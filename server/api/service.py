@@ -1,6 +1,7 @@
 import urllib.parse
 import uuid
 from collections import defaultdict
+
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import or_
 from sqlalchemy import text, func
@@ -119,23 +120,9 @@ def services_from_collaboration_memberships(user_id, service_id=None, count_only
     return _services_from_query(count_only, query, service_id)
 
 
-# Services connected to an organisation where the user is a member of
-def services_from_organisation_memberships(user_id, service_id=None, count_only=False):
-    query = Service.query \
-        .join(Service.organisations) \
-        .join(Organisation.organisation_memberships) \
-        .join(OrganisationMembership.user) \
-        .filter(User.id == user_id)
-
-    return _services_from_query(count_only, query, service_id)
-
-
 def member_access_to_service(service_id):
     user_id = current_user_id()
     count = services_from_collaboration_memberships(user_id, service_id, True)
-    if count > 0:
-        return True
-    count = services_from_organisation_memberships(user_id, service_id, True)
     if count > 0:
         return True
     service = Service.query.filter(Service.id == service_id).one()
@@ -441,8 +428,7 @@ def user_services(user_id):
     if count == 0:
         raise Forbidden(f"User {user_id} is not a member of a collaboration in the {organisation.name} organisation")
 
-    services = services_from_organisation_memberships(user_id)
-    services += services_from_collaboration_memberships(user_id)
+    services = services_from_collaboration_memberships(user_id)
     return [convert_service(service) for service in unique_model_objects(services)], 200
 
 
@@ -517,7 +503,6 @@ def toggle_access_property(service_id):
             service.access_allowed_for_all = False
             service.connection_setting = "NO_ONE_ALLOWED"
             service.allowed_organisations.clear()
-            service.organisations.clear()
             service.automatic_connection_allowed_organisations.clear()
             service.collaborations.clear()
         else:
@@ -548,7 +533,6 @@ def toggle_access_property(service_id):
             if enabled:
                 service.automatic_connection_allowed = False
                 service.allowed_organisations.clear()
-                service.organisations.clear()
                 service.automatic_connection_allowed_organisations.clear()
                 service.collaborations.clear()
         elif attribute == "automatic_connection_allowed":

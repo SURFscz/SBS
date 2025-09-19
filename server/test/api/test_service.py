@@ -2,10 +2,8 @@ import time
 import uuid
 
 import responses
-from flask import session
 from sqlalchemy import text
 
-from server.api.service import user_service
 from server.db.db import db
 from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
@@ -41,13 +39,6 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_scheduler_name)
         self.login("urn:betty")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
-
-    def test_find_by_id_access_allowed_through_organisation_memberships(self):
-        service = self.find_entity_by_name(Service, service_scheduler_name)
-        harry = self.find_entity_by_name(User, "Harry Doe")
-        with self.app.app_context():
-            session["user"] = {"id": harry.id, "uid": harry.uid, "admin": False}
-            self.assertTrue(user_service(service.id, False))
 
     def test_find_by_id_admin(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)
@@ -529,7 +520,7 @@ class TestService(AbstractTest):
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
 
         service_wiki = self.find_by_name(services, service_wiki_name)
-        self.assertEqual(4, service_wiki["collaborations_count"])
+        self.assertEqual(1, service_wiki["collaborations_count"])
 
     def test_services_mine(self):
         self.login("urn:service_admin")

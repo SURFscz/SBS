@@ -254,9 +254,7 @@ def ssh_keys():
     logger = ctx_logger("pam_weblogin")
 
     co_memberships = flatten([co.collaboration_memberships for co in service.collaborations])
-    org_collaborations = flatten([org.collaborations for org in service.organisations])
-    all_memberships = co_memberships + flatten([co.collaboration_memberships for co in org_collaborations])
-    all_valid_memberships = [member for member in all_memberships if member.is_active()]
+    all_valid_memberships = [member for member in co_memberships if member.is_active()]
     all_ssh_keys = flatten([member.user.ssh_keys for member in all_valid_memberships])
     all_ssh_values = list(set([ssh_key.ssh_value for ssh_key in all_ssh_keys]))
 

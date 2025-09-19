@@ -33,7 +33,7 @@ class TestInvitation(AbstractTest):
         invitation = invitation_result["invitation"]
         self.assertEqual(invitation_hash_no_way, invitation["hash"])
         self.assertTrue(len(invitation["collaboration"]["collaboration_memberships"]) > 0)
-        self.assertEqual(4, len(invitation_result["service_emails"]))
+        self.assertEqual(2, len(invitation_result["service_emails"]))
 
     def test_accept(self):
         self.login("urn:james", user_info={"name": "urn:james"})
