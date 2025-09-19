@@ -4,6 +4,7 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import {
+    collaborationsByService,
     disallowOrganisation,
     onRequestOrganisation,
     toggleAccessAllowedForAll,
@@ -51,12 +52,16 @@ class ServiceOrganisations extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationDialogAction: undefined,
             disallowedOrganisation: null,
-            loading: false
+            connectedCollaborations: [],
+            loading: true
         }
     }
 
     componentDidMount = callback => {
         const {service} = this.props;
+        collaborationsByService(service.id).then(collaborations => {
+           this.setState({connectedCollaborations: collaborations, loading: false});
+        });
         const connectionAllowedValue = connectionAllowed(service);
         const institutionAccessValue = institutionAccess(service);
         const connectionSettingValue = connectionSetting(service);
@@ -64,7 +69,7 @@ class ServiceOrganisations extends React.Component {
             connectionAllowedValue: connectionAllowedValue,
             institutionAccessValue: institutionAccessValue,
             connectionSettingValue: connectionSettingValue
-        }, callback)
+        }, callback);
     }
 
     openOrganisation = organisation => e => {
@@ -118,7 +123,7 @@ class ServiceOrganisations extends React.Component {
 
     doDisallow = (organisation, showConfirmation = true, accessToNone = false) => {
         const {service} = this.props;
-        const collAffected = this.getAffectedEntities(organisation, service);
+        const collAffected = this.getAffectedEntities(organisation);
         if (showConfirmation && collAffected.length > 0) {
             this.setState({
                 confirmationDialogOpen: true,
@@ -138,8 +143,8 @@ class ServiceOrganisations extends React.Component {
         }
     }
 
-    renderConfirmation = (service, disallowedOrganisation) => {
-        const collAffected= this.getAffectedEntities(disallowedOrganisation, service);
+    renderConfirmation = (disallowedOrganisation) => {
+        const collAffected= this.getAffectedEntities(disallowedOrganisation);
         const collAffectedUnique = removeDuplicates(collAffected, "id");
         return (
             <div className="allowed-organisations-confirmation">
@@ -161,10 +166,11 @@ class ServiceOrganisations extends React.Component {
         });
     }
 
-    getAffectedEntities = (organisations, service) => {
+    getAffectedEntities = (organisations) => {
         organisations = Array.isArray(organisations) ? organisations : [organisations];
+        const {connectedCollaborations} = this.state;
         const organisationIdentifiers = organisations.map(org => org.id);
-        return service.collaborations.filter(coll => organisationIdentifiers.includes(coll.organisation_id));
+        return connectedCollaborations.filter(coll => organisationIdentifiers.includes(coll.organisation_id));
     }
 
     setConnectionAccessValue = value => {
@@ -221,7 +227,7 @@ class ServiceOrganisations extends React.Component {
             }
             case NONE_INSTITUTIONS: {
                 const organisations = (service.automatic_connection_allowed_organisations || []).concat(service.allowed_organisations || []);
-                const collAffected = this.getAffectedEntities(organisations, service);
+                const collAffected = this.getAffectedEntities(organisations);
                 if (collAffected.length > 0) {
                     this.setState({
                         confirmationDialogOpen: true,
@@ -381,7 +387,7 @@ class ServiceOrganisations extends React.Component {
                                     question={I18n.t("models.serviceOrganisations.disableAccessConfirmation")}
                                     closeTimeoutMS={0}
                                     isWarning={true}>
-                    {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
+                    {confirmationDialogOpen && this.renderConfirmation(disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
 

@@ -358,7 +358,7 @@ def by_service_optimized(service_id):
     confirm_service_manager(service_id)
     values = {"service_id": service_id}
     sql = text("""
-    SELECT c.id, c.name, c.short_name, c.uuid4, org.name, org.short_name
+    SELECT c.id, c.name, c.short_name, c.uuid4, org.id, org.name, org.short_name
             FROM collaborations c
             INNER JOIN organisations org ON c.organisation_id = org.id
             INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
@@ -370,8 +370,9 @@ def by_service_optimized(service_id):
                  "name": row[1],
                  "short_name": row[2],
                  "logo": f"{logo_url('collaborations', row[3])}",
-                 "organisation_name": row[4],
-                 "organisation_short_name": row[5]} for row in result_set], 200
+                 "organisation_id": row[4],
+                 "organisation_name": row[5],
+                 "organisation_short_name": row[6]} for row in result_set], 200
 
 
 @collaboration_api.route("/mine_optimized", strict_slashes=False)
