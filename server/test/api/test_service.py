@@ -487,7 +487,6 @@ class TestService(AbstractTest):
         self.assertTrue(len(services) > 0)
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertFalse("collaborations_count" in service_mail)
-        self.assertFalse("organisations_count" in service_mail)
 
     def test_services_all_optimized(self):
         self.login("urn:john")
@@ -527,11 +526,9 @@ class TestService(AbstractTest):
         self.assertEqual(2, len(service_mail["allowed_organisations"]))
 
         service_uuc = self.find_by_name(services, service_scheduler_name)
-        self.assertEqual(1, service_uuc["organisations_count"])
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
 
         service_wiki = self.find_by_name(services, service_wiki_name)
-        self.assertEqual(1, service_wiki["organisations_count"])
         self.assertEqual(4, service_wiki["collaborations_count"])
 
     def test_services_mine(self):
@@ -540,11 +537,9 @@ class TestService(AbstractTest):
         self.assertEqual(5, len(services))
 
         service_storage = self.find_by_name(services, service_storage_name)
-        self.assertEqual(0, service_storage["organisations_count"])
         self.assertEqual(1, service_storage["collaborations_count"])
 
         service_network = self.find_by_name(services, service_network_name)
-        self.assertEqual(0, service_network["organisations_count"])
         self.assertEqual(1, service_network["collaborations_count"])
 
     def test_services_mine_bug(self):

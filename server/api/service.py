@@ -172,12 +172,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
         return services, 200
 
     query = ("select s.id as id, "
-             "(select count(so.id) from services_organisations so where so.service_id = s.id) as so_count,"
-             "((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) + "
-             "(select count(c.id) from collaborations c "
-             "where c.organisation_id in "
-             "(select so.organisation_id from services_organisations so where so.service_id = s.id) "
-             "and c.id not in (select sc.collaboration_id from services_collaborations sc where sc.service_id = s.id)))"
+             "(select count(sc.id) from services_collaborations sc where sc.service_id = s.id)"
              " as c_count from services s")
     if restrict_for_current_user and len(services) > 0:
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
@@ -188,8 +183,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     services_json_dict = {s["id"]: s for s in services_json}
     for row in result_set:
         service_json = services_json_dict.get(row[0])
-        service_json["organisations_count"] = row[1]
-        service_json["collaborations_count"] = row[2]
+        service_json["collaborations_count"] = row[1]
     return services_json, 200
 
 

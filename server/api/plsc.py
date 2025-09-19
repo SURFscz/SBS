@@ -51,8 +51,6 @@ def internal_sync():
                                        f"where service_id = {service['id']}) limit 1"))
                 for row in rs:
                     service["contact_email"] = row[0]
-        rs = conn.execute(text("SELECT service_id, organisation_id FROM services_organisations"))
-        services_organisations = [{"service_id": row[0], "organisation_id": row[1]} for row in rs]
         rs = conn.execute(text("SELECT service_id, collaboration_id FROM services_collaborations"))
         services_collaborations = [{"service_id": row[0], "collaboration_id": row[1]} for row in rs]
         rs = conn.execute(text("SELECT role, user_id, organisation_id FROM organisation_memberships"))
@@ -112,16 +110,13 @@ def internal_sync():
         rs = conn.execute(text("SELECT id, name, identifier, short_name, uuid4 FROM organisations"))
         for row in rs:
             organisation_id = row[0]
-            service_identifiers = _find_by_id(services_organisations, "organisation_id", organisation_id)
             result["organisations"].append({
                 "id": organisation_id, "name": row[1], "identifier": row[2], "short_name": row[3],
                 "logo": logo_url("organisations", row[4]),
                 "schac_home_organisations": _find_by_id(schac_home_organisations, "organisation_id", organisation_id),
                 "organisation_memberships": _find_by_id(organisation_memberships, "organisation_id", organisation_id),
                 "collaborations": _find_by_id(collaborations, "organisation_id", organisation_id),
-                "units": [u["name"] for u in units if u["organisation_id"] == organisation_id],
-                "services": _identifiers_only(
-                    _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))
+                "units": [u["name"] for u in units if u["organisation_id"] == organisation_id]
             })
         result["services"] = services
         rs = conn.execute(text("SELECT id, uid, name, given_name, family_name, email, scoped_affiliation, "

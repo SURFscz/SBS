@@ -129,14 +129,6 @@ class User(Base, db.Model):
         return user_json
 
 
-services_organisations_association = db.Table(
-    "services_organisations",
-    metadata,
-    db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True),
-    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE")),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE")),
-)
-
 collaboration_memberships_groups_association = db.Table(
     "collaboration_memberships_groups",
     metadata,
