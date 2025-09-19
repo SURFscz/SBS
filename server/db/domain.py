@@ -399,7 +399,7 @@ class Collaboration(Base, db.Model, LogoMixin):
         return [m.user.email for m in self.collaboration_memberships if m.role == "admin"]
 
     def service_emails(self):
-        services = self.services + self.organisation.services
+        services = self.services
         res = {}
         for service in services:
             if service.contact_email:
@@ -498,8 +498,6 @@ class Organisation(Base, db.Model, LogoMixin):
                                                default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
-    services = db.relationship("Service", secondary=services_organisations_association, lazy="select",
-                               back_populates="organisations", passive_deletes=True)
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
                                              cascade="all, delete-orphan",
                                              passive_deletes=True)
@@ -597,8 +595,6 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
-    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select",
-                                    back_populates="services", viewonly=True)
     automatic_connection_allowed_organisations = \
         db.relationship("Organisation",
                         secondary=automatic_connection_allowed_organisations_services_association,

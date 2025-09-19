@@ -42,7 +42,6 @@ from server.api.mock_scim import scim_mock_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
-from server.api.organisations_services import organisations_services_api
 from server.api.pam_websso import pam_websso_api
 from server.api.plsc import plsc_api
 from server.api.service import service_api
@@ -137,7 +136,7 @@ blueprints = [
     base_api, service_api, user_api, user_saml_api, mfa_api, collaboration_api, organisation_api, join_request_api,
     organisation_invitations_api, invitations_api, organisation_membership_api, collaboration_membership_api,
     collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
-    service_connection_request_api, audit_log_api, system_api, organisations_services_api, mock_user_api,
+    service_connection_request_api, audit_log_api, system_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
     user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api,
     service_request_api, unit_api, user_login_eb

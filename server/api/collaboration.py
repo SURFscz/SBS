@@ -14,7 +14,6 @@ from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFoun
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.exceptions import APIBadRequest
 from server.api.invitation import email_re, invitations_by_email
-from server.api.service_group import create_service_groups
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
@@ -40,15 +39,29 @@ from server.tools import dt_now
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 base_collaboration_query = """
-    SELECT c.id, c.name, c.short_name, c.identifier, c.uuid4, c.expiry_date, c.last_activity_date, c.status,
-    (SELECT GROUP_CONCAT(DISTINCT u.name) FROM units u
-    INNER JOIN collaboration_units cou ON cou.unit_id = u.id
-    WHERE cou.collaboration_id = c.id) AS names,
-    (SELECT GROUP_CONCAT(DISTINCT t.tag_value) FROM tags t
-    INNER JOIN collaboration_tags ct ON ct.tag_id = t.id WHERE ct.collaboration_id = c.id) AS tag_values,
-    (SELECT COUNT(id) FROM collaboration_memberships cm WHERE cm.collaboration_id = c.id) AS member_count,
-    org.name FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id
-"""
+                           SELECT c.id,
+                                  c.name,
+                                  c.short_name,
+                                  c.identifier,
+                                  c.uuid4,
+                                  c.expiry_date,
+                                  c.last_activity_date,
+                                  c.status,
+                                  (SELECT GROUP_CONCAT(DISTINCT u.name)
+                                   FROM units u
+                                            INNER JOIN collaboration_units cou ON cou.unit_id = u.id
+                                   WHERE cou.collaboration_id = c.id) AS names,
+                                  (SELECT GROUP_CONCAT(DISTINCT t.tag_value)
+                                   FROM tags t
+                                            INNER JOIN collaboration_tags ct ON ct.tag_id = t.id
+                                   WHERE ct.collaboration_id = c.id)  AS tag_values,
+                                  (SELECT COUNT(id)
+                                   FROM collaboration_memberships cm
+                                   WHERE cm.collaboration_id = c.id)  AS member_count,
+                                  org.name
+                           FROM collaborations c
+                                    INNER JOIN organisations org ON org.id = c.organisation_id \
+                           """
 
 
 def _result_set_to_collaborations(result_set):
@@ -143,12 +156,14 @@ def collaboration_admins(service_id):
 
     values = {"service_id": service_id}
     sql = text("""
-        SELECT u.email, c.id FROM users u
-        INNER JOIN collaboration_memberships cm ON cm.user_id = u.id
-        INNER JOIN collaborations c ON c.id = cm.collaboration_id
-        INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
-        WHERE sc.service_id = :service_id AND cm.role = 'admin'
-        """)
+               SELECT u.email, c.id
+               FROM users u
+                        INNER JOIN collaboration_memberships cm ON cm.user_id = u.id
+                        INNER JOIN collaborations c ON c.id = cm.collaboration_id
+                        INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+               WHERE sc.service_id = :service_id
+                 AND cm.role = 'admin'
+               """)
     with db.engine.connect() as conn:
         result = {}
         result_set = conn.execute(sql, values)
@@ -182,7 +197,7 @@ def collaboration_by_identifier():
     collaboration = Collaboration.query \
         .options(selectinload(Collaboration.groups)) \
         .options(selectinload(Collaboration.services)) \
-        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
+        .options(selectinload(Collaboration.organisation)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
@@ -358,12 +373,12 @@ def by_service_optimized(service_id):
     confirm_service_manager(service_id)
     values = {"service_id": service_id}
     sql = text("""
-    SELECT c.id, c.name, c.short_name, c.uuid4, org.id, org.name, org.short_name
-            FROM collaborations c
-            INNER JOIN organisations org ON c.organisation_id = org.id
-            INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
-            WHERE sc.service_id = :service_id
-        """)
+               SELECT c.id, c.name, c.short_name, c.uuid4, org.id, org.name, org.short_name
+               FROM collaborations c
+                        INNER JOIN organisations org ON c.organisation_id = org.id
+                        INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+               WHERE sc.service_id = :service_id
+               """)
     with db.engine.connect() as conn:
         result_set = conn.execute(sql, values)
         return [{"id": row[0],
@@ -440,10 +455,7 @@ def collaboration_lite_by_id(collaboration_id):
     confirm_collaboration_member(collaboration_id)
 
     collaboration = Collaboration.query \
-        .options(selectinload(Collaboration.organisation)
-                 .selectinload(Organisation.services)
-                 .selectinload(Service.service_memberships)
-                 .selectinload(ServiceMembership.user)) \
+        .options(selectinload(Collaboration.organisation)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .options(selectinload(Collaboration.groups)
@@ -482,10 +494,7 @@ def collaboration_by_id(collaboration_id):
     confirm_collaboration_admin(collaboration_id, read_only=True)
 
     collaboration = Collaboration.query \
-        .options(selectinload(Collaboration.organisation)
-                 .selectinload(Organisation.services)
-                 .selectinload(Service.service_memberships)
-                 .selectinload(ServiceMembership.user)) \
+        .options(selectinload(Collaboration.organisation)) \
         .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
@@ -776,10 +785,6 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
         db.session.commit()
 
         broadcast_collaboration_changed(collaboration_id)
-
-    services = organisation.services
-    for service in services:
-        create_service_groups(service, res[0])
 
     emit_socket(f"organisation_{collaboration.organisation_id}")
 

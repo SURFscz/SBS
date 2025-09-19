@@ -289,7 +289,6 @@ def organisation_by_id(organisation_id):
         .options(selectinload(Organisation.api_keys)) \
         .options(selectinload(Organisation.tags)
                  .selectinload(Tag.units)) \
-        .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
                  .selectinload(CollaborationRequest.requester)) \
         .options(selectinload(Organisation.collaborations)

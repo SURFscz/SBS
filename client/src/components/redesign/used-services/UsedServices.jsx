@@ -111,10 +111,7 @@ class UsedServices extends React.Component {
     getServiceStatus = service => {
         const {collaboration} = this.props;
         let status = null;
-        if (service.usedService && !service.connectionRequest &&
-            collaboration.organisation.services.some(s => s.id === service.id)) {
-            status = I18n.t("models.services.statuses.active");
-        } else if (service.connectionRequest) {
+        if (service.connectionRequest) {
             status = I18n.t("models.services.statuses.pending");
         } else if (service.usedService) {
             status = service.connectionRequest ? I18n.t("models.services.statuses.active") : ""
@@ -125,8 +122,7 @@ class UsedServices extends React.Component {
 
     getServiceMessage = service => {
         const {collaboration} = this.props;
-        if (service.usedService && !service.connectionRequest &&
-            collaboration.organisation.services.some(s => s.id === service.id)) {
+        if (service.usedService && !service.connectionRequest) {
             return "";
         }
         if (service.connectionRequest) {
@@ -228,10 +224,6 @@ class UsedServices extends React.Component {
     }
 
     getServiceAction = (service, collaboration) => {
-        if (service.usedService && !service.connectionRequest &&
-            collaboration.organisation.services.some(s => s.id === service.id)) {
-            return null;
-        }
         if (service.connectionRequest) {
             return <Button cancelButton={true}
                            onClick={() => this.removeServiceConnectionRequest(service, collaboration)}

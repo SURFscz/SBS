@@ -331,7 +331,7 @@ const nl = {
                 noPolicy: "Deze applicatie heeft geen privacy policy opgegeven"
             },
             statuses: {
-                active: "Ingeschakeld door organisatie",
+                active: "",
                 pending: "Aangevraagd",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een aanvraag</a> als je denkt dat een specifieke applicatie ontbreekt en moet worden vermeld."

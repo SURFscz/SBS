@@ -355,8 +355,8 @@ class CollaborationDetail extends React.Component {
         if (!isJoinRequest && !isUserAllowed(ROLES.COLL_MEMBER, user, collaboration.organisation_id, collaboration.id)) {
             return [];
         }
-        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services)
-            .filter(s => s.token_enabled), "id");
+        const services = isJoinRequest ? [] : collaboration.services
+            .filter(s => s.token_enabled);
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
             const minimalTabs = [this.getAboutTab(collaboration, showMemberView, isJoinRequest),];
@@ -466,7 +466,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getServicesTab = (collaboration, user) => {
-        const usedServices = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
+        const usedServices = collaboration.services;
         const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
             .filter(r => r.status === "open")
             .length;

@@ -708,8 +708,7 @@ class Groups extends React.Component {
         }
         //If the service is no longer connected, then the group may be removed
         const connected = collaboration.services.some(service => group.service_group?.service_id === service.id);
-        const connectedThroughOrg = collaboration.organisation.services.some(service => group.service_group?.service_id === service.id);
-        return !connected && !connectedThroughOrg;
+        return !connected;
     }
 
     delete = () => {

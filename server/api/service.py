@@ -219,8 +219,6 @@ def _do_toggle_permission_organisation(service_id, organisation_id, action):
             service.allowed_organisations.remove(organisation)
         if organisation in service.automatic_connection_allowed_organisations:
             service.automatic_connection_allowed_organisations.remove(organisation)
-        if organisation in service.organisations:
-            organisation.services.remove(service)
         for collaboration in [coll for coll in service.collaborations if coll.organisation == organisation]:
             service.collaborations.remove(collaboration)
 

@@ -8,13 +8,10 @@ from flask import jsonify
 from server.api.collaboration import generate_short_name
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
-from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
-    ServiceGroup, Tag, Service, Unit
-from server.db.models import flatten
+from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Tag, Service, Unit
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
-                              service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
                               unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support,
                               unihard_unit_support_name, service_monitor_name, unihard_secret)
@@ -95,42 +92,6 @@ class TestCollaboration(AbstractTest):
             collaboration_db = self.find_entity_by_name(Collaboration, collaboration["name"])
             tags = collaboration_db.tags
             self.assertListEqual(sorted(["tag_default_uuc", "tag_uuc"]), sorted([t.tag_value for t in tags]))
-
-    def test_collaboration_new_with_current_user_admin(self):
-        wiki_service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name1)
-        wiki_service_group.auto_provision_members = True
-        db.session.merge(wiki_service_group)
-        db.session.commit()
-
-        organisation = Organisation.query.filter(Organisation.name == unihard_name).one()
-        self.login("urn:john")
-        collaboration = self.post("/api/collaborations",
-                                  body={
-                                      "name": "new_collaboration",
-                                      "description": "new_collaboration",
-                                      "organisation_id": organisation.id,
-                                      "administrators": ["the@ex.org", "that@ex.org"],
-                                      "short_name": "new_short_name",
-                                      "current_user_admin": True
-                                  }, with_basic_auth=False)
-
-        count = self._collaboration_membership_count(collaboration)
-        self.assertEqual(1, count)
-
-        organisation = Organisation.query.filter(Organisation.name == unihard_name).one()
-        service_groups = flatten([service.service_groups for service in organisation.services])
-        collaboration_groups = self.find_entity_by_name(Collaboration, collaboration["name"]).groups
-
-        self.assertEqual(2, len(service_groups))
-        self.assertEqual(2, len(collaboration_groups))
-        service_group_names = sorted([sg.name for sg in service_groups])
-        co_group_names = sorted([co.name for co in collaboration_groups])
-        self.assertListEqual(service_group_names, co_group_names)
-
-        wiki_group = self.find_entity_by_name(Group, co_group_names[0])
-        self.assertEqual(1, len(wiki_group.collaboration_memberships))
-        self.assertEqual("urn:john", wiki_group.collaboration_memberships[0].user.uid)
-        self.assertEqual(service_group_names[0], wiki_group.service_group.name)
 
     def test_collaboration_without_default_current_user_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id

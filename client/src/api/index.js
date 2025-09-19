@@ -755,18 +755,6 @@ export function createCollaborationMembershipRole(collaborationId) {
     }, "post")
 }
 
-//OrganisationServices
-export function addOrganisationServices(organisationId, serviceId) {
-    return postPutJson(`/api/organisations_services`, {
-        organisation_id: organisationId,
-        service_id: serviceId
-    }, "put", false)
-}
-
-export function deleteOrganisationServices(organisationId, serviceId) {
-    return fetchDelete(`/api/organisations_services/${organisationId}/${serviceId}`)
-}
-
 //CollaborationServices
 export function addCollaborationServices(collaborationId, serviceId) {
     return postPutJson(`/api/collaborations_services`, {

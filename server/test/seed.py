@@ -586,9 +586,6 @@ def seed(db, app_config, skip_seed=False):
                      service_membership_demosp, service_membership_demorp, service_membership_monitor,
                      service_membership_empty)
 
-    uuc.services.append(uuc_scheduler)
-    uuc.services.append(wiki)
-
     tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc, is_default=True)
     tag_default_uuc = Tag(tag_value="tag_default_uuc", is_default=True, organisation=uuc, units=[uuc_unit_support])
     tag_ufra = Tag(tag_value="tag_ufra", organisation=ufra)

@@ -50,7 +50,7 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
         return {"result": "FAIL", "info": "Incorrect pin"}
 
     def include_service(s: Service, m: CollaborationMembership):
-        return s in m.collaboration.services or s in m.collaboration.organisation.services
+        return s in m.collaboration.services
 
     collaborations = []
     groups = []

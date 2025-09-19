@@ -50,8 +50,7 @@ def _add_service_aups(user: dict, user_from_db: User):
     # Find all services available for this user and then see if there are missing ServiceAup's
     services = []
     for cm in user_from_db.collaboration_memberships:
-        # TODO we no longer support organisation.services see https://github.com/SURFscz/SBS/issues/421
-        services += [s for s in cm.collaboration.services] + [s for s in cm.collaboration.organisation.services]
+        services += [s for s in cm.collaboration.services]
 
     service_identifiers = [aup.service_id for aup in user_from_db.service_aups]
 

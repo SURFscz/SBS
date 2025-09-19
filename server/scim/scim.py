@@ -70,8 +70,7 @@ def _has_user_service_access(user: User, service: Service, collaboration_to_excl
     collaborations = [member.collaboration for member in user.collaboration_memberships if
                       member.collaboration.identifier != collaboration_to_exclude.identifier and member.is_active()]
     collaboration_services = flatten([coll.services for coll in collaborations])
-    organisation_services = flatten([coll.organisation.services for coll in collaborations])
-    services = _unique_scim_services(collaboration_services + organisation_services)
+    services = _unique_scim_services(collaboration_services)
     return service in services
 
 
@@ -211,7 +210,7 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
 def apply_collaboration_change(app, collaboration_id: int, deletion):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
-        services = collaboration.services + collaboration.organisation.services
+        services = collaboration.services
         for group in collaboration.groups:
             _do_apply_group_collaboration_change(group, services, deletion)
         _do_apply_group_collaboration_change(collaboration, services, deletion)
@@ -222,7 +221,7 @@ def apply_collaboration_change(app, collaboration_id: int, deletion):
 def apply_group_change(app, group_id: int, deletion):
     with app.app_context():
         group = Group.query.filter(Group.id == group_id).one()
-        services = group.collaboration.services + group.collaboration.organisation.services
+        services = group.collaboration.services
         _do_apply_group_collaboration_change(group, services, deletion)
 
 
@@ -237,17 +236,13 @@ def apply_service_changed(app, collaboration_id, service_id, deletion):
         _do_apply_group_collaboration_change(collaboration, services, deletion)
 
 
-# Organisation has a new service or a service is deleted from an organisation
+# Organisation has been deleted
 @apply_change
-def apply_organisation_change(app, organisation_id: int, service_id: int, deletion):
+def apply_organisation_change(app, organisation_id: int, deletion):
     with app.app_context():
         organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
-        if service_id:
-            services = Service.query.filter(Service.id == service_id).all()
-        else:
-            services = organisation.services
         for co in organisation.collaborations:
-            services = services if service_id else co.services + services
+            services = co.services
             for group in co.groups:
                 _do_apply_group_collaboration_change(group, services, deletion)
             _do_apply_group_collaboration_change(co, services, deletion)

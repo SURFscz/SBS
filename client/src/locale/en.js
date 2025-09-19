@@ -331,7 +331,7 @@ const en = {
                 noPolicy: "This application did not provide a privacy policy"
             },
             statuses: {
-                active: "Enabled by organisation",
+                active: "",
                 pending: "Pending",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Send us your request</a> if you think a specific application is missing and should be listed."

@@ -29,18 +29,8 @@ def broadcast_user_deleted(external_id, collaboration_identifiers):
 
 
 @broadcast_endpoint
-def broadcast_organisation_service_added(organisation_id: int, service_id: int):
-    return current_app.executor.submit(apply_organisation_change, current_app, organisation_id, service_id, False)
-
-
-@broadcast_endpoint
-def broadcast_organisation_service_deleted(organisation_id: int, service_id: int):
-    return current_app.executor.submit(apply_organisation_change, current_app, organisation_id, service_id, True)
-
-
-@broadcast_endpoint
 def broadcast_organisation_deleted(organisation_id: int):
-    return current_app.sync_executor.submit(apply_organisation_change, current_app, organisation_id, None, True)
+    return current_app.sync_executor.submit(apply_organisation_change, current_app, organisation_id, True)
 
 
 @broadcast_endpoint

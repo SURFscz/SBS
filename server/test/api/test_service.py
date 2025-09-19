@@ -604,8 +604,6 @@ class TestService(AbstractTest):
     def test_disallow_organisation(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
         organisation = self.find_entity_by_name(Organisation, unifra_name)
-        organisation.services.append(service)
-        self.save_entity(organisation)
 
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
@@ -616,8 +614,6 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_wiki_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
-        organisation = self.find_entity_by_name(Organisation, unifra_name)
-        self.assertFalse(service in organisation.services)
 
     def test_reset_ldap_password(self):
         service = self._find_by_name()
