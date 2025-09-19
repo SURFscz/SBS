@@ -8,7 +8,8 @@ import {
     disallowOrganisation,
     onRequestOrganisation,
     toggleAccessAllowedForAll,
-    toggleAutomaticConnectionAllowed, toggleCRMOrganisationUsersAccessAllowed,
+    toggleAutomaticConnectionAllowed,
+    toggleCRMOrganisationUsersAccessAllowed,
     toggleNonMemberUsersAccessAllowed,
     toggleOverrideAccessAllowedAllConnections,
     toggleReset,
@@ -59,9 +60,11 @@ class ServiceOrganisations extends React.Component {
 
     componentDidMount = callback => {
         const {service} = this.props;
-        collaborationsByService(service.id).then(collaborations => {
-           this.setState({connectedCollaborations: collaborations, loading: false});
-        });
+        if (!callback) {
+            collaborationsByService(service.id).then(collaborations => {
+                this.setState({connectedCollaborations: collaborations, loading: false});
+            });
+        }
         const connectionAllowedValue = connectionAllowed(service);
         const institutionAccessValue = institutionAccess(service);
         const connectionSettingValue = connectionSetting(service);
@@ -139,12 +142,18 @@ class ServiceOrganisations extends React.Component {
             const promises = accessToNone ? [toggleReset(service.id)] :
                 organisations.map(org => disallowOrganisation(service.id, org.id));
             Promise.all(promises)
-                .then(() => this.refreshService(accessToNone ? () => this.setState({connectionAllowedValue: NO_ONE_ALLOWED}) : null));
+                .then(() => {
+                    this.refreshService(accessToNone ? () => this.setState({connectionAllowedValue: NO_ONE_ALLOWED}) : null);
+                    //The collaborations are no longer part of the Service details, need to refetch
+                    collaborationsByService(service.id).then(collaborations => {
+                        this.setState({connectedCollaborations: collaborations, loading: false});
+                    });
+                });
         }
     }
 
     renderConfirmation = (disallowedOrganisation) => {
-        const collAffected= this.getAffectedEntities(disallowedOrganisation);
+        const collAffected = this.getAffectedEntities(disallowedOrganisation);
         const collAffectedUnique = removeDuplicates(collAffected, "id");
         return (
             <div className="allowed-organisations-confirmation">
@@ -160,6 +169,7 @@ class ServiceOrganisations extends React.Component {
     }
 
     refreshService = callback => {
+        callback = callback || (() => true)
         this.props.refresh(() => {
             this.setState({loading: false}, () => this.componentDidMount(callback));
             setFlash(I18n.t("service.flash.updated", {name: this.props.service.name}));
@@ -391,30 +401,30 @@ class ServiceOrganisations extends React.Component {
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
 
-                    <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
-                        <div>
-                            <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
-                            <BlockSwitchChoice value={connectionAllowedValue}
-                                               items={connectionAllowedChoices}
-                                               disabled={!serviceAdmin || (connectionAllowedValue === ALL_ALLOWED && !userAdmin)}
-                                               setValue={this.setConnectionAccessValue}/>
-                        </div>
-                        {connectionAllowedValue !== NO_ONE_ALLOWED && <div>
-                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
-                            <BlockSwitchChoice value={institutionAccessValue}
-                                               items={institutionAccessChoices}
-                                               disabled={!serviceAdmin}
-                                               setValue={this.setInstitutionAccessValue}/>
-                        </div>}
-                        {(connectionAllowedValue !== NO_ONE_ALLOWED && institutionAccessValue !== NONE_INSTITUTIONS) &&
-                            <div>
-                                <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
-                                <BlockSwitchChoice value={connectionSettingValue}
-                                                   items={connectionSettingChoices}
-                                                   disabled={!serviceAdmin}
-                                                   setValue={this.setConnectionSettingValue}/>
-                            </div>}
+                <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
+                    <div>
+                        <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
+                        <BlockSwitchChoice value={connectionAllowedValue}
+                                           items={connectionAllowedChoices}
+                                           disabled={!serviceAdmin || (connectionAllowedValue === ALL_ALLOWED && !userAdmin)}
+                                           setValue={this.setConnectionAccessValue}/>
                     </div>
+                    {connectionAllowedValue !== NO_ONE_ALLOWED && <div>
+                        <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
+                        <BlockSwitchChoice value={institutionAccessValue}
+                                           items={institutionAccessChoices}
+                                           disabled={!serviceAdmin}
+                                           setValue={this.setInstitutionAccessValue}/>
+                    </div>}
+                    {(connectionAllowedValue !== NO_ONE_ALLOWED && institutionAccessValue !== NONE_INSTITUTIONS) &&
+                        <div>
+                            <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
+                            <BlockSwitchChoice value={connectionSettingValue}
+                                               items={connectionSettingChoices}
+                                               disabled={!serviceAdmin}
+                                               setValue={this.setConnectionSettingValue}/>
+                        </div>}
+                </div>
                 {(service.non_member_users_access_allowed && (!userAdmin || showServiceAdminView)) &&
                     <div className={"options-container radio-button-container"}>
                         <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
