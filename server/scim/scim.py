@@ -150,7 +150,6 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
 
 
 def _all_unique_scim_services_of_collaborations(collaborations):
-    organisations = [co.organisation for co in collaborations]
     all_services = flatten([co.services for co in collaborations])
     scim_services = _unique_scim_services(all_services)
     return scim_services
