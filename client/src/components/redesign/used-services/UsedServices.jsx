@@ -109,7 +109,6 @@ class UsedServices extends React.Component {
     };
 
     getServiceStatus = service => {
-        const {collaboration} = this.props;
         let status = null;
         if (service.connectionRequest) {
             status = I18n.t("models.services.statuses.pending");

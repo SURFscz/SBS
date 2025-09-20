@@ -39,7 +39,7 @@ import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestD
 import LastAdminWarning from "../../components/redesign/last-admin-warning/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
+import {ErrorOrigins, isEmpty, stopEvent} from "../../utils/Utils";
 import UserTokens from "../../components/redesign/user-tokens/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {isUuid4} from "../../validations/regExps";
