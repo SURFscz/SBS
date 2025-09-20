@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision e19c3fd08074 (head)
+-- Dump of empty SBS database, alembic revision dd10370a403a (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('e19c3fd08074');
+INSERT INTO `alembic_version` VALUES ('dd10370a403a');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -956,25 +956,6 @@ CREATE TABLE `services_collaborations` (
 LOCK TABLES `services_collaborations` WRITE;
 /*!40000 ALTER TABLE `services_collaborations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `services_collaborations` ENABLE KEYS */;
-UNLOCK TABLES;
-DROP TABLE IF EXISTS `services_organisations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `services_organisations` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `service_id` int(11) NOT NULL,
-  `organisation_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `service_id` (`service_id`),
-  KEY `organisation_id` (`organisation_id`),
-  CONSTRAINT `services_organisations_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `services_organisations_ibfk_2` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `services_organisations` WRITE;
-/*!40000 ALTER TABLE `services_organisations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `services_organisations` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `ssh_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
