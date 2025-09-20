@@ -699,17 +699,6 @@ endpoints = [
         "path": "/api/organisation_memberships/"
     },
     {
-        "name": "organisations_services_api.add_collaborations_services",
-        "method": "PUT",
-        "path": "/api/organisations_services/",
-        "body": {"organisation_id": 0, "service_id": 0}
-    },
-    {
-        "name": "organisations_services_api.delete_organisations_services",
-        "method": "DELETE",
-        "path": "/api/organisations_services/<organisation_id>/<service_id>"
-    },
-    {
         "name": "pam_weblogin_api.check_pin",
         "method": "POST",
         "path": "/pam-weblogin/check-pin"
