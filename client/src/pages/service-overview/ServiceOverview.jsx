@@ -600,23 +600,24 @@ class ServiceOverview extends React.Component {
             oidc_enabled, saml_enabled, grants, entity_id
         } = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-
+        const {config} = this.props;
+        const manageEnabled = config.manage_enabled;
         switch (tab) {
             case "general":
                 return !isEmpty(service.name) && !alreadyExists.name && !isEmpty(service.abbreviation)
                     && !alreadyExists.abbreviation && !isEmpty(service.logo) && !invalidInputs.uri
-                    && !isEmpty(providing_organisation);
+                    && !isEmpty(providing_organisation) && !alreadyExists.entity_id;
             case "contacts":
                 return !isEmpty(service.security_email) && !contactEmailRequired && !invalidInputs.email && !invalidInputs.security_email && !invalidInputs.support_email
             case "policy":
                 return !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
             case "OIDC":
-                return !oidc_enabled ||
+                return !manageEnabled || !oidc_enabled ||
                     (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) || !grants.includes("authorization_code"))
                     && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
                     && !isEmpty(entity_id);
             case "SAML":
-                return !saml_enabled ||
+                return !manageEnabled || !saml_enabled ||
                     (!isEmpty(acs_locations.filter(url => !isEmpty(url))) && Object.values(invalidACSLocations).every(val => !val) &&
                         !isEmpty(entity_id));
             case "Export":
@@ -1797,6 +1798,7 @@ class ServiceOverview extends React.Component {
     }
 
     renderGeneral = (config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView, crmOrganisations) => {
+        const manageEnabled = config.manage_enabled;
         return <>
             <InputField value={service.name}
                         onChange={this.changeServiceProperty("name", false, {...alreadyExists, name: false})}
@@ -1847,6 +1849,26 @@ class ServiceOverview extends React.Component {
                         onChange={this.changeServiceProperty("description")}
                         multiline={true}
                         disabled={!isAdmin && !isServiceAdmin}/>
+            {!manageEnabled && <>
+                <InputField value={service.entity_id}
+                            onChange={this.changeServiceProperty("entity_id", false, {
+                                ...alreadyExists, entity_id: false
+                            })}
+                            placeholder={I18n.t("service.entity_idPlaceHolder")}
+                            onBlur={e => this.validateServiceEntityId(e)}
+                            name={I18n.t("service.entity_id")}
+                            toolTip={I18n.t("service.entity_idTooltip")}
+                            required={true}
+                            error={alreadyExists.entity_id || isEmpty(service.entity_id)}
+                            copyClipBoard={true}
+                            disabled={!isAdmin && !isServiceAdmin}/>
+                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
+                })}/>}
+                {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.entity_id").toLowerCase()
+                })}/>}
+            </>}
 
             <CheckBox name="allow_restricted_orgs"
                       value={service.allow_restricted_orgs || false}

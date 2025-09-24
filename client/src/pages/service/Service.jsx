@@ -75,7 +75,7 @@ class Service extends React.Component {
         motivation: "",
         administrators: [],
         message: "",
-        required: ["name", "abbreviation", "logo", "security_email"],
+        required: ["name", "abbreviation", "logo", "security_email", "providing_organisation"],
         alreadyExists: {},
         initial: true,
         invalidInputs: {},
@@ -113,7 +113,7 @@ class Service extends React.Component {
         const isServiceRequestDetails = isServiceRequest && match && match.params && match.params.service_request_id;
         if (isServiceRequest) {
             const required = this.state.required
-                .concat(["providing_organisation", "connection_type"]);
+                .concat(["connection_type"]);
             this.setState({required: required})
         }
         if (!isServiceRequest && !user.admin) {
@@ -560,20 +560,19 @@ class Service extends React.Component {
                         required={true}
             />
 
-            {isServiceRequest &&
-                <div className="first-column">
-                    <InputField value={providing_organisation}
-                                name={I18n.t("service.providingOrganisation")}
-                                disabled={disableEverything}
-                                placeholder={I18n.t("service.providingOrganisationPlaceholder")}
-                                onChange={e => this.setState({providing_organisation: e.target.value})}
-                                error={!initial && isEmpty(providing_organisation)}
-                                required={true}
-                    />
-                    {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.providingOrganisation").toLowerCase()
-                    })}/>}
-                </div>}
+            <div className="first-column">
+                <InputField value={providing_organisation}
+                            name={I18n.t("service.providingOrganisation")}
+                            disabled={disableEverything}
+                            placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                            onChange={e => this.setState({providing_organisation: e.target.value})}
+                            error={!initial && isEmpty(providing_organisation)}
+                            required={true}
+                />
+                {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                })}/>}
+            </div>
             {!manageEnabled &&
                 <>
                     <h2 className="section-separator">{I18n.t("service.connectionDetails")}</h2>
