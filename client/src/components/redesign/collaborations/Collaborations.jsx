@@ -119,14 +119,14 @@ export default class Collaborations extends React.PureComponent {
         if (organisation) {
             unitOptions = organisation.units
                 .map(unit => ({
-                    val: unit.name, nbr: collaborations
-                        .filter(coll => coll.units.some(u => u.name === unit.name)).length
+                    val: unit.name,
+                    nbr: collaborations.filter(coll => coll.units.some(u => u.name === unit.name)).length
                 }));
 
         } else {
             unitOptions = collaborations.reduce((acc, coll) => {
                 coll.units.forEach(unit => {
-                    const option = acc.find(opt => opt.name === unit.name);
+                    const option = acc.find(opt => opt.val === unit.name);
                     if (option) {
                         ++option.nbr;
                     } else {
