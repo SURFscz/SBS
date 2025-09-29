@@ -1,6 +1,6 @@
 APScheduler==3.11.0
 mysqlclient==2.2.7
-PyYAML==6.0.2
+PyYAML==6.0.3
 SQLAlchemy==2.0.43
 cryptography==46.0.1
 eventlet==0.40.3
