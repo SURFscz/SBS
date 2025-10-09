@@ -657,10 +657,21 @@ class TestService(AbstractTest):
         self.get("/api/services/find_by_uuid4", query_data={"uuid4": service_ssh_uva.uuid4}, with_basic_auth=False,
                  response_status_code=403)
 
-    def test_has_no_member_access_to_service(self):
+    def test_service_by_uuid4_by_schac_home(self):
         cloud = self.find_entity_by_name(Service, service_cloud_name)
-        self.login("urn:james")
-        has_access = self.get(f"/api/services/member_access_to_service/{cloud.id}", with_basic_auth=False)
+        cloud_uuid4 = cloud.uuid4
+
+        self.login("urn:new_user", schac_home_organisation="uni-harderwijk.nl")
+        self.post("/api/aup/agree", with_basic_auth=False)
+        res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud_uuid4}, with_basic_auth=False)
+
+        self.assertEqual(service_cloud_name, res["service"]["name"])
+
+    def test_has_no_member_access_to_service(self):
+        cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.login("urn:new_user", schac_home_organisation="nope.com")
+        self.post("/api/aup/agree", with_basic_auth=False)
+        has_access = self.get(f"/api/services/member_access_to_service/{cloud_id}", with_basic_auth=False)
         self.assertFalse(has_access)
 
     def test_has_member_access_to_service(self):

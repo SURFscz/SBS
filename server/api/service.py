@@ -126,7 +126,13 @@ def member_access_to_service(service_id):
     if count > 0:
         return True
     service = Service.query.filter(Service.id == service_id).one()
-    return service.non_member_users_access_allowed
+    if service.non_member_users_access_allowed:
+        return True
+    # Allowed if the schac_home of the user equals with an org and this org is the Service CRM org
+    user = User.query.filter(User.id == user_id).one()
+    if service.access_allowed_by_crm_organisation(user):
+        return True
+    return False
 
 
 def user_service(service_id, view_only=True):
