@@ -1,7 +1,7 @@
 APScheduler==3.11.0
 mysqlclient==2.2.7
 PyYAML==6.0.3
-SQLAlchemy==2.0.43
+SQLAlchemy==2.0.44
 cryptography==46.0.1
 eventlet==0.40.3
 flask-jsonschema-validator==0.0.4
