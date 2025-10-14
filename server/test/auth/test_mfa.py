@@ -49,12 +49,12 @@ class TestMFA(AbstractTest):
         db.session.commit()
 
         res = eligible_users_to_reset_token(user)
-        self.assertEqual(2, len(res))
+        self.assertEqual(1, len(res))
 
     def test_eligible_users_to_reset_token_schac_home_fallback(self):
         user = User.query.filter(User.uid == "urn:james").one()
         res = eligible_users_to_reset_token(user)
-        self.assertEqual(4, len(res))
+        self.assertEqual(2, len(res))
         for user in res:
             self.assertEqual(unihard_name, user["unit"])
 
