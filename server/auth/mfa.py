@@ -72,36 +72,42 @@ def eligible_users_to_reset_token(user):
             if membership.role == "admin" and membership.user != user:
                 user_information.append({"user": membership.user, "unit": membership.collaboration.name})
     if not user_information:
-        # Then we try to find organization managers
+        # Second we try to find organization managers with the same unit as the CO
         collaborations_with_units = [m.collaboration for m in user.collaboration_memberships if m.collaboration.units]
-        if collaborations_with_units:
-            for co in collaborations_with_units:
-                for m in co.organisation.organisation_memberships:
-                    member_units = [u.id for u in m.units]
-                    if m.role == "manager" and (not m.units or all(u for u in co.units if u.id in member_units)):
-                        user_information.append({"user": m.user, "unit": m.organisation.name})
+        for co in collaborations_with_units:
+            for m in co.organisation.organisation_memberships:
+                member_units = [u.id for u in m.units]
+                if m.role == "manager" and all(u for u in co.units if u.id in member_units):
+                    user_information.append({"user": m.user, "unit": m.organisation.name})
     if not user_information:
-        # Then we try to find organization admin
+        # Third we try to find organization managers without any units
+        all_collaborations = [m.collaboration for m in user.collaboration_memberships]
+        for co in all_collaborations:
+            for m in co.organisation.organisation_memberships:
+                if m.role == "manager" and not m.units:
+                    user_information.append({"user": m.user, "unit": m.organisation.name})
+    if not user_information:
+        # Fourth we try to find organization admins
         for org_membership in user.organisation_memberships:
             for membership in org_membership.organisation.organisation_memberships:
                 if membership.role == "admin" and membership.user != user:
                     user_information.append({"user": membership.user, "unit": membership.organisation.name})
-    if not user_information:
-        # Then we try to find organization members
-        for membership in user.collaboration_memberships:
-            for mb in membership.collaboration.organisation.organisation_memberships:
-                if mb.user != user:
-                    user_information.append({"user": mb.user, "unit": mb.organisation.name})
-
     if not user_information and user.schac_home_organisation:
-        # Then we try to find organization members of the same schac_home
+        # Fifth we try to find organization managers of the same schac_home
         organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
         if organisations:
             org = db.session.get(Organisation, organisations[0].id)
             for membership in org.organisation_memberships:
-                if membership.user != user:
+                if membership.role == "manager" and membership.user != user:
                     user_information.append({"user": membership.user, "unit": membership.organisation.name})
-
+    if not user_information and user.schac_home_organisation:
+        # Sixth we try to find organization admins of the same schac_home
+        organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+        if organisations:
+            org = db.session.get(Organisation, organisations[0].id)
+            for membership in org.organisation_memberships:
+                if membership.role == "admin" and membership.user != user:
+                    user_information.append({"user": membership.user, "unit": membership.organisation.name})
     user_info = [{"name": u["user"].name, "email": u["user"].email, "unit": u["unit"]} for u in user_information]
     # Final fallback is the configured mail
     if not user_info:

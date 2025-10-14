@@ -6,11 +6,11 @@
     <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
         Hi,
     </p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;"></p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
         User {{ user.name }} has requested a reset of verification with their authenticator app (TOTP),
         because they are unable to log in to SURF Research Access Management.
     </p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;"></p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
         A user can request any of their collaboration admins for the reset. If there aren't any, they can
         request it from their organisation managers or admins.
     </p>
@@ -35,13 +35,13 @@
     <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
     Suggestion for a message to the user:</p>
     <div class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 1em 0.6em;max-width: 800px;font-style: italic; border-bottom: 3px solid #f5f5f5">
-    <p style="margin: 0;"></p>
-    <p style="margin: 0;">Hi {{ user.name }},</p>
-    <p style="margin: 0;">You have requested a reset of your authenticator app to log in to SURF Research Access Management.</p>
-    <p style="margin: 0;">Please log in at {{ base_url }}/login and use the reset code below.</p>
-    <p style="margin: 0;">{{ user.mfa_reset_token }}</p>
-    <p style="margin: 0;">Kind regards,</p>
-</div>
+        <p style="margin: 0;"></p>
+        <p style="margin: 0;">Hi {{ user.name }},</p>
+        <p style="margin: 0;">You have requested a reset of your authenticator app to log in to SURF Research Access Management.</p>
+        <p style="margin: 0;">Please log in at {{ base_url }}/login and use the reset code below.</p>
+        <p style="margin: 0;">{{ user.mfa_reset_token }}</p>
+        <p style="margin: 0;">Kind regards,</p>
+    </div>
 </div>
 <br><br>
 

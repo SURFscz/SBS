@@ -489,7 +489,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 title={title}
                 cancelButtonLabel={I18n.t("forms.cancel")}
                 confirmationButtonLabel={I18n.t("forms.apply")}
-                confirmDisabled={showImageGallery ? !galleryImage : (busy || !src)}
+                confirmDisabled={!isEmpty(error) || showImageGallery ? !galleryImage : (busy || !src)}
             />
         );
 
