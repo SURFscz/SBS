@@ -119,7 +119,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
     return {**json_user, **is_admin}, 200
 
 
-def _get_authorization_url(state=None):
+def _get_authorization_url(state=None, aarc_idp_hint=None):
     oidc_config = current_app.app_config.oidc
     if state:
         # This is required as eduTeams can not redirect to a dynamic URI
@@ -138,7 +138,8 @@ def _get_authorization_url(state=None):
     }
     if oidc_config.second_factor_authentication_required:
         params["acr_values"] = ACR_VALUES
-
+    if aarc_idp_hint:
+        params["aarc_idp_hint"] = aarc_idp_hint
     args = urllib.parse.urlencode(params)
     authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
     return authorization_endpoint
@@ -248,7 +249,8 @@ def get_platform_admins():
 @json_endpoint
 def authorization():
     state = query_param("state", required=False, default=None)
-    authorization_endpoint = _get_authorization_url(state)
+    aarc_idp_hint = query_param("aarc_idp_hint", required=False, default=None)
+    authorization_endpoint = _get_authorization_url(state, aarc_idp_hint)
     return {"authorization_endpoint": authorization_endpoint}, 200
 
 

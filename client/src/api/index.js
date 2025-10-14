@@ -95,8 +95,9 @@ export function config() {
 }
 
 //Users
-export function authorizationUrl(state) {
-    return fetchJson(`/api/users/authorization?state=${encodeURIComponent(state)}`);
+export function authorizationUrl(state, idpHint = null) {
+    const idpHintPart = isEmpty(idpHint) ? "" : `&aarc_idp_hint=${encodeURIComponent(idpHint)}`
+    return fetchJson(`/api/users/authorization?state=${encodeURIComponent(state)}${idpHintPart}`);
 }
 
 export function me(config) {
