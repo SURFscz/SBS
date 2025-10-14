@@ -9320,11 +9320,6 @@ serialize-javascript@^6.0.0, serialize-javascript@^6.0.2:
   dependencies:
     randombytes "^2.1.0"
 
-serialize-javascript@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.0.0.tgz#ba912a5a5e3b2031548d2b190191f2ac3472a8c4"
-  integrity sha512-pgLqXJrPEahCSuSLFvmBbIi6C769CQkpG509G8lwnaltznys3QxinnJE71cr78TOr6OPi+boskt4NvRbhfgFrA==
-
 serve-index@^1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/serve-index/-/serve-index-1.9.1.tgz#d3768d69b1e7d82e5ce050fff5b453bea12a9239"
