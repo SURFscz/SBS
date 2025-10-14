@@ -317,15 +317,17 @@ class NewInvitation extends React.Component {
                                 confirm={confirmationDialogAction}
                                 leavePage={leavePage}/>
             <div className="mod-new-collaboration-invitation">
-                <h2>{I18n.t("collaborationInvitations.inviteWithLink")}</h2>
                 {!collaboration.disable_join_requests &&
-                    <div className="link-invitation-container">
-                        <p>{I18n.t("collaborationInvitations.inviteWithLinkInfo")}</p>
-                        <CopyToClipboard
-                            text={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}>
-                            <Button txt={I18n.t("collaborationInvitations.inviteWithLinkCopy")}/>
-                        </CopyToClipboard>
-                    </div>}
+                    <>
+                        <h2>{I18n.t("collaborationInvitations.inviteWithLink")}</h2>
+                        <div className="link-invitation-container">
+                            <p>{I18n.t("collaborationInvitations.inviteWithLinkInfo")}</p>
+                            <CopyToClipboard
+                                text={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}>
+                                <Button txt={I18n.t("collaborationInvitations.inviteWithLinkCopy")}/>
+                            </CopyToClipboard>
+                        </div>
+                    </>}
                 <h2>{I18n.t("collaborationInvitations.inviteWithEmail")}</h2>
                 {this.invitationForm(initial, administrators, intended_role, message, invitation_sender_name,
                     expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations)}
