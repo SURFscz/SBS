@@ -6,7 +6,7 @@ from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_i
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name
+from server.test.seed import unihard_name, co_teachers_name
 
 
 class TestMFA(AbstractTest):
@@ -68,6 +68,61 @@ class TestMFA(AbstractTest):
         user = User.query.filter(User.uid == "urn:betty").one()
         res = eligible_users_to_reset_token(user)
         emails = sorted(['harry@example.org', 'paul@ucc.org'])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
+
+    def test_eligible_users_to_reset_token_exclude_non_managers(self):
+        # CO teachers has unit research and organisation Harderwijk has no research managers - after deleting paul and
+        # roger - and the CO has no admins - after deleting urn:extra_admin. Expecting the admins John and Mary as
+        # eligible users, as all other membership of betty are deleted except for CO teachers
+        users = User.query.filter(User.uid.in_(["urn:paul", "urn:roger", "urn:extra_admin"])).all()
+        for user in users:
+            db.session.delete(user)
+        db.session.commit()
+
+        betty = User.query.filter(User.uid == "urn:betty").one()
+        for co_membership in betty.collaboration_memberships:
+            if co_membership.collaboration.name != co_teachers_name:
+                db.session.delete(co_membership)
+        db.session.commit()
+
+        res = eligible_users_to_reset_token(betty)
+        emails = sorted(["john@example.org", "mary@example.org"])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
+
+    def test_eligible_users_to_reset_token_include_general_managers(self):
+        # CO teachers has unit research and organisation Harderwijk has no research managers - after deleting roger -
+        # and one manager without units - after deleting the units of paul organisation memberships - and the CO has no
+        # admins - after deleting urn:extra_admin. Expecting the manager paul as eligible users, as all other
+        # memberships of betty are deleted except for CO teachers
+        users = User.query.filter(User.uid.in_(["urn:roger", "urn:extra_admin"])).all()
+        for user in users:
+            db.session.delete(user)
+        paul = User.query.filter(User.uid == "urn:paul").one()
+        for org_membership in paul.organisation_memberships:
+            org_membership.units.clear()
+            db.session.merge(org_membership)
+        db.session.commit()
+
+        betty = User.query.filter(User.uid == "urn:betty").one()
+        for co_membership in betty.collaboration_memberships:
+            if co_membership.collaboration.name != co_teachers_name:
+                db.session.delete(co_membership)
+        db.session.commit()
+
+        res = eligible_users_to_reset_token(betty)
+        emails = sorted(["paul@ucc.org"])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
+
+    def test_eligible_users_to_reset_token_include_schac_home_managers(self):
+        # Paul has no collaboration memberships. Expecting the manager harry from the organisation Harderwijk as
+        # eligible user
+        paul = User.query.filter(User.uid == "urn:paul").one()
+        for co_membership in paul.collaboration_memberships:
+            db.session.delete(co_membership)
+        db.session.commit()
+
+        res = eligible_users_to_reset_token(paul)
+        emails = sorted(["harry@example.org"])
         self.assertListEqual(emails, sorted([u["email"] for u in res]))
 
     def test_mfa_idp_allowed(self):

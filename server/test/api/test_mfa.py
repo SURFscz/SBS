@@ -73,7 +73,7 @@ class TestMfa(AbstractTest):
         self.login("urn:mary")
         res = self.get("/api/mfa/token_reset_request", with_basic_auth=False)
         self.assertEqual(1, len(res))
-        self.assertEqual("john@example.org", res[0]["email"])
+        self.assertEqual("paul@ucc.org", res[0]["email"])
 
     def test_token_reset_request_rate_limit(self):
         user = self.find_entity_by_name(User, "Mary Doe")
@@ -88,7 +88,7 @@ class TestMfa(AbstractTest):
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.login("urn:mary")
-            self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "please"},
+            self.post("/api/mfa/token_reset_request", body={"email": "paul@ucc.org", "message": "please"},
                       with_basic_auth=False)
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
@@ -103,7 +103,7 @@ class TestMfa(AbstractTest):
 
     def test_reset2fa(self):
         self.login("urn:mary")
-        self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "please"},
+        self.post("/api/mfa/token_reset_request", body={"email": "paul@ucc.org", "message": "please"},
                   with_basic_auth=False)
         mary = User.query.filter(User.uid == "urn:mary").one()
         self.post("/api/mfa/reset2fa", body={"token": f" {mary.mfa_reset_token} "})
