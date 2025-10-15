@@ -4,9 +4,9 @@ from jwt import algorithms
 
 from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_idp_allowed, user_requires_sram_mfa
 from server.db.db import db
-from server.db.domain import User
+from server.db.domain import User, Unit
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, co_teachers_name, unifra_name
+from server.test.seed import unihard_name, co_teachers_name, unifra_name, unihard_unit_research_name
 
 
 class TestMFA(AbstractTest):
@@ -64,6 +64,12 @@ class TestMFA(AbstractTest):
             for m in co_membership.collaboration.collaboration_memberships:
                 m.role = "member"
                 self.save_entity(m)
+        # Add a new token to Harry
+        harry = User.query.filter(User.uid == "urn:harry").one()
+        for org_membership in harry.organisation_memberships:
+            org_membership.units.append(Unit.query.filter(Unit.name == unihard_unit_research_name).one())
+            db.session.merge(org_membership)
+        db.session.commit()
 
         user = User.query.filter(User.uid == "urn:betty").one()
         res = eligible_users_to_reset_token(user)

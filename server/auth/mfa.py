@@ -76,7 +76,7 @@ def eligible_users_to_reset_token(user):
         collaborations_with_units = [m.collaboration for m in user.collaboration_memberships if m.collaboration.units]
         for co in collaborations_with_units:
             for m in co.organisation.organisation_memberships:
-                if m.role == "manager" and m.units and all(u in co.units for u in m.units) and m.user != user:
+                if m.role == "manager" and m.units and all(u in m.units for u in co.units) and m.user != user:
                     user_information.append({"user": m.user, "unit": m.organisation.name})
     if not user_information:
         # Third we try to find organization managers without any units
