@@ -6,7 +6,7 @@ from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_i
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, co_teachers_name
+from server.test.seed import unihard_name, co_teachers_name, unifra_name
 
 
 class TestMFA(AbstractTest):
@@ -123,6 +123,37 @@ class TestMFA(AbstractTest):
 
         res = eligible_users_to_reset_token(paul)
         emails = sorted(["harry@example.org"])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
+
+    def test_eligible_users_to_reset_token_include_schac_home_admin(self):
+        # Paul has no collaboration memberships and no organisation memberships. Expecting the admin Jane from the
+        # organisation Academia Franekerensis as eligible user becasuse of the matching schachome
+        paul = User.query.filter(User.uid == "urn:paul").one()
+        for co_membership in paul.collaboration_memberships:
+            db.session.delete(co_membership)
+        for org_membership in paul.organisation_memberships:
+            db.session.delete(org_membership)
+        db.session.commit()
+
+        res = eligible_users_to_reset_token(paul)
+        emails = sorted(["jane@ucc.org"])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
+
+    def test_eligible_users_to_reset_token_include_organisation_admin(self):
+        # Paul has no collaboration memberships, one organisation memberships and no matching schac_home. Expecting the
+        # admin Jane from the organisation Academia Franekerensis as eligible user becasuse of the matching schachome
+        paul = User.query.filter(User.uid == "urn:paul").one()
+        for co_membership in paul.collaboration_memberships:
+            db.session.delete(co_membership)
+        for org_membership in paul.organisation_memberships:
+            if org_membership.organisation.name != unifra_name:
+                db.session.delete(org_membership)
+        paul.schac_home_organisation = None
+        db.session.merge(paul)
+        db.session.commit()
+
+        res = eligible_users_to_reset_token(paul)
+        emails = sorted(["jane@ucc.org"])
         self.assertListEqual(emails, sorted([u["email"] for u in res]))
 
     def test_mfa_idp_allowed(self):
