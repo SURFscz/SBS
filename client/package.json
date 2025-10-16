@@ -49,7 +49,7 @@
         "timeago.js": "^4.0.2"
     },
     "devDependencies": {
-        "dot-prop": "^10.0.0",
+        "dot-prop": "^10.1.0",
         "eslint-plugin-risxss": "^2.1.0",
         "http-proxy-middleware": "^3.0.5",
         "raw-loader": "^4.0.2",
