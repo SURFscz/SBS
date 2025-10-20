@@ -4,7 +4,7 @@
     "private": true,
     "dependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "@fortawesome/fontawesome-svg-core": "^7.0.1",
+        "@fortawesome/fontawesome-svg-core": "^7.1.0",
         "@fortawesome/free-solid-svg-icons": "^7.0.1",
         "@fortawesome/react-fontawesome": "^3.1.0",
         "@surfnet/sds": "^0.0.149",
