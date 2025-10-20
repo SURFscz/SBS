@@ -284,4 +284,11 @@ or
 $ npm test -- path/to/YourComponent.test.jsx -u
 ```
 
-This will create a new ``__snapshot__`` folder with an updated component snapshot.
+This will create a new ``__snapshot__`` folder with an updated component snapshot. You can also run a script to 
+regenerate everything:
+```bash
+$ cd client
+$ nvm use
+$ sh ./regenerate_snapshots.sh
+```
+
