@@ -27,7 +27,7 @@ exports[`LandingInfo matches snapshot with default render 1`] = `
               class="admin-function-container"
             >
               <button
-                class="sds--chips main-400"
+                class="sds--chips main-400 "
               >
                 <span
                   class="sds--chips--textual sds--text--body--small"
@@ -67,7 +67,7 @@ exports[`LandingInfo matches snapshot with default render 1`] = `
               class="admin-function-container"
             >
               <button
-                class="sds--chips main-400"
+                class="sds--chips main-400 "
               >
                 <span
                   class="sds--chips--textual sds--text--body--small"

@@ -38,7 +38,7 @@ exports[`CollaborationCard matches snapshot 1`] = `
             class="sds--content-card--actions"
           >
             <button
-              class="sds--chips main-400"
+              class="sds--chips main-400 "
             >
               <span
                 class="sds--chips--textual sds--text--body--small"

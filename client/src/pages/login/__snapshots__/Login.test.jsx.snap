@@ -71,7 +71,7 @@ exports[`Login matches snapshot with custom description 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
@@ -116,7 +116,7 @@ exports[`Login matches snapshot with custom description 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
@@ -299,7 +299,7 @@ exports[`Login matches snapshot with custom title 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
@@ -344,7 +344,7 @@ exports[`Login matches snapshot with custom title 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
@@ -527,7 +527,7 @@ exports[`Login matches snapshot with default props 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
@@ -572,7 +572,7 @@ exports[`Login matches snapshot with default props 1`] = `
                 class="admin-function-container"
               >
                 <button
-                  class="sds--chips main-400"
+                  class="sds--chips main-400 "
                 >
                   <span
                     class="sds--chips--textual sds--text--body--small"
