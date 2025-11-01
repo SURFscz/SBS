@@ -139,12 +139,12 @@ jobs:
           sudo apt -y install curl
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - name: Use Node.js 21
+        uses: actions/setup-node@v5
         with:
-          node-version: "20.8.0"
+          node-version: "21.2.0"
           cache: "yarn"
           cache-dependency-path: '**/yarn.lock'
 
