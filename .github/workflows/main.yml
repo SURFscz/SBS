@@ -141,10 +141,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Use Node.js 21
+      - name: Use Node.js 22
         uses: actions/setup-node@v5
         with:
-          node-version: "21.2.0"
+          node-version: "22.11.0"
           cache: "yarn"
           cache-dependency-path: '**/yarn.lock'
 
