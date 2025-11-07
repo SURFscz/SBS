@@ -687,6 +687,8 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     grants = db.Column("grants", db.Text(), nullable=True)
     is_public_client = db.Column("is_public_client", db.Boolean(), nullable=True, default=False)
     oidc_client_secret = db.Column("oidc_client_secret", db.String(length=255), nullable=True)
+    saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
+    saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
     entity_id = db.Column("entity_id", db.String(length=255), nullable=True)
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User", back_populates="service_requests")

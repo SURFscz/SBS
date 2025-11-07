@@ -233,8 +233,6 @@ def name_exists():
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
-    confirm_service_admin()
-
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only(Service.id)) \
