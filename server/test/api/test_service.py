@@ -440,11 +440,15 @@ class TestService(AbstractTest):
         self.assertEqual(False, res)
 
     def test_service_entity_id_exists(self):
-        res = self.get("/api/services/entity_id_exists", query_data={"entity_id": service_network_entity_id})
+        self.login("urn:user_suspend_warning")
+        res = self.get("/api/services/entity_id_exists",
+                       query_data={"entity_id": service_network_entity_id},
+                       with_basic_auth=False)
         self.assertEqual(True, res)
 
         res = self.get("/api/services/entity_id_exists",
-                       query_data={"entity_id": "https://uuc", "existing_service": service_network_entity_id.upper()})
+                       query_data={"entity_id": "https://uuc", "existing_service": service_network_entity_id.upper()},
+                       with_basic_auth=False)
         self.assertEqual(False, res)
 
         res = self.get("/api/services/entity_id_exists", query_data={"entity_id": "https://xyz"})

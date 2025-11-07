@@ -109,23 +109,32 @@ class Service extends React.Component {
     });
 
     componentDidMount = () => {
-        const {user, isServiceRequest, match} = this.props;
+        const {user, config, isServiceRequest, match} = this.props;
         const isServiceRequestDetails = isServiceRequest && match && match.params && match.params.service_request_id;
+        const manageEnabled = config.manage_enabled;
         if (isServiceRequest) {
-            const required = this.state.required
-                .concat(["connection_type"]);
-            this.setState({required: required})
+            if (manageEnabled) {
+                this.setState({connection_type: "none"});
+            } else {
+                const required = this.state.required
+                    .concat(["connection_type"]);
+                this.setState({required: required})
+
+            }
         }
         if (!isServiceRequest && !user.admin) {
             this.props.history.push("/404");
         } else if (isServiceRequestDetails) {
             serviceRequestById(match.params.service_request_id)
                 .then(res => {
+                    const newRequired = [...this.state.required];
+                    newRequired.push("entity_id");
                     this.setState({
                         ...res,
                         service: res,
                         serviceRequest: res,
                         isNew: false,
+                        required: newRequired,
                         isServiceRequestDetails: isServiceRequestDetails,
                         redirect_urls: commaSeparatedArrayToSelectValues(res.redirect_urls),
                         grants: commaSeparatedArrayToSelectValues(res.grants)
@@ -133,12 +142,18 @@ class Service extends React.Component {
                         if (res.status === "open") {
                             Promise.all([
                                 serviceAbbreviationExists(sanitizeShortName(res.abbreviation), null),
-                                serviceNameExists(res.name, null)
+                                serviceNameExists(res.name, null),
+                                serviceEntityIdExists(isEmpty(res.entity_id) ? crypto.randomUUID() : res.entity_id, null)
                             ]).then(res => {
                                 this.setState({
                                     initial: false,
                                     loading: false,
-                                    alreadyExists: {...this.state.alreadyExists, abbreviation: res[0], name: res[1]}
+                                    alreadyExists: {
+                                        ...this.state.alreadyExists,
+                                        abbreviation: res[0],
+                                        name: res[1],
+                                        entity_id: res[2]
+                                    }
                                 });
                             })
                         } else {
@@ -147,12 +162,9 @@ class Service extends React.Component {
                     });
                     if (isServiceRequestDetails && (res.saml_metadata_url || res.saml_metadata)) {
                         parseSAMLMetaData(res.saml_metadata, res.saml_metadata_url)
-                            .then(metaData => this.setState({
-                                parsedSAMLMetaData: metaData.result,
-                                entity_id: metaData.result.entity_id,
-                                parsedSAMLMetaDataError: false,
-                                parsedSAMLMetaDataURLError: false
-                            }))
+                            .then(metaData => {
+                                this.setParsedSAMLMetaData(metaData);
+                            })
                             .catch(() => this.setState({
                                 parsedSAMLMetaData: null,
                                 entity_id: null,
@@ -198,7 +210,7 @@ class Service extends React.Component {
 
     validateServiceEntityId = (e, protocol) => {
         let entityId = e.target.value.trim();
-        if (protocol === "oidc") {
+        if (protocol === "openIDConnect") {
             entityId = entityId.replaceAll(":", "@");
         }
         serviceEntityIdExists(entityId, null).then(json => {
@@ -231,16 +243,7 @@ class Service extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
         if (name === "saml_metadata_url") {
             parseSAMLMetaData(null, uri)
-                .then(metaData => this.setState({
-                    parsedSAMLMetaData: {
-                        ...metaData,
-                        acs_binding: metaData.acs_locations[0].binding,
-                        acs_location: metaData.acs_locations[0].location
-                    },
-                    saml_metadata: metaData.xml,
-                    entity_id: metaData.entity_id,
-                    parsedSAMLMetaDataURLError: false
-                }))
+                .then(metaData => this.setParsedSAMLMetaData(metaData))
                 .catch(() => this.setState({
                     parsedSAMLMetaData: null,
                     saml_metadata: null,
@@ -249,6 +252,18 @@ class Service extends React.Component {
                 }))
         }
     };
+
+    setParsedSAMLMetaData = metaData => {
+        this.setState({
+            parsedSAMLMetaData: {
+                ...metaData,
+                acs_binding: metaData.acs_locations[0].binding,
+                acs_location: metaData.acs_locations[0].location
+            },
+            entity_id: metaData.entity_id,
+            parsedSAMLMetaDataURLError: false
+        })
+    }
 
     redirectUrlsChanged = selectedOptions => {
         if (selectedOptions === null) {
@@ -380,7 +395,8 @@ class Service extends React.Component {
             hasAdministrators,
             connection_type,
             redirect_urls,
-            grants, parsedSAMLMetaData
+            grants,
+            parsedSAMLMetaData
         } = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const {user, isServiceRequest} = this.props;
@@ -444,14 +460,21 @@ class Service extends React.Component {
                 const metaData = reader.result.toString();
                 this.setState({samlMetaDataFile: file.name, saml_metadata: metaData});
                 parseSAMLMetaData(metaData, null)
-                    .then(metaData => this.setState({
-                        parsedSAMLMetaData: metaData.result,
-                        entity_id: metaData.result.entity_id,
-                        parsedSAMLMetaDataError: false
-                    }))
-                    .catch(() => this.setState({
-                        parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataError: true, saml_metadata: null
-                    }))
+                    .then(metaData => {
+                        this.setParsedSAMLMetaData(metaData);
+                        const {isServiceRequestDetails} = this.state;
+                        if (isServiceRequestDetails) {
+                            this.validateServiceEntityId({target: {value: metaData.entity_id}}, "saml2File");
+                        }
+                    })
+                    .catch(() => {
+                        this.setState({
+                            parsedSAMLMetaData: null,
+                            entity_id: null,
+                            parsedSAMLMetaDataError: true,
+                            saml_metadata: null
+                        })
+                    })
             };
             reader.readAsText(file);
         }
@@ -551,6 +574,7 @@ class Service extends React.Component {
                     attribute: I18n.t("service.abbreviation").toLowerCase()
                 })}/>}
             </div>
+
             <InputField value={description}
                         name={I18n.t("service.description")}
                         disabled={disableEverything}
@@ -559,6 +583,26 @@ class Service extends React.Component {
                         multiline={true}
                         required={true}
             />
+
+            {isServiceRequestDetails && <>
+                <InputField value={entity_id}
+                            onChange={e => this.setState({
+                                entity_id: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, entity_id: false}
+                            })}
+                            placeholder={I18n.t("service.entity_idPlaceHolder")}
+                            onBlur={e => this.validateServiceEntityId(e, connection_type)}
+                            name={I18n.t("service.entity_id")}
+                            toolTip={I18n.t("service.entity_idTooltip")}
+                            error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
+                            required={true}/>
+                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
+                })}/>}
+                {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.entity_id").toLowerCase()
+                })}/>}
+            </>}
 
             <div className="first-column">
                 <InputField value={providing_organisation}
@@ -607,24 +651,6 @@ class Service extends React.Component {
                     </div>}
                     {(isServiceRequest && connection_type === "openIDConnect") &&
                         <div className="first-column">
-                            <InputField value={entity_id}
-                                        onChange={e => this.setState({
-                                            entity_id: e.target.value,
-                                            alreadyExists: {...this.state.alreadyExists, entity_id: false}
-                                        })}
-                                        placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                        onBlur={e => this.validateServiceEntityId(e, "oidc")}
-                                        name={I18n.t("service.entity_id")}
-                                        toolTip={I18n.t("service.entity_idTooltip")}
-                                        error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
-                                        required={true}/>
-                            {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                                attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
-                            })}/>}
-                            {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.entity_id").toLowerCase()
-                            })}/>}
-
                             <SelectField value={redirect_urls}
                                          options={[]}
                                          creatable={true}
@@ -708,13 +734,13 @@ class Service extends React.Component {
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
                             {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
                         </div>}
-                    {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
+                    {(!disableEverything && isServiceRequest && connection_type === "saml2File") &&
                         <div className="saml-meta-data">
                             <UploadButton name={I18n.t("service.samlMetadataUpload")}
                                           txt={I18n.t("service.samlMetadataUpload")}
                                           acceptFileFormat={".xml"}
                                           onFileUpload={this.onFileUpload}/>
-                            {(!initial && isEmpty(samlMetaDataFile)) && <ErrorIndicator
+                            {(!initial && isEmpty(samlMetaDataFile) && !isServiceRequestDetails) && <ErrorIndicator
                                 msg={I18n.t("service.required", {attribute: I18n.t("service.samlMetadata")})}/>}
                             {(samlMetaDataFile && !isEmpty(parsedSAMLMetaData) && !isServiceRequestDetails && this.renderSAMLMetaData(parsedSAMLMetaData))}
                             {(parsedSAMLMetaDataError && !invalidInputs["saml_metadata"]) && <ErrorIndicator
