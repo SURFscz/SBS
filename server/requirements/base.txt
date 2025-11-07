@@ -28,7 +28,7 @@ Flask-Executor==1.0.0
 Flask-SocketIO==5.5.1
 python-socketio==5.14.3
 Flask-Cors==6.0.1
-dnspython==2.8.0
+dnspython==2.7.0
 bcrypt==5.0.0
 gunicorn==23.0.0
 puremagic==1.30
