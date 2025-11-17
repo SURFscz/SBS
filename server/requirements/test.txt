@@ -12,5 +12,5 @@ alembic==1.17.1
 freezegun==1.5.5
 coverage==7.11.0
 mock==5.2.0
-Faker==37.12.0
+Faker==38.0.0
 pipdeptree==2.29.0
