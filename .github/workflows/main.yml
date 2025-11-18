@@ -28,8 +28,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # We want to remove 3.9, but this is still the production version
-        python-version: [ '3.9', '3.11', '3.12', '3.13' ]
+        # Removed 3.9, as we upgraded to 3.11
+        python-version: [ '3.11', '3.12', '3.13' ]
 
     services:
       # How to use MySQL
