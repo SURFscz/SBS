@@ -37,7 +37,7 @@
         "react-json-view": "^1.21.3",
         "react-md-spinner": "^1.0.0",
         "react-mde": "^11.0.0",
-        "react-router-dom": "^5.2.0",
+        "react-router-dom": "^7.9.6",
         "react-select": "^5.10.2",
         "react-tooltip": "^5.30.0",
         "recharts": "^2.15.4",
