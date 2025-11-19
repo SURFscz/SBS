@@ -1094,7 +1094,7 @@ const nl = {
         access: "Toegang",
         policies: "Beleid",
         policiesSupport: "Beleid & Support",
-        groups: "Applicatie groepen",
+        groups: "Applicatiegroepen",
         noGroups: "Deze applicatie heeft geen groepen",
         tokens: "My Tokens",
         policyCompliance: "Beleid voldoet aan",
