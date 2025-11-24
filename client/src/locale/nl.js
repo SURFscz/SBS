@@ -1013,7 +1013,7 @@ const nl = {
         securityEmailRequired: "Security e-mailadres is verplicht",
         support_email: "Helpdesk voor eindgebruikers",
         support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze applicatie",
-        support_emailTooltip: "Het support e-mailadres of URL wordt getoond aan gebruikers van de applicatie",
+        support_emailTooltip: "Het support e-mailadres of de URL wordt getoond aan gebruikers van de applicatie",
         support_email_unauthorized_users: "Toon aan ongeautoriseerde gebruikers",
         support_email_unauthorized_usersPlaceholder: "Dit e-mailadres of de URL wordt getoond aan gebruikers wanneer ze proberen in te loggen op de applicatie maar ongeautoriseerd zijn, doorgaans doordat ze niet lid zijn van een gekoppelde samenwerking.",
         invitations: "Nodig applicatiebeheerders uit",
