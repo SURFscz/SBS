@@ -39,11 +39,11 @@ CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
 GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
 ```
 
-Run alembic on your sbs database by running `alembic -c migrations/alembic.ini upgrade head` inside the server (alembic points to the correct default, see `server/migrations/alembic.ini`).
-
 Create your own config.yaml by copying `server/config/test_config.yaml` and rename it to `config.yaml` (inside the same folder).
 
-Make sure you point to the correctly migrated `sbs` database by changing the `database.uri` from `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"` to `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs?charset=utf8mb4"`.
+Make sure you point to the `sbs` database by changing the `database.uri` from `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"` to `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs?charset=utf8mb4"`.
+
+Run alembic on your sbs database by running `alembic -c migrations/alembic.ini upgrade head` inside the server (alembic points to the correct default, see `server/migrations/alembic.ini`).
 
 Now you can start the server from the project root (so outside the server folder):
 
