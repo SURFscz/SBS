@@ -112,6 +112,18 @@ class TestMfa(AbstractTest):
         self.assertIsNone(mary.second_factor_auth)
         self.assertFalse(mary.rate_limited)
 
+    def test_reset2fa_reuse_old_token(self):
+        self.login("urn:mary")
+        self.post("/api/mfa/token_reset_request", body={"email": "paul@ucc.org", "message": "please"},
+                  with_basic_auth=False)
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        first_reset_token = mary.mfa_reset_token
+        self.post("/api/mfa/token_reset_request", body={"email": "paul@ucc.org", "message": "please"},
+                  with_basic_auth=False)
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        second_reset_token = mary.mfa_reset_token
+        self.assertEqual(first_reset_token, second_reset_token)
+
     def test_reset2fa_invalid_token(self):
         self.login("urn:mary")
         self.post("/api/mfa/reset2fa", body={"token": "nope"}, response_status_code=401)

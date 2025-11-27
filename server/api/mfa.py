@@ -81,7 +81,8 @@ def token_reset_request_post():
     email = data["email"]
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()
-    user.mfa_reset_token = generate_token()
+    # Reuse the mfa_reset_token, only generate new one if there is no mfa_reset_token
+    user.mfa_reset_token = generate_token() if not user.mfa_reset_token else user.mfa_reset_token
     db.session.merge(user)
     db.session.commit()
     mail_reset_token(email, user, data["message"])
