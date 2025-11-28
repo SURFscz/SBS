@@ -147,8 +147,11 @@ class ServiceOverview extends React.Component {
         ["email"].forEach(name => {
             invalidInputs[name] = !(isEmpty(service[name]) || validEmailRegExp.test(service[name]));
         });
-        ["security_email", "support_email"].forEach(name => {
+        ["support_email"].forEach(name => {
             invalidInputs[name] = !(isEmpty(service[name]) || validEmailRegExp.test(service[name]) || validUrlRegExp.test(service[name]));
+        });
+        ["security_email"].forEach(name => {
+            invalidInputs[name] = !(isEmpty(service[name]) || validEmailRegExp.test(service[name]));
         });
         ["accepted_user_policy", "uri_info", "uri", "scim_url"].forEach(name => {
             let serviceElement = service[name];
@@ -1765,7 +1768,7 @@ class ServiceOverview extends React.Component {
                         required={true}
                         toolTip={I18n.t("service.security_emailTooltip")}
                         error={isEmpty(service.security_email) || invalidInputs["security_email"]}
-                        onBlur={this.validateEmail("security_email", true)}
+                        onBlur={this.validateEmail("security_email", false)}
                         disabled={!isAdmin && !isServiceAdmin}/>
 
             {invalidInputs["security_email"] &&

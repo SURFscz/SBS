@@ -225,11 +225,11 @@ class Service extends React.Component {
         });
     }
 
-    validateEmail = name => e => {
+    validateEmail = (name, allowWebsite = true) => e => {
         const email = e.target.value.trim();
         const {invalidInputs} = this.state;
-        const inValid = !isEmpty(email) && !(validEmailRegExp.test(email) || validUrlRegExp.test(email));
-        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+        const valid = isEmpty(email) || validEmailRegExp.test(email) || (allowWebsite && validUrlRegExp.test(email));
+        this.setState({invalidInputs: {...invalidInputs, [name]: !valid}});
     };
 
     renderSAMLMetaData = parsedSAMLMetaData => {
@@ -836,7 +836,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.security_emailTooltip")}
                             disabled={disableEverything}
                             error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
-                            onBlur={this.validateEmail("security_email")}
+                            onBlur={this.validateEmail("security_email", false)}
                             externalLink={validUrlRegExp.test(security_email)}
                             required={true}
                 />
