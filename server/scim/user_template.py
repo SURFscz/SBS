@@ -7,13 +7,8 @@ from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import SCIM_SCHEMA_CORE_USER, SCIM_API_MESSAGES
 from server.tools import dt_now, inactivity
 
-import logging
-logger = logging.getLogger("scim")
-
 
 def replace_none_values(d: dict):
-    import json
-    logging.error(json.dumps(d, indent=4))
     for k, v in d.items():
         if isinstance(v, dict):
             replace_none_values(v)
