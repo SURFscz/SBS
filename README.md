@@ -181,13 +181,19 @@ See the https://github.com/SURFscz/SCZ-deploy project
 
 ### [Upgrade](#upgrade)
 
-See https://github.com/simion/pip-upgrader for upgrading automatically
+We just to use https://github.com/simion/pip-upgrader for upgrading automatically, however this library is not 
+compatible with python 3.11+. We can use `pip-tools` as an alternative
 
 ```bash
 source .venv/bin/activate
-pip install pip-upgrader
 cd server
-pip-upgrade requirements/test.txt --dry-run
+pip list --outdated
+```
+
+To automatically update all outdated packages:
+
+```bash
+pip install -U $(pip list --outdated | awk 'NR>2 {print $1}')
 ```
 
 ### [Dependency tree](#pipdeptree)
