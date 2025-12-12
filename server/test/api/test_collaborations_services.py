@@ -222,6 +222,24 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(3, len(collaboration["services"]))
 
     # org api
+    def test_connect_collaboration_service_already_connected(self):
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        service_entity_id = service_cloud.entity_id
+        # To prevent sqlalchemy.orm.exc.DetachedInstanceError after another query
+        connection_collaboration_identifiers = [co.id for co in service_cloud.collaborations]
+
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        self.assertTrue(collaboration.id in connection_collaboration_identifiers)
+
+        url = f"/api/collaborations_services/v1/connect_collaboration_service/{collaboration.identifier}"
+        res = self.client.put(url,
+                              headers={"Authorization": f"Bearer {unifra_secret}"},
+                              data=json.dumps({
+                                  "service_entity_id": service_entity_id
+                              }), content_type="application/json")
+        self.assertEqual("connected", res.json["status"])
+
+    # org api
     def test_connect_collaboration_service_deprecated(self):
         collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")

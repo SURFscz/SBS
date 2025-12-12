@@ -70,8 +70,10 @@ def _do_connect_collaboration_service_api(organisation, co_identifier, collabora
 
     # Ensure to skip current_user is CO admin check
     request_context.skip_collaboration_admin_confirmation = True
-
-    if service.automatic_connection_allowed or organisation in service.automatic_connection_allowed_organisations:
+    if service in collaboration.services:
+        # If already connected, just short-circuit and return connected
+        status = "connected"
+    elif service.automatic_connection_allowed or organisation in service.automatic_connection_allowed_organisations:
         connect_service_collaboration(service.id, collaboration.id, force=True)
         status = "connected"
     else:
