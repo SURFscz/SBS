@@ -93,6 +93,17 @@
             flex-direction: column;
         }
 
+        div.user-health {
+            display: grid;
+            width: 100%;
+            grid-column: span 2;
+            grid-template-columns: 2fr 1fr;
+            border-top: 1px solid $background;
+            margin-top: 15px;
+            row-gap: 1em;
+            column-gap: 15px;
+        }
+
         div.actions {
             margin-top: 20px;
             display: flex;

@@ -2809,6 +2809,12 @@ const en = {
             message: "The optional personal message to be included in the invitation. Defaults to None if not specified",
             sender_name: "The optional name of the sender to be included in the invitation. Defaults to name of the current user if not specified"
         }
+    },
+    userDetails: {
+        suspended: "Suspended?",
+        rateLimited: "Rate limited / account blocked?",
+        totpEnabled: "TOTP enabled?",
+        totpResetCode: "TOTP reset requested?"
     }
 };
 

@@ -123,7 +123,7 @@ class User(Base, db.Model):
     @staticmethod
     def translate_user_mfa_attributes(user_json: dict):
         if "mfa_reset_token" in user_json:
-            del user_json["mfa_reset_token"]
+            user_json["mfa_reset_token"] = bool(user_json["mfa_reset_token"])
         if "second_factor_auth" in user_json:
             user_json["second_factor_auth"] = bool(user_json["second_factor_auth"])
         return user_json

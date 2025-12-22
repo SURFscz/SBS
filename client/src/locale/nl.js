@@ -2809,6 +2809,12 @@ const nl = {
             message: "De optionele persoonlijke boodschap die in de uitnodiging wordt opgenomen. Standaard geen indien niet opgegeven",
             sender_name: "De optionele naam van de afzender die in de uitnodiging wordt opgenomen. Standaard de naam van de huidige gebruiker indien niet opgegeven"
         }
+    },
+    userDetails: {
+        suspended: "Suspended?",
+        rateLimited: "Rate limited / account geblokkeerd?",
+        totpEnabled: "TOTP ingeschakeld?",
+        totpResetCode: "TOTP-reset aangevraagd?"
     }
 };
 

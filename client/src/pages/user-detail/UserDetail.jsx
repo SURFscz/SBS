@@ -4,7 +4,8 @@ import {
     auditLogsUser,
     deleteOtherUser,
     findUserById,
-    organisationNameById, reset2faOther
+    organisationNameById,
+    reset2faOther
 } from "../../api";
 import I18n from "../../locale/I18n";
 import "./UserDetail.scss";
@@ -12,7 +13,6 @@ import "./UserDetail.scss";
 import {AppStore} from "../../stores/AppStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
-import {filterAuditLogs} from "../../utils/AuditLog";
 import InputField from "../../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {ReactComponent as PersonIcon} from "../../icons/personal_info.svg";
@@ -229,6 +229,22 @@ class UserDetail extends React.Component {
                             </li>)}
                     </ul>}
                 </div>}
+
+                {currentUser.admin &&
+                    <div className="user-health">
+                        <InputField name={I18n.t("userDetails.suspended")}
+                                    noInput={true}
+                                    value={I18n.t(`forms.${user.suspended ? "yes" : "no"}`)}/>
+                        <InputField name={I18n.t("userDetails.rateLimited")}
+                                    noInput={true}
+                                    value={I18n.t(`forms.${user.rate_limited ? "yes" : "no"}`)}/>
+                        <InputField name={I18n.t("userDetails.totpEnabled")}
+                                    noInput={true}
+                                    value={I18n.t(`forms.${user.second_factor_auth ? "yes" : "no"}`)}/>
+                        <InputField name={I18n.t("userDetails.totpResetCode")}
+                                    noInput={true}
+                                    value={I18n.t(`forms.${user.mfa_reset_token ? "yes" : "no"}`)}/>
+                    </div>}
                 <div className={"actions"}>
                     {currentUser.admin &&
                         <Button warningButton={true}
@@ -252,7 +268,8 @@ class UserDetail extends React.Component {
             <div key="history" name="history" label={I18n.t("home.history")}
                  icon={<FontAwesomeIcon icon="history"/>}>
                 <div className={"user-history"}>
-                    {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs} collectionName={"users"} user={this.props.user}/>}
+                    {!loadingAuditLogs &&
+                        <Activity auditLogs={filteredAuditLogs} collectionName={"users"} user={this.props.user}/>}
                     {loadingAuditLogs && <Loader children={
                         <div className={"loader-msg"}><span>{I18n.t("models.allUsers.loading")}</span></div>}/>}
                 </div>
@@ -263,16 +280,6 @@ class UserDetail extends React.Component {
     toggleSsh = e => {
         stopEvent(e);
         this.setState({showSshKeys: !this.state.showSshKeys})
-    }
-
-    onChangeQuery = e => {
-        const query = e.target.value;
-        const {auditLogs} = this.state;
-        const filteredAuditLogs = filterAuditLogs(auditLogs, query);
-        this.setState({
-            filteredAuditLogs: filteredAuditLogs,
-            query: query
-        });
     }
 
     tabChanged = (name, id) => {
