@@ -156,12 +156,17 @@ class UserDetail extends React.Component {
                             disabled={true}
                             value={user.last_login_date ? moment(user.last_login_date * 1000).format("LLL") : "-"}
                             name={I18n.t("models.allUsers.last_login_date")}/>
-                {currentUser.admin && <div className="ssh-keys">
+                {currentUser.admin &&
+                    <div className="ssh-keys">
                     <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
                                 name={I18n.t("user.ssh_key")}/>
                     {user.ssh_keys.length > 0 &&
                         <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
                 </div>}
+
+                <div className="grid-separator">
+                </div>
+
                 <div className="input-field">
                     <label>{I18n.t(`models.organisations.title`)}</label>
                     {isEmpty(user.organisation_memberships) && "-"}
@@ -229,9 +234,10 @@ class UserDetail extends React.Component {
                             </li>)}
                     </ul>}
                 </div>}
-
+                {currentUser.admin && <div className="grid-separator">
+                </div>}
                 {currentUser.admin &&
-                    <div className="user-health">
+                    <>
                         <InputField name={I18n.t("userDetails.suspended")}
                                     noInput={true}
                                     value={I18n.t(`forms.${user.suspended ? "yes" : "no"}`)}/>
@@ -244,7 +250,8 @@ class UserDetail extends React.Component {
                         <InputField name={I18n.t("userDetails.totpResetCode")}
                                     noInput={true}
                                     value={I18n.t(`forms.${user.mfa_reset_token ? "yes" : "no"}`)}/>
-                    </div>}
+                    </>
+                }
                 <div className={"actions"}>
                     {currentUser.admin &&
                         <Button warningButton={true}
