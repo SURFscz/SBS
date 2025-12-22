@@ -533,7 +533,7 @@ class TestOrganisation(AbstractTest):
         users = [cm.get("user") for cm in collaboration.get("collaboration_memberships")]
         self.assertEqual(6, len(users))
         for user in users:
-            self.assertFalse("mfa_reset_token" in user)
+            self.assertTrue(isinstance(user.get("mfa_reset_token"), bool))
             self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
 
     def test_search_users(self):

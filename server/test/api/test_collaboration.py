@@ -884,7 +884,7 @@ class TestCollaboration(AbstractTest):
         users = [cm.get("user") for cm in res.get("collaboration_memberships")]
         self.assertEqual(6, len(users))
         for user in users:
-            self.assertFalse("mfa_reset_token" in user)
+            self.assertTrue(isinstance(user.get("mfa_reset_token"), bool))
             self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
 
         self.assertListEqual(sorted(["tag_uuc", "tag_uuc_2"]), sorted(res["tags"]))
