@@ -8,7 +8,7 @@ pytest==9.0.2
 pytest-cov==7.0.0
 pytest-xdist==3.8.0
 responses==0.25.8
-alembic==1.17.2
+alembic==1.18.0
 freezegun==1.5.5
 coverage==7.13.1
 mock==5.2.0
