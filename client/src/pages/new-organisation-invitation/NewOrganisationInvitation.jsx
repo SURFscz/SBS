@@ -69,11 +69,13 @@ class NewOrganisationInvitation extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        if (params.organisation_id) {
-            organisationById(params.organisation_id)
+        const organisationIdString = params.organisation_id;
+        if (!isEmpty(organisationIdString)) {
+            const organisationId = parseInt(organisationIdString, 10);
+            organisationById(organisationId)
                 .then(json => {
                     const {user} = this.props;
-                    const isManager = !isUserAllowed(ROLES.ORG_ADMIN, user, params.organisation_id, null);
+                    const isManager = !isUserAllowed(ROLES.ORG_ADMIN, user, organisationId, null);
                     let userUnits = [];
                     if (isManager) {
                         this.intendedRolesOptions = this.intendedRolesOptions.filter(option => option.value !== "admin");
