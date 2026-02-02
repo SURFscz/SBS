@@ -24,8 +24,6 @@ def obtain_lock(app, lock_name, success, failure):
     with app.app_context():
         session = sessionmaker(app.db.engine)()
         try:
-            session.execute(text("SET autocommit = 0"))
-            
             # Try to insert a new lock record
             try:
                 session.execute(
@@ -57,8 +55,4 @@ def obtain_lock(app, lock_name, success, failure):
             else:
                 return failure()
         finally:
-            try:
-                session.execute(text("SET autocommit = 1"))
-            except Exception:
-                pass
             session.close()
