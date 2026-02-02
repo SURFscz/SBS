@@ -30,7 +30,7 @@ python-socketio==5.16.0
 Flask-Cors==6.0.2
 dnspython==2.8.0
 bcrypt==5.0.0
-gunicorn==24.1.1
+gunicorn==25.0.1
 puremagic==1.30
 click==8.3.1
 paramiko==4.0.0
