@@ -1,7 +1,7 @@
 """Add distributed_locks table
 
 Revision ID: a1bd7ecbcc27
-Revises: fdc2ca03aecb
+Revises: dd10370a403a
 Create Date: 2026-02-02 09:47:36.000000
 
 """
@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'a1bd7ecbcc27'
-down_revision = 'fdc2ca03aecb'
+down_revision = 'dd10370a403a'
 branch_labels = None
 depends_on = None
 
