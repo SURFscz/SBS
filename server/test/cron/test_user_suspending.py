@@ -15,15 +15,28 @@ from server.tools import dt_now
 class TestUserSuspending(AbstractTest):
 
     def test_schedule_lock(self):
-        with sessionmaker(self.app.db.engine).begin() as session:
-            try:
-                session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 1)"))
-                mail = self.app.mail
-                with mail.record_messages() as outbox:
-                    suspend_users(self.app)
-                    self.assertEqual(0, len(outbox))
-            finally:
-                session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+        session = sessionmaker(self.app.db.engine)()
+        try:
+            # Insert a lock to simulate another instance holding it
+            session.execute(
+                text("INSERT INTO distributed_locks (lock_name, acquired_at) VALUES (:lock_name, NOW())"),
+                {"lock_name": suspend_users_lock_name}
+            )
+            session.commit()
+            
+            # Run the method - it should fail to obtain the lock and not send any emails
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                suspend_users(self.app)
+                self.assertEqual(0, len(outbox))
+        finally:
+            # Clean up the lock
+            session.execute(
+                text("DELETE FROM distributed_locks WHERE lock_name = :lock_name"),
+                {"lock_name": suspend_users_lock_name}
+            )
+            session.commit()
+            session.close()
 
     def test_schedule(self):
         mail = self.app.mail
