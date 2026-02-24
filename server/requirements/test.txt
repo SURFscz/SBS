@@ -9,7 +9,7 @@ flask-webtest==0.1.6
 freezegun==1.5.5
 hbmqtt2==0.9.7
 mock==5.2.0
-pip-tools==7.5.2
+pip-tools==7.5.3
 pipdeptree==2.31.0
 pytest==9.0.2
 pytest-cov==7.0.0
