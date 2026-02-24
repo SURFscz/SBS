@@ -1975,10 +1975,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@surfnet/sds@^0.0.156":
-  version "0.0.156"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.156.tgz#bff37faf8506532b18a05785f5b836fce11e0a08"
-  integrity sha512-26Mt7mm3RWHHG4poWEfsusvK0sYMdSyD9l2NXGpFz+hyXdKLZCdtSeBxCGqx1jMnaCjxv7y74LgDgUaktkRAJg==
+"@surfnet/sds@^0.0.162":
+  version "0.0.162"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.162.tgz#f7add4e64bb5140ffc3cab8fb96782ad0735779f"
+  integrity sha512-B4qPsS1d2Hy6QJ/dyrOGMynHaPXvGQh65/G6cfs84d8gEtlN17RaxLa82qw45d1kXVXEyCiAi+gTV7mP9KOuog==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
