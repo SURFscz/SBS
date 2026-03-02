@@ -20,7 +20,7 @@ mysqlclient==2.2.8
 paramiko==4.0.0
 passlib==1.7.4
 Pillow==12.1.1
-puremagic==1.30
+puremagic==2.0.0
 PyJWT==2.11.0
 pyotp==2.9.0
 python-socketio==5.16.1
