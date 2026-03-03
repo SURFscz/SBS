@@ -263,4 +263,3 @@ class TestScimFifoOrdering(AbstractTest):
             f"a group task completed after its paired collaboration task.\n"
             f"Full call sequence: {call_log}"
         )
-
