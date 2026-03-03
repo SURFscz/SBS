@@ -185,6 +185,7 @@ app.redis_client = init_redis(config)
 
 # Initialize the executors to be used in broadcasting SCIM changes
 app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = True
+app.config["EXECUTOR_MAX_WORKERS"] = 1 # This is required to make sure the SCIM events are send out in FIFO order, which is important for the correct processing of the events by the SCIM providers. If this is set to more than 1, the events can be processed out of order, which can lead to issues with the SCIM providers.
 init_executor(app, blocking=False)
 
 app.app_config = config
