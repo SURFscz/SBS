@@ -1,19 +1,28 @@
-from server.api.base import application_base_url
-from server.api.mock_scim import HTTP_CALLS_KEY, DATABASE_KEY
-from server.db.domain import User, Collaboration, Service
-from server.scim import EXTERNAL_ID_POST_FIX
-from server.scim.schema_template import get_scim_schema_sram_group
-from server.scim.group_template import create_group_template, scim_member_object, update_group_template
-from server.scim.user_template import create_user_template
-from server.test.abstract_test import AbstractTest
-from server.test.seed import user_sarah_name, co_ai_computing_name, service_cloud_name
+import os
+import threading
+import time
+from typing import Any
+from unittest.mock import patch
+
 from flask import current_app
 
+from server.api.base import application_base_url
+from server.api.mock_scim import HTTP_CALLS_KEY, DATABASE_KEY
+from server.db.domain import User, Collaboration, Group, Service
+from server.scim import EXTERNAL_ID_POST_FIX
+from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
+from server.scim.group_template import create_group_template, scim_member_object, update_group_template
+from server.scim.schema_template import get_scim_schema_sram_group
+from server.scim.user_template import create_user_template
+from server.test.abstract_test import AbstractTest
+from server.test.seed import (user_sarah_name, co_ai_computing_name, service_cloud_name,
+                              co_research_name, group_science_name)
 
-class TestMockScim(AbstractTest):
+
+class TestMockScim(AbstractTest):  # type: ignore[misc]
 
     # Very lengthy flow test, but we need the ordering right
-    def test_mock_scim_flow(self):
+    def test_mock_scim_flow(self) -> None:
         self.delete("/api/scim_mock/clear")
 
         current_app.redis_client.set(HTTP_CALLS_KEY, "")
@@ -103,9 +112,7 @@ class TestMockScim(AbstractTest):
         self.login("urn:john")
 
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
-        print("debugging wonkey test")
-        print(cloud_service_id)
-        print(res)
+
         self.assertEqual(1, len(res["database"][str(cloud_service_id)]["users"]))
         self.assertEqual(1, len(res["database"][str(cloud_service_id)]["groups"]))
         self.assertEqual(8, len(res["http_calls"][str(cloud_service_id)]))
@@ -124,7 +131,7 @@ class TestMockScim(AbstractTest):
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
         self.assertEqual(0, len(res["database"]))
 
-    def test_mock_scim_authorization(self):
+    def test_mock_scim_authorization(self) -> None:
         cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
         self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
                  {"scim_bearer_token": "secret"})
@@ -140,3 +147,84 @@ class TestMockScim(AbstractTest):
                   headers={"X-Service": str(cloud_service_id), "Authorization": "bearer nope"},
                   with_basic_auth=False,
                   response_status_code=401)
+
+
+class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
+    """
+    Verify that the async executor dispatches SCIM events in FIFO order: a collaboration
+    broadcast submitted before a group broadcast must execute before it.
+
+    The test patches apply_collaboration_change and apply_group_change so no real HTTP
+    calls or running server are needed — making it safe to run in CI.
+
+    Relies on EXECUTOR_MAX_WORKERS=1 (set in __main__.py).  With multiple workers the
+    tasks run concurrently and the shorter group task will frequently finish first,
+    causing violations that are caught across N repeated pairs.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super(TestScimFifoOrdering, cls).setUpClass()
+        os.environ.pop("SCIM_DISABLED", None)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super(TestScimFifoOrdering, cls).tearDownClass()
+        os.environ["SCIM_DISABLED"] = "1"
+
+    def test_collaboration_scim_before_group_scim(self) -> None:
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        group = self.find_entity_by_name(Group, group_science_name)
+
+        # Thread-safe ordered log of which apply_* function was invoked and when.
+        call_log: list[str] = []
+        lock = threading.Lock()
+
+        def record_collab(*args: Any, **kwargs: Any) -> None:
+            # Sleep simulates the longer I/O of apply_collaboration_change (multiple HTTP
+            # calls per child group + the collaboration itself).  Without the fix
+            # (EXECUTOR_MAX_WORKERS > 1) a concurrent worker picks up the group task
+            # and completes it before this sleep ends, flipping the order.
+            time.sleep(0.05)
+            with lock:
+                call_log.append("collab")
+
+        def record_group(*args: Any, **kwargs: Any) -> None:
+            with lock:
+                call_log.append("group")
+
+        # Patch at the name used inside events.py so the executor picks up our stubs.
+        # This avoids any real HTTP calls and works without a running server (CI-safe).
+        with patch("server.scim.events.apply_collaboration_change", side_effect=record_collab), \
+                patch("server.scim.events.apply_group_change", side_effect=record_group):
+
+            # Submit N interleaved (collab, group) pairs.
+            # With N=5 the probability of all N group stubs accidentally finishing
+            # after their collab stub by chance (without the fix) is (1/2)^5 < 4%.
+            # In practice it is far lower because group tasks are always shorter.
+            N = 5
+            futures = []
+            for _ in range(N):
+                futures.append(broadcast_collaboration_changed(collaboration.id))
+                futures.append(broadcast_group_changed(group.id))
+
+            for f in futures:
+                f.result()
+
+        # With EXECUTOR_MAX_WORKERS=1 the single worker processes tasks strictly in
+        # submission order: collab, group, collab, group, ...
+        # So call_log must be exactly ["collab", "group"] * N.
+        self.assertEqual(len(call_log), N * 2,
+                         f"Expected {N * 2} recorded calls, got {len(call_log)}: {call_log}")
+
+        for i in range(N):
+            self.assertEqual(
+                call_log[i * 2], "collab",
+                f"Pair {i + 1}: expected 'collab' at position {i * 2}, got '{call_log[i * 2]}'. "
+                f"Full order: {call_log}"
+            )
+            self.assertEqual(
+                call_log[i * 2 + 1], "group",
+                f"Pair {i + 1}: expected 'group' at position {i * 2 + 1}, got '{call_log[i * 2 + 1]}'. "
+                f"Full order: {call_log}"
+            )

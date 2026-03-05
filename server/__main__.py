@@ -185,6 +185,10 @@ app.redis_client = init_redis(config)
 
 # Initialize the executors to be used in broadcasting SCIM changes
 app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = True
+# Required for FIFO ordering of SCIM events: a single worker guarantees that tasks are
+# executed in submission order. With multiple workers a shorter group task can overtake
+# a longer collaboration task, delivering child-before-parent to the SCIM receiver.
+app.config["EXECUTOR_MAX_WORKERS"] = 1
 init_executor(app, blocking=False)
 
 app.app_config = config
