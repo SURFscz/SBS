@@ -3,6 +3,10 @@
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 
+import sys
+if sys.platform == "win32":
+    eventlet.hubs.use_hub("selects")
+
 from server.cron.shared import obtain_lock
 
 eventlet.monkey_patch(thread=False)
