@@ -181,7 +181,7 @@ See the https://github.com/SURFscz/SCZ-deploy project
 
 ### [Upgrade](#upgrade)
 
-We just to use https://github.com/simion/pip-upgrader for upgrading automatically, however this library is not 
+We just to use https://github.com/simion/pip-upgrader for upgrading automatically, however this library is not
 compatible with python 3.11+. We can use `pip-tools` as an alternative
 
 ```bash
@@ -278,13 +278,23 @@ $ docker compose up -d
 
 Now open your browser at: http://localhost:8080
 
+### Database in Docker
+
+If you are running MySQL in a Docker container while running the server-app on your local machine, create the database user with a wildcard host (`%`) so it accepts connections from outside the container:
+
+```sql
+CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
+
 ## Client snapshot tests
 
 Most of the components and pages in the client have basic snapshot tests (*.test.jsx). Snapshot tests are part of our CI
 pipeline and are run in the build stage.
 
 Whenever a page of component changes, the snapshot test of that page or component is expected to fail.
-If the change was intended, the snapshot should be updated. In order to do that, one should delete the `__snapshots__` 
+If the change was intended, the snapshot should be updated. In order to do that, one should delete the `__snapshots__`
 folder in the component's subfolder and rerun the test:
 
 ```bash
@@ -296,7 +306,7 @@ or
 $ npm test -- path/to/YourComponent.test.jsx -u
 ```
 
-This will create a new ``__snapshot__`` folder with an updated component snapshot. You can also run a script to 
+This will create a new ``__snapshot__`` folder with an updated component snapshot. You can also run a script to
 regenerate everything:
 ```bash
 $ cd client
