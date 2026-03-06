@@ -170,10 +170,7 @@ def collaboration_admins(service_id):
         for row in result_set:
             email = row[0]
             collaboration_id = row[1]
-            if collaboration_id in result:
-                result[collaboration_id].append(email)
-            else:
-                result[collaboration_id] = [email]
+            result.setdefault(collaboration_id, []).append(email)
         return result, 200
 
 
