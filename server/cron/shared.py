@@ -9,15 +9,11 @@ logger = logging.getLogger("scheduler")
 
 def cleanup_stale_locks(session, timeout_minutes=60):
     """Clean up locks that are older than timeout_minutes."""
-    try:
-        session.execute(
-            text("DELETE FROM distributed_locks WHERE acquired_at < NOW() - INTERVAL :timeout MINUTE"),
-            {"timeout": timeout_minutes}
-        )
-        session.commit()
-    except Exception as e:
-        logger.warning(f"Failed to cleanup stale locks: {e}")
-        session.rollback()
+    session.execute(
+        text("DELETE FROM distributed_locks WHERE acquired_at < NOW() - INTERVAL :timeout MINUTE"),
+        {"timeout": timeout_minutes}
+    )
+    session.commit()
 
 
 def obtain_lock(app, lock_name, success, failure):
@@ -38,7 +34,7 @@ def obtain_lock(app, lock_name, success, failure):
                 lock_obtained = False
                 # Cleanup stale locks that might not have been released due to crashes
                 cleanup_stale_locks(session)
-            
+
             if lock_obtained:
                 try:
                     return success(app)
