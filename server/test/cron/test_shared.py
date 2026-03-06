@@ -17,14 +17,27 @@ from server.test.abstract_test import AbstractTest
 class TestShared(AbstractTest):
 
     def _do_schedule_lock(self, lock_name, method_to_test):
-        with sessionmaker(self.app.db.engine).begin() as session:
-            try:
-                session.execute(text(f"SELECT GET_LOCK('{lock_name}', 1)"))
-                res = method_to_test(self.app)
-                for value in res.values():
-                    self.assertEqual(0, len(value))
-            finally:
-                session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
+        session = sessionmaker(self.app.db.engine)()
+        try:
+            # Insert a lock to simulate another instance holding it
+            session.execute(
+                text("INSERT INTO distributed_locks (lock_name, acquired_at) VALUES (:lock_name, NOW())"),
+                {"lock_name": lock_name}
+            )
+            session.commit()
+            
+            # Run the method - it should fail to obtain the lock
+            res = method_to_test(self.app)
+            for value in res.values():
+                self.assertEqual(0, len(value))
+        finally:
+            # Clean up the lock
+            session.execute(
+                text("DELETE FROM distributed_locks WHERE lock_name = :lock_name"),
+                {"lock_name": lock_name}
+            )
+            session.commit()
+            session.close()
 
     def test_schedule_lock(self):
         locks_and_crons = {cleanup_non_open_requests_lock_name: cleanup_non_open_requests,
