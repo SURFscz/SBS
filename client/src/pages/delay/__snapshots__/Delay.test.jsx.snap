@@ -43,9 +43,6 @@ exports[`Delay matches snapshot with custom description 1`] = `
               </p>
             </section>
           </div>
-          <div
-            class="sds--modal--actions sds--actions--outer sds--space--top--5"
-          />
         </div>
       </div>
     </div>
@@ -101,9 +98,6 @@ exports[`Delay matches snapshot with custom title 1`] = `
               </p>
             </section>
           </div>
-          <div
-            class="sds--modal--actions sds--actions--outer sds--space--top--5"
-          />
         </div>
       </div>
     </div>
@@ -159,9 +153,6 @@ exports[`Delay matches snapshot with default props 1`] = `
               </p>
             </section>
           </div>
-          <div
-            class="sds--modal--actions sds--actions--outer sds--space--top--5"
-          />
         </div>
       </div>
     </div>

@@ -64,11 +64,11 @@ exports[`ErrorDialog matches snapshot when open 1`] = `
             </svg>
           </div>
           <div
-            class="sds--alert--textual"
+            class="sds--alert--textual "
           >
-            <p>
+            <span>
               An error has occurred
-            </p>
+            </span>
           </div>
         </div>
       </div>

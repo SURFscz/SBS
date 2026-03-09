@@ -49,9 +49,6 @@ exports[`MetaDataDialog matches snapshot with custom metadata 1`] = `
             </div>
           </div>
         </div>
-        <div
-          class="sds--modal--actions sds--actions--outer sds--space--top--5"
-        />
       </div>
     </div>
   </div>
@@ -107,9 +104,6 @@ exports[`MetaDataDialog matches snapshot with minimal props 1`] = `
             </div>
           </div>
         </div>
-        <div
-          class="sds--modal--actions sds--actions--outer sds--space--top--5"
-        />
       </div>
     </div>
   </div>
