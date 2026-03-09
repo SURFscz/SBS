@@ -211,25 +211,28 @@ class TestUser(AbstractTest):
 
     def test_update(self):
         self.login("urn:roger")
-
-        body = {"ssh_keys": [{"ssh_value": "ssh_key\0\n\r"}],
+        ssh_value = self.read_file("pem.pub")
+        body = {"ssh_keys": [{"ssh_value": ssh_value + "\0\n\r"}],
                 "email": "bogus"}
         self.put("/api/users", body, with_basic_auth=False)
 
         roger = User.query.filter(User.uid == "urn:roger").one()
-        self.assertEqual("ssh_key", roger.ssh_keys[0].ssh_value)
+        ssh_value_db = roger.ssh_keys[0].ssh_value
+        self.assertTrue(ssh_value_db.startswith("ssh-rsa"))
         self.assertEqual("jdoe@example", roger.email)
 
     def test_update_impersonation(self):
         self.login("urn:john")
 
-        body = {"ssh_keys": [{"ssh_value": "bogus"}]}
+        ssh_value = self.read_file("pem.pub")
+        body = {"ssh_keys": [{"ssh_value": ssh_value}]}
         james = User.query.filter(User.uid == "urn:james").one()
 
         self.put("/api/users", body, headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
                                               "X-IMPERSONATE-NAME": user_james_name}, with_basic_auth=False)
         james = User.query.filter(User.uid == "urn:james").one()
-        self.assertEqual("bogus", james.ssh_keys[0].ssh_value)
+        ssh_value_db = james.ssh_keys[0].ssh_value
+        self.assertTrue(ssh_value_db.startswith("ssh-rsa"))
 
     def test_update_user_service_profile_ssh2_key_conversion(self):
         self.do_test_update_user_profile_ssk_key_conversion("ssh2.pub")
