@@ -1,5 +1,8 @@
 import os
 from unittest import TestCase
+from unittest.mock import patch
+
+from cryptography.exceptions import UnsupportedAlgorithm
 
 from server.auth.ssh_validator import is_valid_ssh_public_key
 
@@ -22,14 +25,31 @@ class TestSecret(TestCase):
     def test_valid_ecdsa(self):
         self.validate("valid_ecdsa256.pub", True)
 
+    def test_invalid_pem_public(self):
+        with patch(
+                "cryptography.hazmat.primitives.serialization.load_pem_public_key",
+                side_effect=UnsupportedAlgorithm("forced")
+        ):
+            self.validate("valid_pem_public.pub", False)
+
     def test_valid_pem_public(self):
         self.validate("valid_pem_public.pub", True)
 
     def test_valid_pkcs1_rsa(self):
         self.validate("valid_pkcs1_rsa.pub", True)
 
-    def test_valid_ssh2(self):
+    def test_valid_converted_ssh2(self):
         self.validate("valid_ssh2.pub", True)
+
+    def test_valid_ssh2(self):
+        self.validate("key_rfc4716.pub", True)
+
+    def test_invalid_ssh2(self):
+        with patch(
+                "cryptography.hazmat.primitives.serialization.load_ssh_public_key",
+                side_effect=UnsupportedAlgorithm("forced")
+        ):
+            self.validate("key_rfc4716.pub", False)
 
     def test_invalid_base64(self):
         self.validate("invalid_base64.pub", False)

@@ -1,5 +1,7 @@
 import base64
 import re
+import struct
+
 from cryptography.hazmat.primitives import serialization
 
 OPENSSH_KEY_TYPES = {
@@ -27,7 +29,33 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
     key = key.strip()
 
-    # ---- 1 OpenSSH format ----------------------------------------
+    # ---- 1 SSH2 RFC4716 format -----------------------------------
+    if "BEGIN SSH2 PUBLIC KEY" in key:
+        try:
+            # Strip RFC 4716 headers (4 dashes, not 5)
+            body = re.sub(r"---- (BEGIN|END) SSH2 PUBLIC KEY ----", "", key)
+            # Strip comment lines
+            body = re.sub(r"Comment:.*\n?", "", body)
+            # Collapse all whitespace to get clean base64
+            body = "".join(body.split())
+
+            # Decode to get the raw bytes
+            decoded = base64.b64decode(body)
+
+            # Extract key type from the wire format:
+            # First 4 bytes = big-endian uint32 length of the key-type string
+            length = struct.unpack(">I", decoded[:4])[0]
+            key_type = decoded[4:4 + length].decode()  # e.g. "ssh-rsa", "ssh-ed25519"
+
+            # Reconstruct OpenSSH public key format that load_ssh_public_key expects
+            openssh_key = f"{key_type} {body}".encode()
+
+            serialization.load_ssh_public_key(openssh_key)
+            return True
+        except Exception:
+            return False
+
+    # ---- 2 OpenSSH format ----------------------------------------
     if not key.startswith("-----"):
         parts = key.split()
 
@@ -60,18 +88,11 @@ def is_valid_ssh_public_key(key: str) -> bool:
         except Exception:
             return False
 
-    # ---- 3 SSH2 RFC4716 format -----------------------------------
-    if "BEGIN SSH2 PUBLIC KEY" in key:
-        try:
-            body = re.sub(r"-----(BEGIN|END) SSH2 PUBLIC KEY-----", "", key)
-            body = re.sub(r"Comment:.*", "", body)
-            body = "".join(body.split())
-
-            decoded = base64.b64decode(body)
-
-            serialization.load_ssh_public_key(decoded)
-            return True
-        except Exception:
-            return False
-
     return False
+
+
+def get_key_type(b64_body: str) -> str:
+    decoded = base64.b64decode(b64_body)
+    # First 4 bytes are the length of the key-type string
+    length = struct.unpack(">I", decoded[:4])[0]
+    return decoded[4:4 + length].decode()
