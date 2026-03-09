@@ -25,7 +25,7 @@ PyJWT==2.11.0
 pyotp==2.9.0
 python-socketio==5.16.1
 python2-secrets==1.0.5
-pytz==2025.2
+pytz==2026.1.post1
 PyYAML==6.0.3
 qrcode==8.2
 redis==7.2.1
