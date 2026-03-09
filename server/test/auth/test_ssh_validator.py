@@ -1,11 +1,6 @@
-import base64
 import os
 from unittest import TestCase
 
-from cryptography.exceptions import InvalidTag
-
-from server.auth.secrets import secure_hash, generate_token, generate_password_with_hash, decrypt_secret, \
-    encrypt_secret
 from server.auth.ssh_validator import is_valid_ssh_public_key
 
 
