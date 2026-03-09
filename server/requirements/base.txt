@@ -28,7 +28,7 @@ python2-secrets==1.0.5
 pytz==2025.2
 PyYAML==6.0.3
 qrcode==8.2
-redis==7.2.1
+redis==7.3.0
 requests==2.32.5
 SQLAlchemy==2.0.47
 urllib3==2.6.3
