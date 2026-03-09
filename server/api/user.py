@@ -1,11 +1,11 @@
 import itertools
 import json
 import os
-import unicodedata
 import urllib.parse
 import uuid
 
 import requests
+import unicodedata
 from flask import Blueprint, current_app, redirect, make_response
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
@@ -18,6 +18,7 @@ from server.auth.mfa import ACR_VALUES, store_user_in_session, decode_jwt_token,
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
+from server.auth.ssh_validator import is_valid_ssh_public_key
 from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
@@ -570,7 +571,8 @@ def update_user():
     new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
     for ssh_key in new_ssh_keys:
         ssh_value = "".join(ch for ch in ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
-        db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
+        if is_valid_ssh_public_key(ssh_value):
+            db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
 
     user.updated_by = user.uid
     user_id = user.id
