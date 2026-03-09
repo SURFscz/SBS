@@ -1,5 +1,5 @@
 APScheduler==3.11.2
-Authlib==1.6.8
+Authlib==1.6.9
 bcrypt==5.0.0
 click==8.3.1
 cryptography==46.0.5
