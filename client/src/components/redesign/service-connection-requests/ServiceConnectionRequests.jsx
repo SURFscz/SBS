@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 
 import "./ServiceConnectionRequests.scss";
@@ -22,28 +22,26 @@ import {chipTypeForStatus} from "../../../utils/UserRole";
 
 const allValue = "all";
 
-class ServiceConnectionRequests extends React.Component {
+const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh, user: currentUser, ...rest}) => {
 
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            selectedServiceConnectionRequestId: null,
-            confirmationDialogOpen: false,
-            confirmationDialogQuestion: undefined,
-            confirmationDialogAction: () => true,
-            cancelDialogAction: () => this.setState({declineDialog: false, confirmationDialogOpen: false}),
-            isWarning: false,
-            declineDialog: false,
-            loading: true,
-            filterOptions: [],
-            filterValue: {},
-            rejectionReason: null
-        }
-    }
+    const [selectedServiceConnectionRequestId, setSelectedServiceConnectionRequestId] = useState(null);
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+    const [confirmationDialogQuestion, setConfirmationDialogQuestion] = useState(undefined);
+    const [confirmationDialogAction, setConfirmationDialogAction] = useState(() => () => true);
+    const [isWarning, setIsWarning] = useState(false);
+    const [declineDialog, setDeclineDialog] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [filterOptions, setFilterOptions] = useState([]);
+    const [filterValue, setFilterValue] = useState({});
+    const [rejectionReason, setRejectionReason] = useState(null);
 
-    componentDidMount = callback => {
-        const {serviceConnectionRequests} = this.props;
-        const filterOptions = [{
+    const cancelDialogAction = () => {
+        setDeclineDialog(false);
+        setConfirmationDialogOpen(false);
+    };
+
+    const initializeFilters = useCallback((callback) => {
+        const options = [{
             label: I18n.t("collaborationRequest.statuses.all", {nbr: serviceConnectionRequests.length}),
             value: allValue
         }];
@@ -60,131 +58,110 @@ class ServiceConnectionRequests extends React.Component {
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
-        this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0],
-            loading: false,
-            declineDialog: false,
-            selectedServiceConnectionRequestId: null
-        }, callback);
-    }
+        setFilterOptions(options.concat(statusOptions));
+        setFilterValue(options[0]);
+        setLoading(false);
+        setDeclineDialog(false);
+        setSelectedServiceConnectionRequestId(null);
+        if (callback) {
+            callback();
+        }
+    }, [serviceConnectionRequests]);
 
-    refreshAndFlash = (promise, flashMsg, callback) => {
-        this.closeConfirmationDialog();
-        this.setState({loading: true});
+    useEffect(() => {
+        initializeFilters();
+    }, [initializeFilters]);
+
+    const closeConfirmationDialog = () => setConfirmationDialogOpen(false);
+
+    const confirm = (action, question, warning, decline) => {
+        setConfirmationDialogOpen(true);
+        setConfirmationDialogQuestion(question);
+        setConfirmationDialogAction(() => action);
+        setDeclineDialog(decline);
+        setIsWarning(warning);
+    };
+
+    const refreshAndFlash = (promise, flashMsg, callback) => {
+        closeConfirmationDialog();
+        setLoading(true);
         promise.then(res => {
-            this.props.refresh(() => {
-                this.componentDidMount(() => callback && callback(res));
+            refresh(() => {
+                initializeFilters(() => callback && callback(res));
                 setFlash(flashMsg);
             });
         });
-    }
-
-    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
-
-    getSelectedServiceConnectionRequest = () => {
-        const {selectedServiceConnectionRequestId} = this.state;
-        const {serviceConnectionRequests} = this.props;
-        return serviceConnectionRequests.find(scr => scr.id === selectedServiceConnectionRequestId);
-    }
-
-    removeServiceConnectionRequest = () => {
-        const {service} = this.props;
-        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        const name = isEmpty(service) ? serviceConnectionRequest.service.name : service.name;
-        this.confirm(() => {
-            this.refreshAndFlash(deleteServiceConnectionRequest(serviceConnectionRequest.id),
-                I18n.t("serviceConnectionRequest.flash.deleted", {
-                    name: name
-                }), () => this.componentDidMount())
-        }, I18n.t("serviceConnectionRequest.deleteConfirmation"), false, false);
-
     };
 
-    approveServiceConnectionRequest = () => {
-        const {service} = this.props;
-        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        const name = isEmpty(service) ? serviceConnectionRequest.service.name : service.name;
-        this.confirm(() => {
-            this.refreshAndFlash(approveServiceConnectionRequest(serviceConnectionRequest),
-                I18n.t("serviceConnectionRequest.flash.accepted", {
-                    name: name
-                }), () => this.componentDidMount())
+    const getSelectedServiceConnectionRequest = () =>
+        serviceConnectionRequests.find(scr => scr.id === selectedServiceConnectionRequestId);
+
+    const handleRemove = () => {
+        const scr = serviceConnectionRequests.find(r => r.id === selectedServiceConnectionRequestId);
+        const name = isEmpty(service) ? scr.service.name : service.name;
+        confirm(() => {
+            refreshAndFlash(deleteServiceConnectionRequest(scr.id),
+                I18n.t("serviceConnectionRequest.flash.deleted", {name}),
+                () => initializeFilters());
+        }, I18n.t("serviceConnectionRequest.deleteConfirmation"), false, false);
+    };
+
+    const handleApprove = () => {
+        const scr = serviceConnectionRequests.find(r => r.id === selectedServiceConnectionRequestId);
+        const name = isEmpty(service) ? scr.service.name : service.name;
+        confirm(() => {
+            refreshAndFlash(approveServiceConnectionRequest(scr),
+                I18n.t("serviceConnectionRequest.flash.accepted", {name}),
+                () => initializeFilters());
         }, I18n.t("serviceConnectionRequest.approveConfirmation"), false, false);
     };
 
-    denyServiceConnectionRequest = () => {
-        const {service} = this.props;
-        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        const name = isEmpty(service) ? serviceConnectionRequest.service.name : service.name;
-        this.confirm(() => {
-            const {rejectionReason} = this.state;
-            this.refreshAndFlash(denyServiceConnectionRequest(serviceConnectionRequest, rejectionReason),
-                I18n.t("serviceConnectionRequest.flash.declined", {
-                    name: name
-                }), () => this.componentDidMount())
+    const handleDeny = () => {
+        const scr = serviceConnectionRequests.find(r => r.id === selectedServiceConnectionRequestId);
+        const name = isEmpty(service) ? scr.service.name : service.name;
+        confirm(() => {
+            refreshAndFlash(denyServiceConnectionRequest(scr, rejectionReason),
+                I18n.t("serviceConnectionRequest.flash.declined", {name}),
+                () => initializeFilters());
         }, I18n.t("serviceConnectionRequest.declineConfirmation"), true, true);
     };
 
-    filter = (filterOptions, filterValue) => {
-        return (
-            <div className="service-connection-request-filter">
-                <Select
-                    className={"service-connection-request-filter-select"}
-                    value={filterValue}
-                    classNamePrefix={"filter-select"}
-                    onChange={option => this.setState({filterValue: option})}
-                    options={filterOptions}
-                    isSearchable={false}
-                    isClearable={false}
-                />
-            </div>
-        );
-    }
-
-    getDeclineRejectionOptions = rejectionReason => {
-        return (
-            <div className="rejection-reason-container">
-                <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
-                <InputField value={rejectionReason}
-                            multiline={true}
-                            onChange={e => this.setState({rejectionReason: e.target.value})}/>
-                <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
-            </div>
-        );
-    }
-
-    confirm = (action, question, isWarning, declineDialog) => {
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationDialogQuestion: question,
-            confirmationDialogAction: action,
-            declineDialog: declineDialog,
-            isWarning: isWarning
-        });
+    const cancelSideScreen = (e) => {
+        stopEvent(e);
+        setSelectedServiceConnectionRequestId(null);
     };
 
-    cancelSideScreen = e => {
+    const openServiceConnectionRequest = (serviceConnectionRequest) => (e) => {
         stopEvent(e);
-        this.setState({selectedServiceConnectionRequestId: null});
-    }
-
-    openServiceConnectionRequest = serviceConnectionRequest => e => {
-        stopEvent(e);
-        this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
+        setSelectedServiceConnectionRequestId(serviceConnectionRequest.id);
     };
 
-    renderServiceConnectionRequest = (service, serviceConnectionRequest) => {
-        const {
-            confirmationDialogOpen,
-            cancelDialogAction,
-            confirmationDialogAction,
-            confirmationDialogQuestion,
-            isWarning,
-            rejectionReason,
-            declineDialog
-        } = this.state;
-        const isOpen = serviceConnectionRequest.status === "open"
+    const renderFilter = (
+        <div className="service-connection-request-filter">
+            <Select
+                className={"service-connection-request-filter-select"}
+                value={filterValue}
+                classNamePrefix={"filter-select"}
+                onChange={option => setFilterValue(option)}
+                options={filterOptions}
+                isSearchable={false}
+                isClearable={false}
+            />
+        </div>
+    );
+
+    const renderDeclineRejectionOptions = (reason) => (
+        <div className="rejection-reason-container">
+            <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+            <InputField value={reason}
+                        multiline={true}
+                        onChange={e => setRejectionReason(e.target.value)}/>
+            <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+        </div>
+    );
+
+    const renderServiceConnectionRequest = (svc, serviceConnectionRequest) => {
+        const isOpen = serviceConnectionRequest.status === "open";
         const isDeclined = serviceConnectionRequest.status === "denied";
 
         return (
@@ -195,23 +172,23 @@ class ServiceConnectionRequests extends React.Component {
                                     disabledConfirm={declineDialog && isEmpty(rejectionReason)}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
-                    {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
+                    {declineDialog && renderDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
                 <div>
                     <a className={"back-to-service-connection-requests"}
-                       onClick={this.cancelSideScreen}
+                       onClick={cancelSideScreen}
                        href={"/#cancel"}>
                         <ChevronLeft/>{I18n.t("models.serviceConnectionRequests.backToServiceConnectionRequests")}
                     </a>
                 </div>
                 <div className="service-connection-request-form">
                     <div className="service-connection-request-header">
-                        <h2>{I18n.t(`models.serviceConnectionRequests.${isEmpty(service) ? "detailsWithService" : "details"}`,
+                        <h2>{I18n.t(`models.serviceConnectionRequests.${isEmpty(svc) ? "detailsWithService" : "details"}`,
                             {
                                 date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
                                 name: serviceConnectionRequest.requester.name || serviceConnectionRequest.requester.uid,
                                 collaborationName: serviceConnectionRequest.collaboration.name,
-                                serviceName: isEmpty(service) ? serviceConnectionRequest.service.name : ""
+                                serviceName: isEmpty(svc) ? serviceConnectionRequest.service.name : ""
                             })}</h2>
                         {<Chip label={I18n.t(`collaborationRequest.statuses.${serviceConnectionRequest.status}`)}
                                type={chipTypeForStatus(serviceConnectionRequest)}/>}
@@ -229,83 +206,79 @@ class ServiceConnectionRequests extends React.Component {
                                                multiline={true}/>}
 
                     <section className="actions">
-                        {isOpen && <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
-                                           onClick={this.denyServiceConnectionRequest}/>}
-                        {isOpen && <Button txt={I18n.t("serviceConnectionRequest.accept")}
-                                           onClick={this.approveServiceConnectionRequest}/>}
-                        {!isOpen && <Button warningButton={true}
-                                            onClick={this.removeServiceConnectionRequest}/>}
+                        {isOpen && <>
+                                <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")} onClick={handleDeny}/>
+                                <Button txt={I18n.t("serviceConnectionRequest.accept")} onClick={handleApprove}/>
+                        </>}
+                        {!isOpen && <Button warningButton={true} onClick={handleRemove}/>}
                     </section>
                 </div>
             </div>)
+    };
 
+    if (loading) {
+        return <SpinnerField/>;
     }
 
-    render() {
-        const {loading, filterOptions, filterValue} = this.state;
-        const {service, serviceConnectionRequests, user: currentUser} = this.props;
-        if (loading) {
-            return <SpinnerField/>;
-        }
-        const selectedServiceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        if (selectedServiceConnectionRequest) {
-            return this.renderServiceConnectionRequest(service, selectedServiceConnectionRequest);
-        }
-        const columns = [
-            {
-                nonSortable: true,
-                key: "logo",
-                header: "",
-                mapper: serviceConnectionRequest => <Logo src={serviceConnectionRequest.collaboration.logo}/>
-            },
-            {
-                key: "collaboration__name",
-                class: isEmpty(service) ? "" : "has-service",
-                header: I18n.t("models.serviceConnectionRequests.name"),
-                mapper: serviceConnectionRequest => serviceConnectionRequest.collaboration.name
-            },
-            isEmpty(service) ? {
-                key: "service__name",
-                header: I18n.t("models.serviceConnectionRequests.serviceName"),
-                mapper: serviceConnectionRequest => serviceConnectionRequest.service.name
-            } : null,
-            {
-                key: "requester__name",
-                class: isEmpty(service) ? "" : "has-service",
-                header: I18n.t("models.serviceConnectionRequests.requester"),
-                mapper: serviceConnectionRequest => <UserColumn entity={{user: serviceConnectionRequest.requester}}
-                                                                currentUser={currentUser}/>
-            },
-            {
-                key: "user__schac_home_organisation",
-                header: I18n.t("models.users.institute"),
-                mapper: serviceConnectionRequest => <InstituteColumn entity={{user: serviceConnectionRequest.requester}}
-                                                                     currentUser={currentUser}/>
-            },
-            {
-                key: "status",
-                header: I18n.t("collaborationRequest.status"),
-                mapper: entity => <Chip type={chipTypeForStatus(entity)}
-                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
-            }
-        ].filter(tab => tab !== null);
-
-        const filteredServiceConnectionRequests = filterValue.value === allValue ? serviceConnectionRequests :
-            serviceConnectionRequests.filter(jr => jr.status === filterValue.value);
-        return (
-            <div>
-                <Entities entities={filteredServiceConnectionRequests}
-                          modelName="serviceConnectionRequests"
-                          searchAttributes={["requester__name", "requester__email", "message", "status", "collaboration__name"]}
-                          defaultSort="collaboration__name"
-                          rowLinkMapper={() => this.openServiceConnectionRequest}
-                          columns={columns}
-                          filters={this.filter(filterOptions, filterValue)}
-                          loading={loading}
-                          {...this.props}/>
-            </div>
-        )
+    const selectedServiceConnectionRequest = getSelectedServiceConnectionRequest();
+    if (selectedServiceConnectionRequest) {
+        return renderServiceConnectionRequest(service, selectedServiceConnectionRequest);
     }
-}
+
+    const columns = [
+        {
+            nonSortable: true,
+            key: "logo",
+            header: "",
+            mapper: scr => <Logo src={scr.collaboration.logo}/>
+        },
+        {
+            key: "collaboration__name",
+            class: isEmpty(service) ? "" : "has-service",
+            header: I18n.t("models.serviceConnectionRequests.name"),
+            mapper: scr => scr.collaboration.name
+        },
+        isEmpty(service) ? {
+            key: "service__name",
+            header: I18n.t("models.serviceConnectionRequests.serviceName"),
+            mapper: scr => scr.service.name
+        } : null,
+        {
+            key: "requester__name",
+            class: isEmpty(service) ? "" : "has-service",
+            header: I18n.t("models.serviceConnectionRequests.requester"),
+            mapper: scr => <UserColumn entity={{user: scr.requester}} currentUser={currentUser}/>
+        },
+        {
+            key: "user__schac_home_organisation",
+            header: I18n.t("models.users.institute"),
+            mapper: scr => <InstituteColumn entity={{user: scr.requester}} currentUser={currentUser}/>
+        },
+        {
+            key: "status",
+            header: I18n.t("collaborationRequest.status"),
+            mapper: entity => <Chip type={chipTypeForStatus(entity)}
+                                    label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
+        }
+    ].filter(tab => tab !== null);
+
+    const filteredServiceConnectionRequests = filterValue.value === allValue
+        ? serviceConnectionRequests
+        : serviceConnectionRequests.filter(jr => jr.status === filterValue.value);
+
+    return (
+        <div>
+            <Entities entities={filteredServiceConnectionRequests}
+                      modelName="serviceConnectionRequests"
+                      searchAttributes={["requester__name", "requester__email", "message", "status", "collaboration__name"]}
+                      defaultSort="collaboration__name"
+                      rowLinkMapper={() => openServiceConnectionRequest}
+                      columns={columns}
+                      filters={renderFilter}
+                      loading={loading}
+                      {...rest}/>
+        </div>
+    );
+};
 
 export default ServiceConnectionRequests;
