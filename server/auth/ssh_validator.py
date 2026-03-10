@@ -1,10 +1,7 @@
 import base64
 import re
-<<<<<<< HEAD
 import struct
 
-=======
->>>>>>> main
 from cryptography.hazmat.primitives import serialization
 
 OPENSSH_KEY_TYPES = {
@@ -32,7 +29,6 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
     key = key.strip()
 
-<<<<<<< HEAD
     # ---- 1 SSH2 RFC4716 format -----------------------------------
     if "BEGIN SSH2 PUBLIC KEY" in key:
         try:
@@ -60,9 +56,6 @@ def is_valid_ssh_public_key(key: str) -> bool:
             return False
 
     # ---- 2 OpenSSH format ----------------------------------------
-=======
-    # ---- 1 OpenSSH format ----------------------------------------
->>>>>>> main
     if not key.startswith("-----"):
         parts = key.split()
 
@@ -95,21 +88,4 @@ def is_valid_ssh_public_key(key: str) -> bool:
         except Exception:
             return False
 
-<<<<<<< HEAD
-=======
-    # ---- 3 SSH2 RFC4716 format -----------------------------------
-    if "BEGIN SSH2 PUBLIC KEY" in key:
-        try:
-            body = re.sub(r"-----(BEGIN|END) SSH2 PUBLIC KEY-----", "", key)
-            body = re.sub(r"Comment:.*", "", body)
-            body = "".join(body.split())
-
-            decoded = base64.b64decode(body)
-
-            serialization.load_ssh_public_key(decoded)
-            return True
-        except Exception:
-            return False
-
->>>>>>> main
     return False
