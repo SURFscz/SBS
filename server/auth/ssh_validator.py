@@ -89,10 +89,3 @@ def is_valid_ssh_public_key(key: str) -> bool:
             return False
 
     return False
-
-
-def get_key_type(b64_body: str) -> str:
-    decoded = base64.b64decode(b64_body)
-    # First 4 bytes are the length of the key-type string
-    length = struct.unpack(">I", decoded[:4])[0]
-    return decoded[4:4 + length].decode()

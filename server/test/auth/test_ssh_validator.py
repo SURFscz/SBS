@@ -7,7 +7,7 @@ from cryptography.exceptions import UnsupportedAlgorithm
 from server.auth.ssh_validator import is_valid_ssh_public_key
 
 
-class TestSecret(TestCase):
+class TestSshValidator(TestCase):
 
     def validate(self, file_name, expected):
         file = f"{os.path.dirname(os.path.realpath(__file__))}/../data/keys/{file_name}"
@@ -41,6 +41,13 @@ class TestSecret(TestCase):
     def test_valid_converted_ssh2(self):
         self.validate("valid_ssh2.pub", True)
 
+    def test_invalid_converted_ssh2(self):
+        with patch(
+                "cryptography.hazmat.primitives.serialization.load_ssh_public_key",
+                side_effect=UnsupportedAlgorithm("forced")
+        ):
+            self.validate("valid_ssh2.pub", False)
+
     def test_valid_ssh2(self):
         self.validate("key_rfc4716.pub", True)
 
@@ -59,3 +66,7 @@ class TestSecret(TestCase):
 
     def test_empty(self):
         self.validate("empty.pub", False)
+
+    def test_fall_through(self):
+        actual = is_valid_ssh_public_key("-------")
+        self.assertFalse(actual)
