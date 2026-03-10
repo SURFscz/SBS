@@ -57,7 +57,7 @@
         "sass": "^1.97.3"
     },
     "resolutions": {
-        "minimatch": "^9.0.4",
+        "minimatch": "^10.2.4",
         "tough-cookie": "4.1.4",
         "ws": "^8.17.1"
     },
