@@ -37,7 +37,7 @@ body:
     attributes:
       label: Definition of Done
       description: Predefined Definition of Done
-      placeholder: |
+      value: |
         - [ ] Does the code include backend code?
           - [ ] Happy flow tested with API test
           - [ ] One or more unhappy flows tested with API test
