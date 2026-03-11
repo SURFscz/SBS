@@ -32,6 +32,30 @@ body:
       placeholder: |
         - [ ] Criterion 1
         - [ ] Criterion 2
+  
+  - type: textarea
+    attributes:
+      label: Definition of Done
+      description: Predefined Definition of Done
+      placeholder: |
+        - [ ] Does the code include backend code?
+          - [ ] Happy flow tested with API test
+          - [ ] One or more unhappy flows tested with API test
+          - [ ] Manually tested with API client (as long as API tests are slightly different)
+          - [ ] Mypy succeeds on new code
+          - [ ] Linting succeeds on new code
+          - [ ] Relevant documentation is updated 
+            - OpenAPI specs
+            - README
+            - Pydocs
+          - [ ] Communicate changes like breaking api changes or a necessary database migration
+        
+        - [ ] Does the code include frontend code?
+          - [ ] New functionality is tested with Playwright, or is too small for Playwright tests
+          - [ ] Adapt existing Playwright tests if they break
+          - [ ] New React components are functional components
+          - [ ] Linting succeeds on new code
+          - [ ] Relevant documentation is updated (maybe none, docs on the react code seems quite scarce 😅 )
 
   - type: textarea
     attributes:
