@@ -12,6 +12,7 @@ OPENSSH_KEY_TYPES = {
     "ecdsa-sha2-nistp521",
     "sk-ssh-ed25519@openssh.com",
     "sk-ecdsa-sha2-nistp256@openssh.com",
+    "ssh-ed25519",
 }
 
 
@@ -26,18 +27,33 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
     if not key or not isinstance(key, str):
         return False
+    key = key.strip().rstrip("\n").replace("\\n", "").rstrip("$")
 
-    key = key.strip()
+    for key_type in OPENSSH_KEY_TYPES:
+        if key.startswith(key_type + "_"):
+            key = key_type + key[key.index(" "):]
+            break
+
+    # Fix missing space between key type and key data
+    for key_type in OPENSSH_KEY_TYPES:
+        if key.startswith(key_type) and not key.startswith(key_type + " "):
+            key = key_type + " " + key[len(key_type):]
+            break
 
     # ---- 1 SSH2 RFC4716 format -----------------------------------
     if "BEGIN SSH2 PUBLIC KEY" in key:
         try:
-            # Strip RFC 4716 headers (4 dashes, not 5)
-            body = re.sub(r"---- (BEGIN|END) SSH2 PUBLIC KEY ----", "", key)
-            # Strip comment lines
-            body = re.sub(r"Comment:.*\n?", "", body)
-            # Collapse all whitespace to get clean base64
-            body = "".join(body.split())
+            # Normalize SSH2 format - fix missing newlines
+            # Strip all existing newlines and rebuild cleanly
+            key = key.replace("\r\n", "").replace("\n", "").replace("\r", "")
+            key = key.replace("---- BEGIN SSH2 PUBLIC KEY ----", "---- BEGIN SSH2 PUBLIC KEY ----\n")
+            key = key.replace("---- END SSH2 PUBLIC KEY ----", "\n---- END SSH2 PUBLIC KEY ----")
+            key = re.sub(r'(Comment:[^\n]+)', r'\1\n', key)
+
+            match = re.search(r'(AAAA[A-Za-z0-9+/=]+)', key)
+            if not match:
+                return False
+            body = match.group(1)
 
             # Decode to get the raw bytes
             decoded = base64.b64decode(body)
@@ -52,7 +68,9 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
             serialization.load_ssh_public_key(openssh_key)
             return True
-        except Exception:
+        except Exception as e:
+            print(e)
+            # print(key)
             return False
 
     # ---- 2 OpenSSH format ----------------------------------------
@@ -63,21 +81,29 @@ def is_valid_ssh_public_key(key: str) -> bool:
             return False
 
         key_type = parts[0]
-        key_data = parts[1]
+        key_data = parts[1].rstrip("$")
 
         if key_type not in OPENSSH_KEY_TYPES:
             return False
+        # Strip any non-base64 characters from the end of key_data
+
+        grouped = re.match(r'[A-Za-z0-9+/=]+', key_data)
+        if grouped:
+            key_data = grouped.group(0)
 
         try:
             base64.b64decode(key_data, validate=True)
-        except Exception:
+        except Exception as e:
+            print(e)
+            # print(key)
             return False
 
         # ensure decoded key actually parses
         try:
             serialization.load_ssh_public_key(key.encode())
             return True
-        except Exception:
+        except Exception as e:
+            print(e)
             return False
 
     # ---- 2 PEM public key ----------------------------------------

@@ -573,6 +573,9 @@ def update_user():
         ssh_value = "".join(ch for ch in ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
         if is_valid_ssh_public_key(ssh_value):
             db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
+        else:
+            logger = ctx_logger("user")
+            logger.info(f"Rejecting ssh_key {ssh_value} from user {user.uid}")
 
     user.updated_by = user.uid
     user_id = user.id
