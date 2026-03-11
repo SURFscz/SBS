@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
 import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 
 import "./ServiceConnectionRequests.scss";
@@ -24,6 +25,9 @@ const allValue = "all";
 
 const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh, user: currentUser, ...rest}) => {
 
+    const location = useLocation();
+    const filterValue2 = new URLSearchParams(location.search).get("filterValue2");
+
     const [selectedServiceConnectionRequestId, setSelectedServiceConnectionRequestId] = useState(null);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [confirmationDialogQuestion, setConfirmationDialogQuestion] = useState(undefined);
@@ -32,8 +36,10 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
     const [declineDialog, setDeclineDialog] = useState(false);
     const [loading, setLoading] = useState(true);
     const [filterOptions, setFilterOptions] = useState([]);
-    const [filterValue, setFilterValue] = useState({});
+    const [filterValue, setFilterValue] = useState({}); // todo convert to string
     const [rejectionReason, setRejectionReason] = useState(null);
+
+    console.log(`ServiceConnectionRequests:`, {filterValue, filterValue2, filterOptions, serviceConnectionRequests});
 
     const cancelDialogAction = () => {
         setDeclineDialog(false);
@@ -45,6 +51,8 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
             label: I18n.t("collaborationRequest.statuses.all", {nbr: serviceConnectionRequests.length}),
             value: allValue
         }];
+
+        // Todo this one makes the list of options other than "All"
         const statusOptions = serviceConnectionRequests.reduce((acc, jr) => {
             const option = acc.find(opt => opt.status === jr.status);
             if (option) {
