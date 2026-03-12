@@ -26,7 +26,7 @@ const allValue = "all";
 const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh, user: currentUser, ...rest}) => {
 
     const location = useLocation();
-    const filterValue2 = new URLSearchParams(location.search).get("filterValue2");
+    const filterValue = new URLSearchParams(location.search).get("filterValue");
 
     const [selectedServiceConnectionRequestId, setSelectedServiceConnectionRequestId] = useState(null);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -36,10 +36,8 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
     const [declineDialog, setDeclineDialog] = useState(false);
     const [loading, setLoading] = useState(true);
     const [filterOptions, setFilterOptions] = useState([]);
-    const [filterValue, setFilterValue] = useState({}); // todo convert to string
+    const [selectedFilter, setSelectedFilter] = useState({});
     const [rejectionReason, setRejectionReason] = useState(null);
-
-    console.log(`ServiceConnectionRequests:`, {filterValue, filterValue2, filterOptions, serviceConnectionRequests});
 
     const cancelDialogAction = () => {
         setDeclineDialog(false);
@@ -47,12 +45,11 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
     };
 
     const initializeFilters = useCallback((callback) => {
-        const options = [{
+        const baseOptions = [{
             label: I18n.t("collaborationRequest.statuses.all", {nbr: serviceConnectionRequests.length}),
             value: allValue
         }];
 
-        // Todo this one makes the list of options other than "All"
         const statusOptions = serviceConnectionRequests.reduce((acc, jr) => {
             const option = acc.find(opt => opt.status === jr.status);
             if (option) {
@@ -66,8 +63,10 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
-        setFilterOptions(options.concat(statusOptions));
-        setFilterValue(options[0]);
+        const allOptions = [...baseOptions, ...statusOptions];
+        setFilterOptions(allOptions);
+        setSelectedFilter(allOptions.find(o => o.value === filterValue) || baseOptions[0]);
+
         setLoading(false);
         setDeclineDialog(false);
         setSelectedServiceConnectionRequestId(null);
@@ -148,9 +147,9 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
         <div className="service-connection-request-filter">
             <Select
                 className={"service-connection-request-filter-select"}
-                value={filterValue}
+                value={selectedFilter}
                 classNamePrefix={"filter-select"}
-                onChange={option => setFilterValue(option)}
+                onChange={option => setSelectedFilter(option)}
                 options={filterOptions}
                 isSearchable={false}
                 isClearable={false}
@@ -270,9 +269,9 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
         }
     ].filter(tab => tab !== null);
 
-    const filteredServiceConnectionRequests = filterValue.value === allValue
+    const filteredServiceConnectionRequests = selectedFilter.value === allValue
         ? serviceConnectionRequests
-        : serviceConnectionRequests.filter(jr => jr.status === filterValue.value);
+        : serviceConnectionRequests.filter(jr => jr.status === selectedFilter.value);
 
     return (
         <div>
