@@ -6,7 +6,7 @@
 Your request to create collaboration {{ collaboration.name }} has been accepted by the
     administrator {{administrator}} of the organisation {{ organisation.name }}.
 
-Login to view the collaboration:
+Log in to view the collaboration:
 
 {{ base_url }}/collaborations/{{ collaboration.id }}
 

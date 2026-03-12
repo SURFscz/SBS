@@ -6,7 +6,7 @@
 Your request to have access to application {{ service.name }} for collaboration {{ collaboration.name }}
 has been denied by the contact person {{ contact }} of the application.
 
-Login to view the collaboration:
+Log in to view the collaboration:
 {{ base_url }}/collaborations/{{ collaboration.id }}
 
 {% endblock %}

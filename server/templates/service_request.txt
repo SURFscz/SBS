@@ -8,7 +8,7 @@ The user {{ user.name }} has requested to create a new application {{ service_re
 The motivation for this request:
 {{ service_request.message }}
 
-Login to process this request:
+Log in to process this request:
 
 {{base_url}}/service-request/{{service_request.id}}
 {% endblock %}

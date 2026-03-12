@@ -6,7 +6,7 @@
 Your request to join collaboration {{ join_request.collaboration.name }} has been accepted by the
     administrator {{administrator}} of the collaboration.
 
-Login to view the collaboration:
+Log in to view the collaboration:
 
 {{ base_url }}/collaborations/{{ join_request.collaboration.id }}
 

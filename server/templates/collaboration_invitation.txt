@@ -13,7 +13,7 @@ Personal Message from {{ sender_name }}:
 "{{ invitation.message }}"
 {% endif %}
 Accept invitation:
-To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional account
+To accept this invitation, please click 'Log in to accept this invitation'. After logging in with your institutional account
 you can review and accept the invitation and join the collaboration.
 
 If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
