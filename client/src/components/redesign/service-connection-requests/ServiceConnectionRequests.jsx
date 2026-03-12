@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
 import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 
 import "./ServiceConnectionRequests.scss";
@@ -20,13 +19,13 @@ import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import {Chip} from "@surfnet/sds";
 import {chipTypeForStatus} from "../../../utils/UserRole";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
 const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh, user: currentUser, ...rest}) => {
 
-    const location = useLocation();
-    const filterValue = new URLSearchParams(location.search).get("filterValue");
+    const [filterValue, setFilterValue] = useQueryParameter('filterValue');
 
     const [selectedServiceConnectionRequestId, setSelectedServiceConnectionRequestId] = useState(null);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -149,7 +148,10 @@ const ServiceConnectionRequests = ({service, serviceConnectionRequests, refresh,
                 className={"service-connection-request-filter-select"}
                 value={selectedFilter}
                 classNamePrefix={"filter-select"}
-                onChange={option => setSelectedFilter(option)}
+                onChange={option => {
+                    setFilterValue(option.value);
+                    setSelectedFilter(option);
+                }}
                 options={filterOptions}
                 isSearchable={false}
                 isClearable={false}
