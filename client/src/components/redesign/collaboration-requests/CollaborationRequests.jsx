@@ -53,8 +53,9 @@ const CollaborationRequests = ({organisation, user, history, ...rest}) => {
             return;
         }
         stopEvent(e);
-        // Todo: test if this works, this would overwrite the filter in URL
-        history.push(`/collaboration-requests/${collaborationRequest.id}`);
+        history.push(`/collaboration-requests/${collaborationRequest.id}`, {
+            from: `${window.location.pathname}${window.location.search}`
+        });
     };
 
     const renderFilter = (
