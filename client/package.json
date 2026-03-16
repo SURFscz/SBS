@@ -49,12 +49,19 @@
         "timeago.js": "^4.0.2"
     },
     "devDependencies": {
+        "@vitejs/plugin-react": "^6.0.1",
         "dot-prop": "^10.1.0",
+        "eslint": "^10.0.3",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-risxss": "^2.1.0",
+        "globals": "^17.4.0",
         "http-proxy-middleware": "^3.0.5",
         "raw-loader": "^4.0.2",
         "react-scripts": "^5.0.1",
-        "sass": "^1.97.3"
+        "sass": "^1.97.3",
+        "vite": "^8.0.0",
+        "vitest": "^4.1.0"
     },
     "resolutions": {
         "minimatch": "^10.2.4",
@@ -62,10 +69,12 @@
         "ws": "^8.17.1"
     },
     "scripts": {
-        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false SBS_SERVER=${SBS_SERVER:-localhost:8080} react-scripts start",
-        "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=true react-scripts build",
-        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test --transformIgnorePatterns 'node_modules/(?!i18n-js)/'",
-        "analyze": "source-map-explorer build/static/js/main.*.js "
+        "analyze": "source-map-explorer build/static/js/main.*.js ",
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "eslint .",
+        "preview": "vite preview",
+        "test": "vitest"
     },
     "eslintConfig": {
         "extends": "react-app"
