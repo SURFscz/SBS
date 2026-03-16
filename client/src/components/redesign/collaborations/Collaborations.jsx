@@ -22,15 +22,15 @@ const allValue = "all";
 
 export const Collaborations = ({collaborations: collaborationsProp, user, organisation, history, ...rest}) => {
 
-    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('label');
-    const [queryUnitFilterValue, setQueryUnitFilterValue] = useQueryParameter('unit');
+    const [labelFilterValue, setLabelFilterValue] = useQueryParameter('label');
+    const [unitFilterValue, setUnitFilterValue] = useQueryParameter('unit');
 
     const [standalone, setStandalone] = useState(false);
     const [collaborations, setCollaborations] = useState([]);
     const [filterOptions, setFilterOptions] = useState([]);
     const [filterValue, setFilterValue] = useState({});
     const [unitFilterOptions, setUnitFilterOptions] = useState([]);
-    const [unitFilterValue, setUnitFilterValue] = useState({});
+    const [selectedUnitFilter, setSelectedUnitFilter] = useState({});
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [confirmationTxt] = useState(I18n.t("confirmationDialog.confirm"));
     const [confirmationDialogAction] = useState(() => () => true);
@@ -117,9 +117,9 @@ export const Collaborations = ({collaborations: collaborationsProp, user, organi
                     setStandalone(true);
                     setCollaborations(res);
                     setFilterOptions(allFilterOpts);
-                    setFilterValue(allFilterOpts.find(o => o.value === queryFilterValue) || allFilterOpts[0]);
+                    setFilterValue(allFilterOpts.find(o => o.value === labelFilterValue) || allFilterOpts[0]);
                     setUnitFilterOptions(allUnitFilterOpts);
-                    setUnitFilterValue(allUnitFilterOpts.find(o => o.value === queryUnitFilterValue) || allUnitFilterOpts[0]);
+                    setSelectedUnitFilter(allUnitFilterOpts.find(o => o.value === unitFilterValue) || allUnitFilterOpts[0]);
                     setLoading(false);
                 });
         } else {
@@ -128,9 +128,9 @@ export const Collaborations = ({collaborations: collaborationsProp, user, organi
             addRoleInformation(user, collaborationsProp);
             addLabelInformation(collaborationsProp);
             setFilterOptions(allFilterOpts);
-            setFilterValue(allFilterOpts.find(o => o.value === queryFilterValue) || allFilterOpts[0]);
+            setFilterValue(allFilterOpts.find(o => o.value === labelFilterValue) || allFilterOpts[0]);
             setUnitFilterOptions(allUnitFilterOpts);
-            setUnitFilterValue(allUnitFilterOpts.find(o => o.value === queryUnitFilterValue) || allUnitFilterOpts[0]);
+            setSelectedUnitFilter(allUnitFilterOpts.find(o => o.value === unitFilterValue) || allUnitFilterOpts[0]);
             setLoading(false);
         }
     }, [collaborationsProp, user, organisation]);
@@ -167,11 +167,11 @@ export const Collaborations = ({collaborations: collaborationsProp, user, organi
                     <div className="collaboration-label-filter">
                         <Select
                             className={"collaboration-label-filter-select"}
-                            value={unitFilterValue}
+                            value={selectedUnitFilter}
                             classNamePrefix={"filter-select"}
                             onChange={option => {
-                                setQueryUnitFilterValue(option.value);
-                                setUnitFilterValue(option);
+                                setUnitFilterValue(option.value);
+                                setSelectedUnitFilter(option);
                             }}
                             options={unitFilterOptions}
                             isSearchable={false}
@@ -184,7 +184,7 @@ export const Collaborations = ({collaborations: collaborationsProp, user, organi
                         value={filterValue}
                         classNamePrefix={"filter-select"}
                         onChange={option => {
-                            setQueryFilterValue(option.value);
+                            setLabelFilterValue(option.value);
                             setFilterValue(option);
                         }}
                         options={filterOptions}
@@ -327,8 +327,8 @@ export const Collaborations = ({collaborations: collaborationsProp, user, organi
     );
     let filteredCollaborations = filterValue.value === allValue ? activeCollaborations :
         activeCollaborations.filter(coll => coll.tags.some(tag => tag.tag_value === filterValue.value));
-    filteredCollaborations = unitFilterValue.value === allValue ? filteredCollaborations :
-        filteredCollaborations.filter(coll => coll.units.some(unit => unit.name === unitFilterValue.value));
+    filteredCollaborations = selectedUnitFilter.value === allValue ? filteredCollaborations :
+        filteredCollaborations.filter(coll => coll.units.some(unit => unit.name === selectedUnitFilter.value));
 
     return (
         <>
