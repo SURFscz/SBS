@@ -10,7 +10,7 @@ import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import PlatformAdmins from "../../components/redesign/platform-admins/PlatformAdmins";
 import Services from "../../components/redesign/services/Services";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
-import Collaborations from "../../components/redesign/collaborations/Collaborations";
+import {Collaborations} from "../../components/redesign/collaborations/Collaborations";
 import {isEmpty} from "../../utils/Utils";
 import Users from "../../components/redesign/users/Users";
 import ServiceRequests from "../../components/redesign/service-requests/ServiceRequests";

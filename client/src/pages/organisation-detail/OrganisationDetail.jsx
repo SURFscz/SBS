@@ -12,7 +12,7 @@ import Tabs from "../../components/tabs/Tabs";
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import OrganisationAdmins from "../../components/redesign/organisation-admins/OrganisationAdmins";
 import {AppStore} from "../../stores/AppStore";
-import Collaborations from "../../components/redesign/collaborations/Collaborations";
+import {Collaborations} from "../../components/redesign/collaborations/Collaborations";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import ApiKeys from "../../components/redesign/api-keys/ApiKeys";
 import CollaborationRequests from "../../components/redesign/collaboration-requests/CollaborationRequests";
