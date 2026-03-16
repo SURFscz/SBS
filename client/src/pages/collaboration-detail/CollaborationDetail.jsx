@@ -31,7 +31,7 @@ import AboutCollaboration from "../../components/redesign/about-collaboration/Ab
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
 import {getParameterByName} from "../../utils/QueryParameters";
 import CollaborationWelcomeDialog from "../../components/collaboration-welcome-dialog/CollaborationWelcomeDialog";
-import JoinRequests from "../../components/redesign/join-requests/JoinRequests";
+import {JoinRequests} from "../../components/redesign/join-requests/JoinRequests";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import Button from "../../components/button/Button";
