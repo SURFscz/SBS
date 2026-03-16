@@ -1,5 +1,5 @@
-@import "../../stylesheets/vars";
-@import "../../stylesheets/forms";
+@use "../../stylesheets/vars";
+@use "../../stylesheets/forms";
 
 .mod-new-collaboration-invitation {
     max-width: $medium;

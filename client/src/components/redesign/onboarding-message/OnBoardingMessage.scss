@@ -1,5 +1,5 @@
-@import "../../../stylesheets/vars";
-@import "../../../stylesheets/mde_preview";
+@use "../../../stylesheets/vars" as *;
+@use "../../../stylesheets/mde_preview" as *;
 
 div.instructions {
   @include mde-preview;
