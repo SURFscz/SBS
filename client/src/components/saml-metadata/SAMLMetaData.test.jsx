@@ -1,9 +1,11 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import {SAMLMetaData} from "./SAMLMetaData";
 
-jest.mock("../../locale/I18n", () => ({
-    t: key => key
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: key => key
 }));
 
 const mockParsedSAMLMetaData = {

@@ -1,11 +1,13 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import ConfirmationDialog from "./ConfirmationDialog";
 
-jest.mock("../../locale/I18n", () => ({
-    t: (key, opts) => (opts && opts.name ? `${key} ${opts.name}` : key)
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: (key, opts) => (opts && opts.name ? `${key} ${opts.name}` : key)
 }));
-jest.mock("@surfnet/sds", () => ({
+vi.mock("@surfnet/sds", () => ({
     Modal: props => (
         <div data-testid="modal">
             <div>{props.title}</div>
@@ -22,8 +24,8 @@ describe("ConfirmationDialog", () => {
         const {asFragment} = render(
             <ConfirmationDialog
                 isOpen={true}
-                close={jest.fn()}
-                confirm={jest.fn()}
+                close={vi.fn()}
+                confirm={vi.fn()}
                 title="Confirm"
                 subTitle="Are you sure?"
                 confirmationButtonLabel="Yes"

@@ -1,7 +1,10 @@
+import { describe, it, expect, vi } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
 
+
+describe('locale_line_sync', () => {
 expect.extend({
     equalLineNumber(enTranslation, nlTranslation, index) {
         const indexOf = enTranslation.indexOf(": ");
@@ -16,10 +19,11 @@ expect.extend({
     },
 });
 
-test("All translations have the same  line number", () => {
+it("All translations have the same  line number", () => {
     const enTranslations = fs.readFileSync(path.resolve(__dirname, "../../locale/en.js"), {encoding: 'utf8'});
     const nlTranslations = fs.readFileSync(path.resolve(__dirname, "../../locale/nl.js"), {encoding: 'utf8'});
     const enLines = enTranslations.split("\n");
     const nlLines = nlTranslations.split("\n");
     enLines.forEach((enLine, index) => expect(enLine).equalLineNumber(nlLines[index], index));
+});
 });

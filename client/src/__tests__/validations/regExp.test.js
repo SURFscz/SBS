@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import {
     sanitizeShortName,
     validUrlRegExp,
@@ -6,7 +7,9 @@ import {
     validRedirectUrlRegExp
 } from "../../validations/regExps";
 
-test("Valid emails", () => {
+
+describe('regExp', () => {
+it("Valid emails", () => {
     expect(validEmailRegExp.test("a@a.com")).toBeTruthy();
     expect(validEmailRegExp.test("b@b")).toBeTruthy();
     expect(validEmailRegExp.test("a@a")).toBeTruthy();
@@ -21,7 +24,7 @@ test("Valid emails", () => {
 
 })
 
-test("Sanitize tag names", () => {
+it("Sanitize tag names", () => {
     expect(sanitizeTagName(null)).toEqual(null);
     expect(sanitizeTagName("1QWERTY")).toEqual("1qwerty");
     expect(sanitizeTagName("1234567890123456789012345678901234567890")).toEqual("12345678901234567890123456789012");
@@ -29,7 +32,7 @@ test("Sanitize tag names", () => {
     expect(sanitizeTagName(" 🌹 ")).toEqual("🌹");
 });
 
-test("Sanitize short names", () => {
+it("Sanitize short names", () => {
     expect(sanitizeShortName(null)).toEqual(null);
     expect(sanitizeShortName("1QWERTY")).toEqual("qwerty");
     expect(sanitizeShortName("123456789012345678X")).toEqual("x");
@@ -38,7 +41,7 @@ test("Sanitize short names", () => {
     expect(sanitizeShortName("$ABC!D@E#F&G(HIJ)KLMNOPQRSTUVWYZ")).toEqual("abcdefghijklmnop");
 });
 
-test("Valid urls", () => {
+it("Valid urls", () => {
     expect(validUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("http://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("https://demo-sp.sram.surf.nl/test")).toEqual(true);
@@ -56,7 +59,7 @@ test("Valid urls", () => {
     expect(validUrlRegExp.test("nope")).toEqual(false);
 });
 
-test("Valid redirect urls", () => {
+it("Valid redirect urls", () => {
     const redirectURLs = {
         "https://localhost/api/scim_mock": true,
         "http://localhost/redirect": true,
@@ -77,4 +80,6 @@ test("Valid redirect urls", () => {
     }
     Object.entries(redirectURLs)
         .forEach((arr) => expect(validRedirectUrlRegExp.test(arr[0])).toEqual(arr[1]));
+});
+
 });

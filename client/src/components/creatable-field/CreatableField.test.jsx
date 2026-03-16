@@ -1,9 +1,11 @@
+import { vi } from 'vitest';
 import React from "react";
 import { render } from "@testing-library/react";
 import CreatableField from "./CreatableField";
 
-jest.mock("../../locale/I18n", () => ({
-  t: key => key
+vi.mock("../../locale/I18n", () => ({
+    default: { t: key => key },
+t: key => key
 }));
 
 const options = [
@@ -16,7 +18,7 @@ describe("CreatableField", () => {
     const { asFragment } = render(
       <CreatableField
         value={options[0]}
-        onChange={jest.fn()}
+        onChange={vi.fn()}
         options={options}
         placeholder="Select or create"
         isMulti={false}

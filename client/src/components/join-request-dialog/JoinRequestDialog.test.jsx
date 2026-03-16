@@ -1,16 +1,18 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import JoinRequestDialog from "./JoinRequestDialog";
 
-jest.mock("../../locale/I18n", () => ({
-    t: (key, opts) => key + (opts ? JSON.stringify(opts) : ""),
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: (key, opts) => key + (opts ? JSON.stringify(opts) : ""),
 }));
 
-jest.mock("../../api", () => ({
-    joinRequestForCollaboration: jest.fn(() => Promise.resolve()),
+vi.mock("../../api", () => ({
+    joinRequestForCollaboration: vi.fn(() => Promise.resolve()),
 }));
 
-jest.mock("../../utils/Aups", () => ({
+vi.mock("../../utils/Aups", () => ({
     aupData: () => ({
         services: [],
         hasServices: false,
@@ -23,9 +25,9 @@ describe("JoinRequestDialog", () => {
     it("matches snapshot when open", () => {
         const props = {
             isOpen: true,
-            close: jest.fn(),
-            refresh: jest.fn(),
-            history: {push: jest.fn()},
+            close: vi.fn(),
+            refresh: vi.fn(),
+            history: {push: vi.fn()},
             collaboration: {id: 1, name: "TestCollab", organisation: {}},
             user: {},
             adminEmails: [],

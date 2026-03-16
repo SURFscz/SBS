@@ -1,6 +1,9 @@
+import { describe, it, expect, vi } from 'vitest';
 import {capitalize, groupBy, removeDuplicates, sortObjects, splitListSemantically} from "../../utils/Utils";
 
-test("GroupBy", () => {
+
+describe('Utils', () => {
+it("GroupBy", () => {
     expect({
         "bar": [
             {"foo": "bar", "id": 1},
@@ -19,7 +22,7 @@ test("GroupBy", () => {
         {foo: "barbar", id: 2},], "foo"));
 });
 
-test("Sort", () => {
+it("Sort", () => {
     const objects = [{c: 0}, {c: 0}, {c: 1}, {c: 0}];
     const res = sortObjects(objects, "c", false).map(o => o.c);
     expect(res).toEqual([0, 0, 0, 1]);
@@ -33,7 +36,7 @@ test("Sort", () => {
 
 });
 
-test("Remove duplicates", () => {
+it("Remove duplicates", () => {
     const arr = [
         {id: 1, name: "one"},
         {id: 1, name: "one"},
@@ -46,7 +49,7 @@ test("Remove duplicates", () => {
     ]);
 });
 
-test("Remove duplicates with undefined", () => {
+it("Remove duplicates with undefined", () => {
     const arr = [
         {id: 1, name: "one"},
         {id: 1, name: "one"},
@@ -58,7 +61,7 @@ test("Remove duplicates with undefined", () => {
     ]);
 });
 
-test("splitListSemantically", () => {
+it("splitListSemantically", () => {
     const arr = ["1", "2", "3", "4"]
     expect(splitListSemantically(arr, "and")).toEqual("1, 2, 3 and 4");
     expect(splitListSemantically(["1", "2"], "and")).toEqual("1 and 2");
@@ -66,10 +69,12 @@ test("splitListSemantically", () => {
     expect(splitListSemantically([], "and")).toEqual("");
 });
 
-test("capitalize", () => {
+it("capitalize", () => {
     expect(capitalize(undefined)).toEqual(undefined);
     expect(capitalize(null)).toEqual(null);
     expect(capitalize("")).toEqual("");
     expect(capitalize(" ")).toEqual(" ");
     expect(capitalize("test")).toEqual("Test");
 })
+
+});

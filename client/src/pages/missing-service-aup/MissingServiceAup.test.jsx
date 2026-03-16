@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render, fireEvent, waitFor} from "@testing-library/react";
 import MissingServiceAup from "./MissingServiceAup";
 import {MemoryRouter} from "react-router-dom";
 
-jest.mock("../../api", () => ({
-    serviceAupBulkCreate: jest.fn(() => Promise.resolve({location: "/some/path"})),
+vi.mock("../../api", () => ({
+    serviceAupBulkCreate: vi.fn(() => Promise.resolve({location: "/some/path"})),
 }));
 
 const mockUser = {
@@ -17,8 +18,8 @@ const mockUser = {
     service_emails: ["test@example.com"]
 };
 
-const mockReloadMe = jest.fn(cb => cb());
-const mockHistory = {push: jest.fn()};
+const mockReloadMe = vi.fn(cb => cb());
+const mockHistory = {push: vi.fn()};
 
 describe("MissingServiceAup", () => {
     it("renders and matches snapshot", () => {

@@ -1,18 +1,20 @@
+import { vi } from 'vitest';
 import React from "react";
 import { render } from "@testing-library/react";
 import Activity from "./Activity";
 
-jest.mock("../../locale/I18n", () => ({
-  t: key => key
+vi.mock("../../locale/I18n", () => ({
+    default: { t: key => key },
+t: key => key
 }));
-jest.mock("../../utils/Utils", () => ({
-  escapeDeep: jest.fn(),
+vi.mock("../../utils/Utils", () => ({
+  escapeDeep: vi.fn(),
   isEmpty: obj => !obj || (typeof obj === "object" && Object.keys(obj).length === 0)
 }));
-jest.mock("../../utils/Date", () => ({
+vi.mock("../../utils/Date", () => ({
   pseudoIso: () => "2024-01-01T00:00:00Z"
 }));
-jest.mock("../../utils/AuditLog", () => ({
+vi.mock("../../utils/AuditLog", () => ({
   filterAuditLogs: (logs, query) => logs
 }));
 

@@ -10,6 +10,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     resolve: {
         alias: [
+            {
+                find: /^@surfnet\/sds$/,
+                replacement: '@surfnet/sds/esm/index.js',
+            },
             // JS: force browser-safe build
             {
                 find: /^jsondiffpatch$/,
@@ -64,7 +68,7 @@ export default defineConfig({
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: './src/setupTests.ts', // if you have one
+      setupFiles: './src/setupTests.js',
       transformIgnorePatterns: [
         'node_modules/(?!i18n-js)/',     // replaces --transformIgnorePatterns
       ]

@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import ApiKeys from "./ApiKeys";
 
-jest.mock("@fortawesome/react-fontawesome", () => ({
+vi.mock("@fortawesome/react-fontawesome", () => ({
     FontAwesomeIcon: () => <span data-testid="icon"/>
 }));
 

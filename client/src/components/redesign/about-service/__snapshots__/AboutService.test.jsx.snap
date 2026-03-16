@@ -1,4 +1,23 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AboutService > matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="service-about-mod"
+  >
+    <div
+      class="support"
+    >
+      <ul />
+    </div>
+    <div
+      class="admins"
+    >
+      <ul />
+    </div>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`AboutService matches snapshot with default props 1`] = `
 <DocumentFragment>

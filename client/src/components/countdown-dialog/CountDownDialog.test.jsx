@@ -1,11 +1,13 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import CountDownDialog from "./CountDownDialog";
 
-jest.mock("../../locale/I18n", () => ({
-    t: (key, opts) => (opts && opts.seconds ? `${key} ${opts.seconds}` : key)
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: (key, opts) => (opts && opts.seconds ? `${key} ${opts.seconds}` : key)
 }));
-jest.mock("@surfnet/sds", () => ({
+vi.mock("@surfnet/sds", () => ({
     Modal: props => (
         <div data-testid="modal">
             <div>{props.title}</div>
@@ -22,8 +24,8 @@ describe("CountDownDialog", () => {
         const {asFragment} = render(
             <CountDownDialog
                 isOpen={true}
-                close={jest.fn()}
-                confirm={jest.fn()}
+                close={vi.fn()}
+                confirm={vi.fn()}
                 title="Count down"
                 subTitle="Counting down"
                 confirmationButtonLabel="OK"

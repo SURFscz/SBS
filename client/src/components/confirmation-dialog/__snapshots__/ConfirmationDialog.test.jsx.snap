@@ -1,4 +1,30 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ConfirmationDialog > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="modal"
+  >
+    <div>
+      confirmationDialog.title
+    </div>
+    <div>
+      confirmationDialog.subTitle
+    </div>
+    <div>
+      <div>
+        Dialog content
+      </div>
+    </div>
+    <button>
+      confirmationDialog.confirm
+    </button>
+    <button>
+      No
+    </button>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`ConfirmationDialog matches snapshot 1`] = `
 <DocumentFragment>

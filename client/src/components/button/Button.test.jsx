@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import React from "react";
 import { render } from "@testing-library/react";
 import Button from "./Button";
 
-jest.mock("@surfnet/sds", () => ({
+vi.mock("@surfnet/sds", () => ({
   Button: props => <button {...props}>{props.txt}</button>,
   ButtonSize: { Small: "small", Full: "full", Default: "default" },
   ButtonType: {
@@ -15,14 +16,14 @@ jest.mock("@surfnet/sds", () => ({
   }
 }));
 
-jest.mock("../../utils/Utils", () => ({
-  stopEvent: jest.fn()
+vi.mock("../../utils/Utils", () => ({
+  stopEvent: vi.fn()
 }));
 
 describe("Button", () => {
   it("matches snapshot", () => {
     const { asFragment } = render(
-      <Button onClick={jest.fn()} centralize={"true"} txt="Click me" />
+      <Button onClick={vi.fn()} centralize={"true"} txt="Click me" />
     );
     expect(asFragment()).toMatchSnapshot();
   });

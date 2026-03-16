@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import System from "./System";
 
-jest.mock("@fortawesome/react-fontawesome", () => ({
+vi.mock("@fortawesome/react-fontawesome", () => ({
     FontAwesomeIcon: () => <span data-testid="icon"/>
 }));
 
@@ -15,6 +16,7 @@ describe("System", () => {
             <System
                 user={mockUser}
                 config={mockConfig}
+                match={{params: {}}}
             />
         );
         expect(asFragment()).toMatchSnapshot();

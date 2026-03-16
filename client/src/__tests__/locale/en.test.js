@@ -1,6 +1,9 @@
+import { describe, it, expect, vi } from 'vitest';
 import en from "../../locale/en";
 import nl from "../../locale/nl";
 
+
+describe('en', () => {
 expect.extend({
     toContainKey(translation, key) {
         return {
@@ -10,7 +13,7 @@ expect.extend({
     },
 });
 
-test("All translations exists in all bundles", () => {
+it("All translations exists in all bundles", () => {
     const contains = (translation, translationToVerify, keyCollection, parents) => {
         Object.keys(translation).forEach(key => {
             expect(translationToVerify).toContainKey(key);
@@ -27,4 +30,5 @@ test("All translations exists in all bundles", () => {
     contains(nl, en, keyCollectionNL, '');
     const positionalMismatches = keyCollectionEN.filter((item, index) => keyCollectionNL[index] !== item);
     expect(positionalMismatches).toEqual([])
+});
 });

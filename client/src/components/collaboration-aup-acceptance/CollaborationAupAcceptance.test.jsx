@@ -1,20 +1,26 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
 
-jest.mock("../../locale/I18n", () => ({
-    t: key => key
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: key => key
 }));
-jest.mock("../checkbox/CheckBox", () => props => (
-    <div data-testid="checkbox">{JSON.stringify(props)}</div>
-));
-jest.mock("../redesign/logo/Logo", () => props => (
-    <img data-testid="logo" {...props} />
-));
-jest.mock("../../utils/Utils", () => ({
+vi.mock("../checkbox/CheckBox", () => ({
+    default: (props) => (
+        <div data-testid="checkbox">{JSON.stringify(props)}</div>
+    )
+}));
+vi.mock("../redesign/logo/Logo", () => ({
+    default: (props) => (
+        <img data-testid="logo" {...props} />
+    )
+}));
+vi.mock("../../utils/Utils", () => ({
     isEmpty: obj => !obj || (typeof obj === "object" && Object.keys(obj).length === 0)
 }));
-jest.mock("@fortawesome/react-fontawesome", () => ({
+vi.mock("@fortawesome/react-fontawesome", () => ({
     FontAwesomeIcon: () => <span data-testid="icon"/>
 }));
 
@@ -39,7 +45,7 @@ describe("CollaborationAupAcceptance", () => {
                 services={services}
                 disabled={true}
                 serviceEmails={serviceEmails}
-                setDisabled={jest.fn()}
+                setDisabled={vi.fn()}
                 allServiceAupsAgreedOn={false}
             >
                 <div>Child content</div>

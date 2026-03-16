@@ -1,14 +1,18 @@
+import { vi } from 'vitest';
 import React from "react";
 import { render } from "@testing-library/react";
 import { CollaborationUnits } from "./CollaborationUnits";
 
-jest.mock("../../locale/I18n", () => ({
-  t: key => key
+vi.mock("../../locale/I18n", () => ({
+    default: { t: key => key },
+t: key => key
 }));
-jest.mock("../redesign/logo/Logo", () => props => (
-  <img data-testid="logo" {...props} />
-));
-jest.mock("@fortawesome/react-fontawesome", () => ({
+vi.mock("../redesign/logo/Logo", () => ({
+  default: (props) => (
+    <img data-testid="logo" {...props} />
+  )
+}));
+vi.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />
 }));
 
@@ -39,7 +43,7 @@ describe("CollaborationUnits", () => {
       <CollaborationUnits
         selectedUnits={[]}
         allUnits={allUnits}
-        setUnits={jest.fn()}
+        setUnits={vi.fn()}
         user={user}
         organisation={organisation}
       />

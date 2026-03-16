@@ -1,6 +1,9 @@
+import { describe, it, expect, vi } from 'vitest';
 import {aupData} from "../../utils/Aups";
 
-test("AupData Schac home member", () => {
+
+describe('Aup', () => {
+it("AupData Schac home member", () => {
     const user = {
         schac_home_organisation: "example.com"
     };
@@ -24,7 +27,7 @@ test("AupData Schac home member", () => {
     expect(allServiceAupsAgreedOn).toEqual(false);
 });
 
-test("AupData services agreed", () => {
+it("AupData services agreed", () => {
     const user = {
         organisation_aups: [
             {organisation_id: 1}
@@ -52,7 +55,7 @@ test("AupData services agreed", () => {
     expect(allServiceAupsAgreedOn).toEqual(true);
 });
 
-test("AupData no service AUPS", () => {
+it("AupData no service AUPS", () => {
     const user = {};
     const collaboration = {
         organisation: {accepted_user_policy: "http://apu.org"},
@@ -69,7 +72,7 @@ test("AupData no service AUPS", () => {
     expect(allServiceAupsAgreedOn).toEqual(true);
 });
 
-test("AupData defensive coding", () => {
+it("AupData defensive coding", () => {
     const {
         hasServices,
         requiresOrganisationAup,
@@ -79,4 +82,6 @@ test("AupData defensive coding", () => {
     expect(hasServices).toEqual(false);
     expect(requiresOrganisationAup).toEqual(false);
     expect(allServiceAupsAgreedOn).toEqual(true);
+});
+
 });

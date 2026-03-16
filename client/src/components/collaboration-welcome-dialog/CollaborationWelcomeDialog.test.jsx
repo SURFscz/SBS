@@ -1,17 +1,23 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import CollaborationWelcomeDialog from "./CollaborationWelcomeDialog";
 
-jest.mock("../../locale/I18n", () => ({
-    t: (key, opts) => (opts && opts.name ? `${key} ${opts.name}` : key)
+vi.mock("../../locale/I18n", () => ({
+      default: { t: key => key },
+t: (key, opts) => (opts && opts.name ? `${key} ${opts.name}` : key)
 }));
-jest.mock("../collaboration-aup-acceptance/CollaborationAupAcceptance", () => props => (
-    <div data-testid="collab-aup-acceptance">{props.children}</div>
-));
-jest.mock("../organisation-aup-acceptance/OrganisationAupAcceptance", () => () => (
-    <div data-testid="org-aup-acceptance"/>
-));
-jest.mock("../../utils/Aups", () => ({
+vi.mock("../collaboration-aup-acceptance/CollaborationAupAcceptance", () => ({
+    default: (props) => (
+        <div data-testid="collab-aup-acceptance">{props.children}</div>
+    )
+}));
+vi.mock("../organisation-aup-acceptance/OrganisationAupAcceptance", () => ({
+    default: () => (
+        <div data-testid="org-aup-acceptance"/>
+    )
+}));
+vi.mock("../../utils/Aups", () => ({
     aupData: () => ({
         organisation: {id: 1, name: "Org"},
         services: [{id: 1, name: "Service"}],
@@ -20,7 +26,7 @@ jest.mock("../../utils/Aups", () => ({
         allServiceAupsAgreedOn: false
     })
 }));
-jest.mock("@surfnet/sds", () => ({
+vi.mock("@surfnet/sds", () => ({
     AlertType: {Info: "info"},
     Modal: props => (
         <div data-testid="modal">
@@ -31,7 +37,7 @@ jest.mock("@surfnet/sds", () => ({
         </div>
     )
 }));
-jest.mock("../../utils/UserRole", () => ({
+vi.mock("../../utils/UserRole", () => ({
     ROLES: {COLL_ADMIN: "admin", COLL_MEMBER: "member"}
 }));
 
@@ -47,7 +53,7 @@ describe("CollaborationWelcomeDialog", () => {
                 serviceEmails={["service@example.org"]}
                 adminEmails={["admin@example.org"]}
                 isOpen={true}
-                close={jest.fn()}
+                close={vi.fn()}
                 user={user}
                 collaboration={collaboration}
             />

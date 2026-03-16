@@ -1,4 +1,31 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CountDownDialog > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="modal"
+  >
+    <div>
+      countDownDialog.title
+    </div>
+    <div />
+    <div>
+      <section
+        class="count-down-content"
+      >
+        <p>
+          countDownDialog.subTitle
+        </p>
+        <p>
+          countDownDialog.info
+        </p>
+      </section>
+    </div>
+    <button />
+    <button />
+  </div>
+</DocumentFragment>
+`;
 
 exports[`CountDownDialog matches snapshot 1`] = `
 <DocumentFragment>

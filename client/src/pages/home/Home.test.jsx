@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import React from "react";
 import {render} from "@testing-library/react";
 import Home from "./Home";
@@ -17,8 +18,8 @@ const mockMatch = {params: {id: "1"}};
 const mockProps = {
     match: mockMatch,
     user: mockUser,
-    history: { push: jest.fn(), replace: jest.fn() },
-    refreshUser: jest.fn()
+    history: { push: vi.fn(), replace: vi.fn() },
+    refreshUser: vi.fn()
 };
 
 describe("Home", () => {

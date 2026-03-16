@@ -1,6 +1,9 @@
+import { describe, it, expect, vi } from 'vitest';
 import {pagination} from "../../utils/Pagination";
 
-test("pagination", () => {
+
+describe('Pagination', () => {
+it("pagination", () => {
 
     const expectations = [
         [1, 2, 3, "...", 20],
@@ -26,4 +29,5 @@ test("pagination", () => {
     for (let i = 1; i <= expectations.length; i++) {
         expect(pagination(i, expectations.length)).toEqual(expectations[i - 1]);
     }
+});
 });
