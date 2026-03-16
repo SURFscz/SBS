@@ -1,5 +1,5 @@
 import React from "react";
-import {ReactComponent as TreeSwing} from "../../../images/tree_swing.svg";
+import TreeSwing from "../../../images/tree_swing.svg?react";
 
 import "./Collaborations.scss";
 import {isEmpty, stopEvent, tagArraySort, unitArraySort} from "../../../utils/Utils";

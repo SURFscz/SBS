@@ -1,6 +1,6 @@
 import {pageCount, pagination} from "../../utils/Pagination";
-import {ReactComponent as ChevronRight} from "../../icons/chevron-right.svg";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import ChevronRight from "../../icons/chevron-right.svg?react";
+import ChevronLeft from "../../icons/chevron-left.svg?react";
 import "./Pagination.scss";
 
 export default function Pagination({currentPage, onChange, total}) {

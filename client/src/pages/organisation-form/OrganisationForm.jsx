@@ -13,7 +13,7 @@ import I18n from "../../locale/I18n";
 import InputField from "../../components/input-field/InputField";
 import "./OrganisationForm.scss";
 import Button from "../../components/button/Button";
-import {ReactComponent as OrganisationsIcon} from "../../icons/organisations.svg";
+import OrganisationsIcon from "../../icons/organisations.svg?react";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../../utils/Flash";

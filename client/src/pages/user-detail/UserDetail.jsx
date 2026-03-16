@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import InputField from "../../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../../utils/Utils";
-import {ReactComponent as PersonIcon} from "../../icons/personal_info.svg";
+import PersonIcon from "../../icons/personal_info.svg?react";
 
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";

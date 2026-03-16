@@ -1,6 +1,6 @@
 import React from "react";
 import "./BreadCrumb.scss";
-import {ReactComponent as ArrowRight} from "../../icons/arrow-right-2.svg";
+import ArrowRight from "../../icons/arrow-right-2.svg?react";
 import {AppStore} from "../../stores/AppStore";
 import {Link} from "react-router-dom";
 import {isEmpty} from "../../utils/Utils";

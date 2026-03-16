@@ -12,11 +12,11 @@ import {
 import "./ServiceDetail.scss";
 import I18n from "../../locale/I18n";
 import Tabs from "../../components/tabs/Tabs";
-import {ReactComponent as WebsiteIcon} from "../../icons/network-information.svg";
-import {ReactComponent as ShortNameIcon} from "../../icons/short-name.svg";
+import WebsiteIcon from "../../icons/network-information.svg?react";
+import ShortNameIcon from "../../icons/short-name.svg?react";
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import {ReactComponent as ConnectedIcon} from "../../icons/groups.svg";
+import ConnectedIcon from "../../icons/groups.svg?react";
 import ServiceOrganisations from "../../components/redesign/service-organisations/ServiceOrganisations";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import {capitalize, stopEvent} from "../../utils/Utils";

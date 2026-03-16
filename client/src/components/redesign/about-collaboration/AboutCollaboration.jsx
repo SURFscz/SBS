@@ -5,10 +5,10 @@ import {isEmpty, stopEvent} from "../../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME, validUrlRegExp} from "../../../validations/regExps";
 import ServiceCard from "../../service-card/ServiceCard";
 
-import {ReactComponent as WebsiteIcon} from "../../../icons/network-information.svg";
-import {ReactComponent as EmailActionIcon} from "../../../icons/streamline/email-action-unread.svg";
-import {ReactComponent as ShortNameIcon} from "../../../icons/short-name.svg";
-import {ReactComponent as TagsIcon} from "../../../icons/tags.svg";
+import WebsiteIcon from "../../../icons/network-information.svg?react";
+import EmailActionIcon from "../../../icons/streamline/email-action-unread.svg?react";
+import ShortNameIcon from "../../../icons/short-name.svg?react";
+import TagsIcon from "../../../icons/tags.svg?react";
 import Button from "../../button/Button";
 
 

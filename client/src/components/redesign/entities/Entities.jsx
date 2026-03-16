@@ -1,7 +1,7 @@
 import React from "react";
 import "../organisations/Organisations.scss";
 import I18n from "../../../locale/I18n";
-import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
+import SearchIcon from "@surfnet/sds/icons/functional-icons/search.svg?react";
 import Button from "../../button/Button";
 import PropTypes from "prop-types";
 import {isEmpty, sortObjects, valueForSort} from "../../../utils/Utils";

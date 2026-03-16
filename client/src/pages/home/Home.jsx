@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "../../locale/I18n";
-import {ReactComponent as Logo} from "../../icons/ram.svg";
+import Logo from "../../icons/ram.svg?react";
 import {AppStore} from "../../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import Tabs from "../../components/tabs/Tabs";

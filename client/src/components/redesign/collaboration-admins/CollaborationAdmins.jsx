@@ -1,12 +1,12 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import {ReactComponent as UserIcon} from "../../../icons/users.svg";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
-import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
-import {ReactComponent as EmailIcon} from "../../../icons/email_new.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import UserIcon from "../../../icons/users.svg?react";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
+import InviteIcon from "../../../icons/single-neutral-question.svg?react";
+import HandIcon from "../../../icons/puppet_new.svg?react";
+import EmailIcon from "../../../icons/email_new.svg?react";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import CheckBox from "../../checkbox/CheckBox";
 import {
     deleteCollaborationMembership,
@@ -32,8 +32,8 @@ import {Chip, Tooltip, ChipType} from "@surfnet/sds";
 import LastAdminWarning from "../last-admin-warning/LastAdminWarning";
 import DateField from "../../date-field/DateField";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import {ReactComponent as ChevronUp} from "../../../icons/chevron-up.svg";
-import {ReactComponent as ChevronDown} from "../../../icons/chevron-down.svg";
+import ChevronUp from "../../../icons/chevron-up.svg?react";
+import ChevronDown from "../../../icons/chevron-down.svg?react";
 import {emitImpersonation} from "../../../utils/Impersonation";
 
 const memberFilterValue = "members";

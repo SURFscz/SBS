@@ -14,7 +14,7 @@ import {
     serviceNameExists,
     serviceRequestById
 } from "../../api";
-import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
+import ServicesIcon from "../../icons/services.svg?react";
 import I18n from "../../locale/I18n";
 import InputField from "../../components/input-field/InputField";
 import "./Service.scss";

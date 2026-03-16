@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "./ServiceDenied.scss";
-import {ReactComponent as NoAccessIcon} from "../../icons/service-denied-1.svg";
-import {ReactComponent as LogonPrevIcon} from "../../icons/service-denied-2.svg";
-import {ReactComponent as HappyIcon} from "../../icons/landing/happy.svg";
-import {ReactComponent as ErrorInfoIcon} from "../../icons/service-denied-3.svg";
+import NoAccessIcon from "../../icons/service-denied-1.svg?react";
+import LogonPrevIcon from "../../icons/service-denied-2.svg?react";
+import HappyIcon from "../../icons/landing/happy.svg?react";
+import ErrorInfoIcon from "../../icons/service-denied-3.svg?react";
 import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
 import {capitalize, isEmpty} from "../../utils/Utils";

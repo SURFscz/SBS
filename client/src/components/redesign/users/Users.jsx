@@ -5,8 +5,8 @@ import "../entities/Entities.scss";
 import {Tooltip} from "@surfnet/sds";
 import Entities from "../entities/Entities";
 import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../../api";
-import {ReactComponent as UserIcon} from "../../../icons/single-neutral.svg";
-import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
+import UserIcon from "../../../icons/single-neutral.svg?react";
+import InviteIcon from "../../../icons/single-neutral-question.svg?react";
 import "./Users.scss";
 import UserColumn from "../user-column/UserColumn";
 
@@ -14,7 +14,7 @@ import {isEmpty, stopEvent} from "../../../utils/Utils";
 import debounce from "lodash.debounce";
 import SpinnerField from "../spinner-field/SpinnerField";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
+import HandIcon from "../../../icons/puppet_new.svg?react";
 import {emitImpersonation} from "../../../utils/Impersonation";
 
 

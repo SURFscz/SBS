@@ -1,5 +1,5 @@
 import React from "react";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 
 import "./ServiceConnectionRequests.scss";
 import "../user-column/UserColumn.scss";

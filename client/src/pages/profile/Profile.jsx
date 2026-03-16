@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "../../locale/I18n";
 import "./Profile.scss";
 import {AppStore} from "../../stores/AppStore";
-import {ReactComponent as PersonIcon} from "../../icons/single-neutral-check.svg";
+import PersonIcon from "../../icons/single-neutral-check.svg?react";
 
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import Me from "../me/Me";

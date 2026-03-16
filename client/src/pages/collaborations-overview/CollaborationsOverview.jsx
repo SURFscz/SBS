@@ -5,7 +5,7 @@ import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../api";
 import {AppStore} from "../../stores/AppStore";
 import I18n from "../../locale/I18n";
-import {ReactComponent as TreeSwing} from "../../images/tree_swing_static.svg";
+import TreeSwing from "../../images/tree_swing_static.svg?react";
 import {getUserRequests} from "../../utils/UserRole";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {Button} from "@surfnet/sds";

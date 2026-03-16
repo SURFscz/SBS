@@ -5,7 +5,7 @@ import "./InputField.scss";
 import {isEmpty} from "../../utils/Utils";
 import ClipBoardCopy from "../redesign/clipboard-copy/ClipBoardCopy";
 import {validUrlRegExp} from "../../validations/regExps";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 
 export default function InputField({
                                        onChange,

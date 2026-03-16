@@ -1,5 +1,10 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
+import path from 'path'
+import {fileURLToPath} from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,7 +23,12 @@ export default defineConfig({
             },
         ],
     },
-    plugins: [react()],
+    plugins: [
+        svgr({
+            svgrOptions: { exportType: "default", ref: true, svgo: false, titleProp: true },
+        }),
+        react(),
+    ],
     build: {
         sourcemap: true,
         chunkSizeWarningLimit: 1000
@@ -27,17 +37,25 @@ export default defineConfig({
       port: 3000,
       allowedHosts: true,
       proxy: {
-        // Adjust the path pattern to whatever your app proxies
         '/api': {
           target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        }
+        },
+        '/config': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
       }
     },
     css: {
         preprocessorOptions: {
             scss: {
+                additionalData: '@use "vars" as *;\n',
+                loadPaths: [path.resolve(__dirname, 'src/stylesheets')],
                 // ToDo fix?
                 silenceDeprecations: ["mixed-decls", "global-builtin", "color-functions"],
             },

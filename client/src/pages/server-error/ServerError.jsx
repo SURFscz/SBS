@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./ServerError.scss";
-import {ReactComponent as Warning} from "../../lotties/undraw_warning.svg";
+import Warning from "../../lotties/undraw_warning.svg?react";
 import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
 import {isEmpty} from "../../utils/Utils";

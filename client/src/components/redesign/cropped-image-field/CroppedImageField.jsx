@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import I18n from "../../../locale/I18n";
-import {ReactComponent as NotFoundIcon} from "../../../icons/image-not-found.svg";
+import NotFoundIcon from "../../../icons/image-not-found.svg?react";
 import "./CroppedImageField.scss";
 import {isEmpty} from "../../../utils/Utils";
 import "react-image-crop/dist/ReactCrop.css";

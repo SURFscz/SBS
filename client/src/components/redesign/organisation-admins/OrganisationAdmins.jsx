@@ -1,14 +1,14 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import {ReactComponent as UserIcon} from "../../../icons/users.svg";
-import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
-import {ReactComponent as ThrashIcon} from "../../../icons/trash_new.svg";
-import {ReactComponent as PencilIcon} from "../../../icons/pencil-1.svg";
+import UserIcon from "../../../icons/users.svg?react";
+import InviteIcon from "../../../icons/single-neutral-question.svg?react";
+import HandIcon from "../../../icons/puppet_new.svg?react";
+import ThrashIcon from "../../../icons/trash_new.svg?react";
+import PencilIcon from "../../../icons/pencil-1.svg?react";
 import CheckBox from "../../checkbox/CheckBox";
-import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import TrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 import {
     deleteOrganisationMembership,
     identityProviderDisplayName,
@@ -26,7 +26,7 @@ import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "../user-column/UserColumn";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
 import SpinnerField from "../spinner-field/SpinnerField";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../../utils/Utils";

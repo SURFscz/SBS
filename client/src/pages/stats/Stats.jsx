@@ -46,7 +46,7 @@ export default function Stats() {
             <ResponsiveContainer width='95%' aspect={4.0 / 3.0}>
                 <LineChart data={statistics}>
                     <CartesianGrid strokeDasharray="3 3"/>
-                    <XAxis dataKey="name" height={60} tick={<CustomizedAxisTick />} />/>
+                    <XAxis dataKey="name" height={60} tick={<CustomizedAxisTick />} />
                     <YAxis/>
                     <Tooltip/>
                     <Legend/>

@@ -4,7 +4,7 @@ import I18n from "../../../locale/I18n";
 import "../entities/Entities.scss";
 import Entities from "../entities/Entities";
 import {platformAdmins} from "../../../api";
-import {ReactComponent as PlatformAdminIcon} from "../../../icons/users.svg";
+import PlatformAdminIcon from "../../../icons/users.svg?react";
 import "./PlatformAdmins.scss";
 import UserColumn from "../user-column/UserColumn";
 import {Tooltip} from "@surfnet/sds";

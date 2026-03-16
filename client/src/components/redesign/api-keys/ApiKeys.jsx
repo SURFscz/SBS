@@ -1,7 +1,7 @@
 import React from "react";
 import {apiKeyValue, createApiKey, deleteApiKey} from "../../../api";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
-import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
+import TrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 
 import "./ApiKeys.scss";
 import I18n from "../../../locale/I18n";

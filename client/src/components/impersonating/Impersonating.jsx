@@ -7,7 +7,7 @@ import Button from "../button/Button";
 import {emitter} from "../../utils/Events";
 import {setFlash} from "../../utils/Flash";
 import "./Impersonating.scss";
-import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
+import HandIcon from "../../icons/puppet_new.svg?react";
 import DOMPurify from "dompurify";
 
 export default function Impersonating({impersonator, currentUser}) {

@@ -5,9 +5,9 @@ import {
     deleteServiceConnectionRequest,
     requestServiceConnection, usedServices
 } from "../../../api";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
-import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
-import {ReactComponent as NoServicesIcon} from "../../../icons/no_services.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
+import SearchIcon from "@surfnet/sds/icons/functional-icons/search.svg?react";
+import NoServicesIcon from "../../../icons/no_services.svg?react";
 import "./UsedServices.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";

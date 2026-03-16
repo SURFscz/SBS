@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 import "./OrganisationInvitations.scss";
 import {isInvitationExpired, shortDateFromEpoch} from "../../../utils/Date";
 import {stopEvent} from "../../../utils/Utils";

@@ -2,7 +2,7 @@ import React from "react";
 import "./System.scss";
 import I18n from "../../locale/I18n";
 import JsonFormatter from 'react-json-formatter'
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import {
     activateUserForCollaboration,
     auditLogsActivity,

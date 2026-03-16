@@ -1,5 +1,5 @@
 import React from "react";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 
 import "./JoinRequests.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
@@ -13,7 +13,7 @@ import InputField from "../../input-field/InputField";
 import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../../api";
 import UserColumn from "../user-column/UserColumn";
 import moment from "moment";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
 import {Chip, Tooltip} from "@surfnet/sds";
 import Select from "react-select";
 import InstituteColumn from "../institute-column/InstituteColumn";

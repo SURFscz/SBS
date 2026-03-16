@@ -12,8 +12,8 @@ import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndic
 import {Tooltip} from "@surfnet/sds";
 import moment from "moment";
 import DOMPurify from "dompurify";
-import {ReactComponent as EditIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
-import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import EditIcon from "@surfnet/sds/icons/functional-icons/edit.svg?react";
+import TrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import UploadButton from "../../components/upload-button/UploadButton";
 import {dateFromEpoch} from "../../utils/Date";
 

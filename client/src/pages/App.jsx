@@ -12,8 +12,7 @@ import ErrorDialog from "../components/error-dialog/ErrorDialog";
 import Welcome from "../components/redesign/welcome/Welcome";
 import Footer from "../components/footer/Footer";
 import Flash from "../components/flash/Flash";
-// eslint-disable-next-line no-unused-vars
-import {csrfToken, setCsrfToken} from "../stores/AppStore";
+import {setCsrfToken} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./collaboration-detail/CollaborationDetail";
 import OrganisationDetail from "./organisation-detail/OrganisationDetail";

@@ -6,7 +6,7 @@ import {
     updateUserToken,
     userTokenGenerateValue
 } from "../../../api";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 import "./UserTokens.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
