@@ -9,6 +9,7 @@ describe("CollaborationRequest", () => {
         const {asFragment} = render(
             <CollaborationRequest
                 match={mockMatch}
+                history={{push: () => {}, replace: () => {}}}
                 service={{logo: "fake_logo_for_testing.png"}}
                 name="Test Service"
                 description="This is a test service."
@@ -24,6 +25,7 @@ describe("CollaborationRequest", () => {
         const {asFragment} = render(
             <CollaborationRequest
                 match={mockMatch}
+                history={{push: () => {}, replace: () => {}}}
                 service={{logo: "fake_logo_for_testing.png"}}
                 name="Test Service"
                 description="This is a test service."

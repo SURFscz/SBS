@@ -9,6 +9,7 @@ describe("CollaborationForm", () => {
         const { asFragment } = render(
             <CollaborationForm
                 match={mockMatch}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {}}
                 onCreate={() => {}}
@@ -21,6 +22,7 @@ describe("CollaborationForm", () => {
         const { asFragment } = render(
             <CollaborationForm
                 match={mockMatch}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {}}
                 onCreate={() => {}}
@@ -34,6 +36,7 @@ describe("CollaborationForm", () => {
         const { asFragment } = render(
             <CollaborationForm
                 match={mockMatch}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {}}
                 onCreate={() => {}}

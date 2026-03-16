@@ -1,4 +1,130 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ApiKeys > matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="mod-entities "
+    >
+      <section
+        class="entities-search"
+      >
+        <h2>
+          Organisation API tokens (1)
+        </h2>
+        <div
+          class="search-filters apiKeys-search-filters"
+        />
+        <div
+          class="search standalone"
+        >
+          <div
+            class="sds--text-field sds--text-field--has-icon"
+          >
+            <div
+              class="sds--text-field--shape"
+            >
+              <div
+                class="sds--text-field--input-and-icon"
+              >
+                <input
+                  class="sds--text-field--input"
+                  placeholder="Search for organisation API tokens..."
+                  type="search"
+                  value=""
+                />
+                <span
+                  class="sds--text-field--icon"
+                >
+                  <svg
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13.4 18.2c4.6-2 6.8-7.3 4.8-11.9S10.9-.5 6.3 1.5-.5 8.8 1.5 13.4c1.9 4.6 7.3 6.7 11.9 4.8zm2.8-2l7 7"
+                      fill="none"
+                      stroke="#000"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="entities-list"
+      >
+        <div
+          class="sds--table"
+        >
+          <table
+            class="apiKeys"
+          >
+            <thead>
+              <tr>
+                <th
+                  class="secret  sortable "
+                >
+                  Organisation API token
+                </th>
+                <th
+                  class="description  sortable "
+                >
+                  Description
+                  <span
+                    data-testid="icon"
+                  />
+                </th>
+                <th
+                  class="created_at  sortable "
+                >
+                  Created at
+                </th>
+                <th
+                  class="trash   "
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class=" "
+              >
+                <td
+                  class="secret sortable "
+                >
+                  One-way hashed secret
+                </td>
+                <td
+                  class="description sortable "
+                >
+                  <span
+                    class="cut-of-lines"
+                  />
+                </td>
+                <td
+                  class="created_at sortable "
+                >
+                  November 8, 55840
+                </td>
+                <td
+                  class="trash  "
+                />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div />
+    </div>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`ApiKeys matches snapshot with default props 1`] = `
 <DocumentFragment>

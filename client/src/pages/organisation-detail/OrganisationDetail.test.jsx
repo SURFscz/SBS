@@ -7,6 +7,7 @@ describe("OrganisationDetail", () => {
         const {asFragment} = render(
             <OrganisationDetail
                 match={{params: {id: "1"}}}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {
                 }}
@@ -21,6 +22,7 @@ describe("OrganisationDetail", () => {
         const {asFragment} = render(
             <OrganisationDetail
                 match={{params: {id: "1"}}}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {
                 }}
@@ -36,6 +38,7 @@ describe("OrganisationDetail", () => {
         const {asFragment} = render(
             <OrganisationDetail
                 match={{params: {id: "1"}}}
+                history={{push: () => {}, replace: () => {}}}
                 open={true}
                 onClose={() => {
                 }}

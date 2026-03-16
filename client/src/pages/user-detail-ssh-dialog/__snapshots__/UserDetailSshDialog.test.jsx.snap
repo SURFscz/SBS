@@ -1,4 +1,101 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UserDetailSshDialog > matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--modal sds--backdrop"
+  >
+    <div
+      class="sds--modal--container full ssh-modal"
+    >
+      <div
+        class="sds--modal--title "
+      >
+        <p
+          class="sds--text--h4"
+        >
+          Public SSH keys of Test User
+        </p>
+      </div>
+      <div
+        class="sds--modal--content"
+      >
+        <div
+          class="sds--text--rich"
+        >
+          <div
+            class="shh-dialog-inner"
+          >
+            <div
+              class="index-0"
+            >
+              <div
+                class="input-field sds--text-field  "
+              >
+                <div
+                  class="inner-input-field"
+                >
+                  <textarea
+                    class="sds--text-field--input sds--text-area large "
+                    cols="10"
+                    disabled=""
+                    placeholder=""
+                  >
+                    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...
+                  </textarea>
+                  <section
+                    class="copy-to-clipboard right "
+                  >
+                    <svg
+                      height="32px"
+                      viewBox="0 0 32 32"
+                      width="32px"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <g
+                        fill="none"
+                        fill-rule="evenodd"
+                        id="icons-/-duplicate"
+                        stroke="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1"
+                      >
+                        <g>
+                          <g
+                            id="layers-back"
+                            stroke="#006db8"
+                            stroke-width="1.5"
+                            transform="translate(4.000000, 4.000000)"
+                          >
+                            <rect
+                              height="18"
+                              id="Rectangle-path"
+                              rx="1.5"
+                              width="18"
+                              x="0.75"
+                              y="0.75"
+                            />
+                            <path
+                              d="M21.75,5.25 C22.5784271,5.25 23.25,5.92157288 23.25,6.75 L23.25,21.75 C23.25,22.5784271 22.5784271,23.25 21.75,23.25 L6.75,23.25 C5.92157288,23.25 5.25,22.5784271 5.25,21.75"
+                              id="Shape"
+                            />
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`UserDetailSshDialog matches snapshot with default props 1`] = `
 <DocumentFragment>

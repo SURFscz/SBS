@@ -9,6 +9,7 @@ describe("CollaborationDetail", () => {
         const {asFragment} = render(
             <CollaborationDetail
                 match={mockMatch}
+                history={{push: () => {}}}
                 collaboration={{id: "1", name: "Test Collaboration"}}
                 onClose={() => {
                 }}
@@ -23,6 +24,7 @@ describe("CollaborationDetail", () => {
         const {asFragment} = render(
             <CollaborationDetail
                 match={mockMatch}
+                history={{push: () => {}}}
                 collaboration={{id: "1", name: "Custom Title"}}
                 onClose={() => {
                 }}
@@ -37,6 +39,7 @@ describe("CollaborationDetail", () => {
         const {asFragment} = render(
             <CollaborationDetail
                 match={mockMatch}
+                history={{push: () => {}}}
                 collaboration={{id: "1", name: "Custom Description"}}
                 onClose={() => {
                 }}

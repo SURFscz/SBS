@@ -1,4 +1,28 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RadioButtonGroup > renders with custom className 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--radio-options"
+  >
+    <div
+      class="sds--text-field-container row"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`RadioButtonGroup > renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--radio-options"
+  >
+    <div
+      class="sds--text-field-container row"
+    />
+  </div>
+</DocumentFragment>
+`;
 
 exports[`RadioButtonGroup renders with custom className 1`] = `
 <DocumentFragment>

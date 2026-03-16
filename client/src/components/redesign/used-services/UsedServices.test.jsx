@@ -8,6 +8,7 @@ describe("UsedServices", () => {
             <UsedServices
                 used_services={[]}
                 user={{ admin: true }}
+                history={{push: () => {}, replace: () => {}}}
                 onDeleteUsedService={() => {}}
                 onReassignUsedService={() => {}}
                 collaboration={{id: "1"}}
@@ -25,6 +26,7 @@ describe("UsedServices", () => {
             <UsedServices
                 used_services={usedServices}
                 user={{ admin: true }}
+                history={{push: () => {}, replace: () => {}}}
                 onDeleteUsedService={() => {}}
                 onReassignUsedService={() => {}}
                 collaboration={{id: "1"}}

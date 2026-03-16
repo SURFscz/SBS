@@ -1,4 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`InstituteColumn > matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="institute-column greyed"
+  >
+    <span />
+  </div>
+</DocumentFragment>
+`;
 
 exports[`InstituteColumn matches snapshot with default props 1`] = `
 <DocumentFragment>

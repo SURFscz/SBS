@@ -1,4 +1,206 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ServiceCard > matches snapshot with all props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--content-card "
+  >
+    <div
+      class="sds--content-card--main"
+    >
+      <div
+        class="sds--content-card--visual"
+      >
+        <div>
+          <img
+            alt=""
+            class=""
+            src="data:image/jpeg;base64,fake_logo_for_testing.png"
+          />
+        </div>
+      </div>
+      <div
+        class="sds--content-card--textual"
+      >
+        <div
+          class="sds--content-card--text-and-actions"
+        >
+          <div>
+            <h4
+              class="sds--space--bottom--1"
+            />
+            <p>
+              <span
+                class="more-less-txt description"
+              />
+            </p>
+          </div>
+          <div
+            class="sds--content-card--actions"
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sds--content-card--bottom"
+    >
+      <nav>
+        <ul>
+          <li>
+            <a
+              class="more-link"
+              href="/policies"
+            >
+              Policies & Support
+              <svg
+                height="12.4"
+                viewBox="0 0 24 12.4"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23.2.8L12.5 11.5c-.1.1-.2.1-.2.2-.1 0-.2.1-.3.1s-.2 0-.3-.1c-.1 0-.2-.1-.2-.2L.8.8"
+                  fill="none"
+                  stroke="#000"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="more-link"
+              href="/groups"
+            >
+              Application groups
+              <svg
+                height="12.4"
+                viewBox="0 0 24 12.4"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23.2.8L12.5 11.5c-.1.1-.2.1-.2.2-.1 0-.2.1-.3.1s-.2 0-.3-.1c-.1 0-.2-.1-.2-.2L.8.8"
+                  fill="none"
+                  stroke="#000"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ServiceCard > matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--content-card "
+  >
+    <div
+      class="sds--content-card--main"
+    >
+      <div
+        class="sds--content-card--visual"
+      >
+        <div>
+          <img
+            alt=""
+            class=""
+            src="data:image/jpeg;base64,fake_logo_for_testing.png"
+          />
+        </div>
+      </div>
+      <div
+        class="sds--content-card--textual"
+      >
+        <div
+          class="sds--content-card--text-and-actions"
+        >
+          <div>
+            <h4
+              class="sds--space--bottom--1"
+            />
+            <p>
+              <span
+                class="more-less-txt description"
+              />
+            </p>
+          </div>
+          <div
+            class="sds--content-card--actions"
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sds--content-card--bottom"
+    >
+      <nav>
+        <ul>
+          <li>
+            <a
+              class="more-link"
+              href="/policies"
+            >
+              Policies & Support
+              <svg
+                height="12.4"
+                viewBox="0 0 24 12.4"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23.2.8L12.5 11.5c-.1.1-.2.1-.2.2-.1 0-.2.1-.3.1s-.2 0-.3-.1c-.1 0-.2-.1-.2-.2L.8.8"
+                  fill="none"
+                  stroke="#000"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="more-link"
+              href="/groups"
+            >
+              Application groups
+              <svg
+                height="12.4"
+                viewBox="0 0 24 12.4"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23.2.8L12.5 11.5c-.1.1-.2.1-.2.2-.1 0-.2.1-.3.1s-.2 0-.3-.1c-.1 0-.2-.1-.2-.2L.8.8"
+                  fill="none"
+                  stroke="#000"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`ServiceCard matches snapshot with all props 1`] = `
 <DocumentFragment>

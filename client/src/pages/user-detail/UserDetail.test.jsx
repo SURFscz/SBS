@@ -9,6 +9,8 @@ describe("UserDetail", () => {
         const {asFragment} = render(
             <UserDetail
                 match={mockMatch}
+                user={{admin: false}}
+                history={{push: () => {}, replace: () => {}}}
             />
         );
         expect(asFragment()).toMatchSnapshot();
