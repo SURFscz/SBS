@@ -15,7 +15,7 @@ import {isEmpty} from "../../utils/Utils";
 import Users from "../../components/redesign/users/Users";
 import ServiceRequests from "../../components/redesign/service-requests/ServiceRequests";
 import EmptyCollaborations from "../../components/redesign/empty-collaborations/EmptyCollaborations";
-import MyRequests from "../../components/redesign/my-requests/MyRequests";
+import {MyRequests} from "../../components/redesign/my-requests/MyRequests";
 
 class Home extends React.Component {
 
