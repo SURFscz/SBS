@@ -248,7 +248,7 @@ class OrganisationDetail extends React.Component {
         this.setState({tab: name}, () =>
             this.props.history.replace({
                 pathname: `/organisations/${orgId}/${name}`,
-                search: window.location.search
+                search: this.props.location.search
             }));
     }
 

@@ -11,11 +11,13 @@ import UserColumn from "../user-column/UserColumn";
 import {chipTypeForStatus} from "../../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {useQueryParameter} from "../../../hooks/useQueryParameter";
+import {useLocation} from "react-router-dom";
 
 const allValue = "all";
 
 const CollaborationRequests = ({organisation, user, history, ...rest}) => {
 
+    const location = useLocation();
     const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
     const [filterOptions, setFilterOptions] = useState([]);
     const [filterValue, setFilterValue] = useState({});
@@ -54,7 +56,7 @@ const CollaborationRequests = ({organisation, user, history, ...rest}) => {
         }
         stopEvent(e);
         history.push(`/collaboration-requests/${collaborationRequest.id}`, {
-            from: `${window.location.pathname}${window.location.search}`
+            from: `${location.pathname}${location.search}`
         });
     };
 

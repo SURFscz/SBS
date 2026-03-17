@@ -14,11 +14,13 @@ import {Chip} from "@surfnet/sds";
 import {findAllServiceRequests} from "../../../api";
 import {statusCustomSort, stopEvent} from "../../../utils/Utils";
 import {useQueryParameter} from "../../../hooks/useQueryParameter";
+import {useLocation} from "react-router-dom";
 
 const allValue = "all";
 
 const ServiceRequests = ({personal, user, service_requests: serviceRequestsProp, refreshUserHook, history, ...rest}) => {
 
+    const location = useLocation();
     const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
 
     const [filterOptions, setFilterOptions] = useState([]);
@@ -83,7 +85,7 @@ const ServiceRequests = ({personal, user, service_requests: serviceRequestsProp,
         }
         stopEvent(e);
         history.push(`/service-request/${serviceRequest.id}`, {
-            from: `${window.location.pathname}${window.location.search}`
+            from: `${location.pathname}${location.search}`
         });
     };
 
