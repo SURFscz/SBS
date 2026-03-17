@@ -142,7 +142,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Use Node.js 22
+      - name: Use Node.js 24.3.0
         uses: actions/setup-node@v5
         with:
           node-version: "22.12.0"
@@ -166,6 +166,7 @@ jobs:
           cd client
           yarn install
           yarn test
+          yarn lint
           yarn build
         env:
           CI: true
@@ -320,7 +321,7 @@ jobs:
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v5ya
         with:
           images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
         env:
