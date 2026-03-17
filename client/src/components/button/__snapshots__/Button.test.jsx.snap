@@ -11,15 +11,3 @@ exports[`Button > matches snapshot 1`] = `
   </button>
 </DocumentFragment>
 `;
-
-exports[`Button matches snapshot 1`] = `
-<DocumentFragment>
-  <button
-    centralize="true"
-    txt="Click me"
-    type="primary"
-  >
-    Click me
-  </button>
-</DocumentFragment>
-`;

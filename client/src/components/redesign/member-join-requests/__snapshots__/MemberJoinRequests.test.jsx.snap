@@ -21,25 +21,3 @@ exports[`MemberJoinRequests > renders with non-empty join requests 1`] = `
   </div>
 </DocumentFragment>
 `;
-
-exports[`MemberJoinRequests renders with non-empty join requests 1`] = `
-<DocumentFragment>
-  <div
-    class="sds--loading-container "
-  >
-    <div
-      class="sds--loading"
-    >
-      <span
-        class="sds--loading--dot"
-      />
-      <span
-        class="sds--loading--dot"
-      />
-      <span
-        class="sds--loading--dot"
-      />
-    </div>
-  </div>
-</DocumentFragment>
-`;

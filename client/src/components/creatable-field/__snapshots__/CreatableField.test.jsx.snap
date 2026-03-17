@@ -19,23 +19,3 @@ exports[`CreatableField > matches snapshot 1`] = `
   </div>
 </DocumentFragment>
 `;
-
-exports[`CreatableField matches snapshot 1`] = `
-<DocumentFragment>
-  <div
-    class="creatable-field "
-  >
-    <label />
-    <div
-      class="inner-creatable-field "
-    >
-      <textarea
-        cols="1"
-        id="creatable-field"
-      >
-        [object Object]
-      </textarea>
-    </div>
-  </div>
-</DocumentFragment>
-`;

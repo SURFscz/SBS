@@ -9,13 +9,3 @@ exports[`Logo > renders with valid src 1`] = `
   />
 </DocumentFragment>
 `;
-
-exports[`Logo renders with valid src 1`] = `
-<DocumentFragment>
-  <img
-    alt="Test Logo"
-    class="test-class"
-    src="data:image/jpeg;base64,valid-image.jpg"
-  />
-</DocumentFragment>
-`;

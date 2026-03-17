@@ -1,5 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`BreadCrumb > matches snapshot 1`] = `<DocumentFragment />`;
-
-exports[`BreadCrumb matches snapshot 1`] = `<DocumentFragment />`;

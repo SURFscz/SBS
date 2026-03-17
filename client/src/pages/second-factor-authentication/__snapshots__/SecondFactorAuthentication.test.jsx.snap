@@ -26,30 +26,3 @@ exports[`SecondFactorAuthentication > matches snapshot with default props 1`] = 
   </div>
 </DocumentFragment>
 `;
-
-exports[`SecondFactorAuthentication matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <div
-    class="mod-mfa verify "
-  >
-    <div>
-      <section
-        class="register-header"
-      >
-        <h1>
-          Verification blocked
-        </h1>
-        <p>
-          Your account has been blocked. Please contact 
-          <a
-            href="mailto:sram-support@surf.nl"
-          >
-            sram-support@surf.nl
-          </a>
-           for reactivation.
-        </p>
-      </section>
-    </div>
-  </div>
-</DocumentFragment>
-`;

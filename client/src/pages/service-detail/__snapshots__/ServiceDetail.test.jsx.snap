@@ -21,25 +21,3 @@ exports[`ServiceDetail > matches snapshot with default props 1`] = `
   </div>
 </DocumentFragment>
 `;
-
-exports[`ServiceDetail matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <div
-    class="sds--loading-container "
-  >
-    <div
-      class="sds--loading"
-    >
-      <span
-        class="sds--loading--dot"
-      />
-      <span
-        class="sds--loading--dot"
-      />
-      <span
-        class="sds--loading--dot"
-      />
-    </div>
-  </div>
-</DocumentFragment>
-`;

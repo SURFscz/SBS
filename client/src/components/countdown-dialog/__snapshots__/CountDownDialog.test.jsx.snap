@@ -26,30 +26,3 @@ exports[`CountDownDialog > matches snapshot 1`] = `
   </div>
 </DocumentFragment>
 `;
-
-exports[`CountDownDialog matches snapshot 1`] = `
-<DocumentFragment>
-  <div
-    data-testid="modal"
-  >
-    <div>
-      countDownDialog.title
-    </div>
-    <div />
-    <div>
-      <section
-        class="count-down-content"
-      >
-        <p>
-          countDownDialog.subTitle
-        </p>
-        <p>
-          countDownDialog.info
-        </p>
-      </section>
-    </div>
-    <button />
-    <button />
-  </div>
-</DocumentFragment>
-`;

@@ -191,29 +191,3 @@ exports[`ErrorIndicator > matches snapshot with default props 1`] = `
   </span>
 </DocumentFragment>
 `;
-
-exports[`ErrorIndicator matches snapshot with custom props 1`] = `
-<DocumentFragment>
-  <span
-    class="error-indication "
-  >
-    <svg>
-      critical.svg
-    </svg>
-    message
-  </span>
-</DocumentFragment>
-`;
-
-exports[`ErrorIndicator matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <span
-    class="error-indication "
-  >
-    <svg>
-      critical.svg
-    </svg>
-    message
-  </span>
-</DocumentFragment>
-`;

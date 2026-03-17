@@ -35,39 +35,3 @@ exports[`Pagination > matches snapshot with no pages 1`] = `
   </section>
 </DocumentFragment>
 `;
-
-exports[`Pagination matches snapshot with custom page and totalPages 1`] = `
-<DocumentFragment>
-  <section
-    class="pagination"
-  >
-    <section
-      class="pagination-container"
-    />
-  </section>
-</DocumentFragment>
-`;
-
-exports[`Pagination matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <section
-    class="pagination"
-  >
-    <section
-      class="pagination-container"
-    />
-  </section>
-</DocumentFragment>
-`;
-
-exports[`Pagination matches snapshot with no pages 1`] = `
-<DocumentFragment>
-  <section
-    class="pagination"
-  >
-    <section
-      class="pagination-container"
-    />
-  </section>
-</DocumentFragment>
-`;

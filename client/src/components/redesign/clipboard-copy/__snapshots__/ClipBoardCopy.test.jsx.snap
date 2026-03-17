@@ -95,27 +95,3 @@ exports[`ClipBoardCopy > matches snapshot with default props 1`] = `
   </section>
 </DocumentFragment>
 `;
-
-exports[`ClipBoardCopy matches snapshot with custom button text 1`] = `
-<DocumentFragment>
-  <section
-    class="copy-to-clipboard  "
-  >
-    <svg>
-      duplicate.svg
-    </svg>
-  </section>
-</DocumentFragment>
-`;
-
-exports[`ClipBoardCopy matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <section
-    class="copy-to-clipboard  "
-  >
-    <svg>
-      duplicate.svg
-    </svg>
-  </section>
-</DocumentFragment>
-`;
