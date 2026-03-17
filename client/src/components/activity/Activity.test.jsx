@@ -15,6 +15,7 @@ vi.mock("../../utils/Date", () => ({
   pseudoIso: () => "2024-01-01T00:00:00Z"
 }));
 vi.mock("../../utils/AuditLog", () => ({
+  // eslint-disable-next-line no-unused-vars
   filterAuditLogs: (logs, query) => logs
 }));
 

@@ -98,7 +98,7 @@ export default class Activity extends React.PureComponent {
         }
         try {
             return JSON.parse(state);
-        } catch (e) {
+        } catch {
             return {};
         }
     }

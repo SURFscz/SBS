@@ -127,6 +127,7 @@ class AboutCollaboration extends React.Component {
                             <div className="values">
                                 <p>
                                     <a href={supportEmailValidURL ? collaboration.support_email : `mailto:${collaboration.support_email}`}
+                                       rel={supportEmailValidURL ? "noopener noreferrer" : undefined}
                                        target={supportEmailValidURL ? "_blank" : "_self"}>
                                         {collaboration.support_email}
                                     </a>

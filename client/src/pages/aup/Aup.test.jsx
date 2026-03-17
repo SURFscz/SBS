@@ -6,6 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 
 vi.mock("../../locale/I18n", () => ({
       default: { t: key => key },
+// eslint-disable-next-line no-unused-vars
 t: (key, opts) => key,
     locale: "nl"
 }));

@@ -1020,8 +1020,8 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(deletedUsers[key]) && <ul>
-                                        {deletedUsers[key].map(email =>
-                                            <li>{email}</li>)}
+                                        {deletedUsers[key].map((email, index) =>
+                                            <li key={index}>{email}</li>)}
                                     </ul>}
                                     {isEmpty(deletedUsers[key]) && <span>None</span>}
                                 </td>
@@ -1051,8 +1051,8 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(expiredMemberships[key]) && <ul>
-                                        {expiredMemberships[key].map(mb =>
-                                            <li>{`${mb.user.name} (${mb.collaboration.name})`}</li>)}
+                                        {expiredMemberships[key].map((mb, index) =>
+                                            <li key={index}>{`${mb.user.name} (${mb.collaboration.name})`}</li>)}
                                     </ul>}
                                     {isEmpty(expiredMemberships[key]) && <span>None</span>}
                                 </td>
@@ -1080,17 +1080,17 @@ class System extends React.Component {
                         <tr>
                             <td className="action">
                                 <div className="invitation_reminders">
-                                    {invitationReminders.invitations.map(email => <span>{email}</span>)}
+                                    {invitationReminders.invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                             <td className="action">
                                 <div className="invitation_reminders">
-                                    {invitationReminders.organisation_invitations.map(email => <span>{email}</span>)}
+                                    {invitationReminders.organisation_invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                             <td className="action">
                                 <div className="invitation_reminders">
-                                    {invitationReminders.service_invitations.map(email => <span>{email}</span>)}
+                                    {invitationReminders.service_invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                         </tr>
@@ -1117,22 +1117,22 @@ class System extends React.Component {
                         <tr>
                             <td className="action">
                                 <div className="invitation_expirations">
-                                    {invitationExpirations.invitations.map(email => <span>{email}</span>)}
+                                    {invitationExpirations.invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                             <td className="action">
                                 <div className="invitation_expirations">
-                                    {invitationExpirations.api_invitations.map(email => <span>{email}</span>)}
+                                    {invitationExpirations.api_invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                             <td className="action">
                                 <div className="invitation_expirations">
-                                    {invitationExpirations.organisation_invitations.map(email => <span>{email}</span>)}
+                                    {invitationExpirations.organisation_invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                             <td className="action">
                                 <div className="invitation_expirations">
-                                    {invitationExpirations.service_invitations.map(email => <span>{email}</span>)}
+                                    {invitationExpirations.service_invitations.map((email, index) => <span key={index}>{email}</span>)}
                                 </div>
                             </td>
                         </tr>
@@ -1159,7 +1159,7 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(suspendedCollaborations[key]) && <ul>
-                                        {suspendedCollaborations[key].map(coll => <li>{coll.name}</li>)}
+                                        {suspendedCollaborations[key].map((coll, index) => <li key={index}>{coll.name}</li>)}
                                     </ul>}
                                     {isEmpty(suspendedCollaborations[key]) && <span>None</span>}
                                 </td>
@@ -1375,7 +1375,7 @@ class System extends React.Component {
                 </thead>
                 <tbody>
                 {userLoginStats.map((stat, i) => <tr key={i}>
-                    {["login_type", "count", "succeeded", "failed"].map(col => <td className={col}>{stat[col]}</td>)}
+                    {["login_type", "count", "succeeded", "failed"].map((col, index) => <td key={index} className={col}>{stat[col]}</td>)}
                 </tr>)}
 
                 </tbody>

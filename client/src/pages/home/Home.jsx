@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React from "react";
 import "./Home.scss";
 import I18n from "../../locale/I18n";

@@ -17,7 +17,7 @@ export default function OrganisationEn({role}) {
     }
     return (
         <div className="welcome">
-            <p>As a {I18n.t(`access.${role}`).toLowerCase()}, here's what you can do:</p>
+            <p>As a {I18n.t(`access.${role}`).toLowerCase()}, here&apos;s what you can do:</p>
             <ul>
                 {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
             </ul>
