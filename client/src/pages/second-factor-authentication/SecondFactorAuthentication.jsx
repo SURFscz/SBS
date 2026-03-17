@@ -271,7 +271,7 @@ class SecondFactorAuthentication extends React.Component {
                         <h3>{I18n.t("mfa.lost.how")}</h3>
                         <ul>
                             {["1", "2", "3", "4", "5"].map(i =>
-                                <li dangerouslySetInnerHTML={{
+                                <li key={i} dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
                                 }}/>
                             )}
@@ -387,7 +387,7 @@ class SecondFactorAuthentication extends React.Component {
                         <h3>{I18n.t("mfa.lost.how")}</h3>
                         <ul>
                             {["1", "2", "3", "4", "5"].map(i =>
-                                <li dangerouslySetInnerHTML={{
+                                <li key={i} dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
                                 }}/>
                             )}

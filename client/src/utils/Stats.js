@@ -8,7 +8,7 @@ export const addMissingDateEntries = res => {
     const maxDate = new Date(Math.max.apply(null, allDates));
     const nbrMonths = Math.max(1, monthsBetween(minDate, maxDate) + 1);
     const allEntries = Array(nbrMonths).fill(0)
-        .reduce((acc, _, index) => { // eslint-disable-line no-unused-vars
+        .reduce((acc, _, index) => {
             const newDate = new Date(minDate);
             newDate.setMonth(minDate.getMonth() + index)
             acc[`${newDate.getMonth() + 1}-${newDate.getFullYear()}`] = {

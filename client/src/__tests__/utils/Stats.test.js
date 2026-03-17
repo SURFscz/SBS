@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {addMissingDateEntries, transformToRechartsData} from "../../utils/Stats";
 import statsInput from "../data/statsInput.json";
 import statsOutput from "../data/statsOutput.json";

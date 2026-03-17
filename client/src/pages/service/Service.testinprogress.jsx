@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
 import Service from "./Service";
 
 const mockUser = {admin: true};

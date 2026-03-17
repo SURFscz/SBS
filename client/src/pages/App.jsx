@@ -130,7 +130,6 @@ class App extends React.Component {
                     const currentUser = results;
                     if (currentUser && currentUser.uid) {
                         this.setState({currentUser: currentUser, loading: false});
-                        // eslint-disable-next-line no-import-assign
                         setCsrfToken(results.CSRFToken);
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"));
