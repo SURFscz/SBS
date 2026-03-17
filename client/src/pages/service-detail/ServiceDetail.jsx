@@ -122,7 +122,7 @@ class ServiceDetail extends React.Component {
             }));
             this.setState({socketSubscribed: true})
         }
-        this.tabChanged(tab, service);
+        this.updateBreadCrumb(service);
         this.setState({
             service: service,
             organisations: organisations,
@@ -314,7 +314,7 @@ class ServiceDetail extends React.Component {
         const serviceId = service ? service.id : this.state.service.id;
         this.updateBreadCrumb(service);
         this.setState({tab: name}, () =>
-            this.props.history.replace(`/services/${serviceId}/${name}${this.props.location.search}`));
+            this.props.history.replace(`/services/${serviceId}/${name}`));
     }
 
     doDeleteMe = () => {
