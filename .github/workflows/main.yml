@@ -145,7 +145,7 @@ jobs:
       - name: Use Node.js 24.3.0
         uses: actions/setup-node@v5
         with:
-          node-version: "22.12.0"
+          node-version: "24.3.0"
           cache: "yarn"
           cache-dependency-path: '**/yarn.lock'
 
