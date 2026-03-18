@@ -118,7 +118,6 @@ class OrganisationDetail extends React.Component {
                         s.objectRole = actionMenuUserRole(user, json, null, null, true)
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
-                    this.tabChanged(tab, json.id);
                     this.setState({
                         organisation: json,
                         adminOfOrganisation: adminOfOrganisation,
@@ -246,10 +245,7 @@ class OrganisationDetail extends React.Component {
     tabChanged = (name, id) => {
         const orgId = id || this.state.organisation.id;
         this.setState({tab: name}, () =>
-            this.props.history.replace({
-                pathname: `/organisations/${orgId}/${name}`,
-                search: this.props.location.search
-            }));
+            this.props.history.replace(`/organisations/${orgId}/${name}`));
     }
 
     doAcceptInvitation = () => {
