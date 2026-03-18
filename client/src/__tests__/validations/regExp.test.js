@@ -16,8 +16,10 @@ test("Valid emails", () => {
 
     expect(validEmailRegExp.test("nope")).toBeFalsy();
     expect(validEmailRegExp.test("aa")).toBeFalsy();
-    expect(validEmailRegExp.test("a!@a.c")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c")).toBeTruthy();
     expect(validEmailRegExp.test("a!@a.c@")).toBeFalsy();
+    expect(validEmailRegExp.test("person10@example.com <person10@example.com>")).toBeFalsy();
+    expect(validEmailRegExp.test("\"person10@example.com\" <person10@example.com>")).toBeTruthy();
 
 })
 
