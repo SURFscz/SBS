@@ -44,7 +44,7 @@ class Service extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = this.initialState();
-        this.grantOptions = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+        this.grantOptions = ["authorization_code", "implicit", "refresh_token"]
             .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
     }
 
