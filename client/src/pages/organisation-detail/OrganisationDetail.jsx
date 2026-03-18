@@ -246,7 +246,10 @@ class OrganisationDetail extends React.Component {
     tabChanged = (name, id) => {
         const orgId = id || this.state.organisation.id;
         this.setState({tab: name}, () =>
-            this.props.history.replace(`/organisations/${orgId}/${name}`));
+            this.props.history.replace({
+                pathname: `/organisations/${orgId}/${name}`,
+                search: this.props.location.search
+            }));
     }
 
     doAcceptInvitation = () => {
