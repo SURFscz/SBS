@@ -1,16 +1,19 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import ServiceRequests from "./ServiceRequests";
+import {MemoryRouter} from "react-router-dom";
 
 describe("ServiceRequests", () => {
     it("renders with default props", () => {
         const { asFragment } = render(
-            <ServiceRequests
-                service_requests={[]}
-                onAccept={() => {}}
-                onReject={() => {}}
-                user={{ admin: true }}
-            />
+            <MemoryRouter>
+                <ServiceRequests
+                    service_requests={[]}
+                    onAccept={() => {}}
+                    onReject={() => {}}
+                    user={{ admin: true }}
+                />
+            </MemoryRouter>
         );
         expect(asFragment()).toMatchSnapshot();
     });
@@ -21,12 +24,14 @@ describe("ServiceRequests", () => {
             { id: 2, name: "Service Request 2" }
         ];
         const { asFragment } = render(
-            <ServiceRequests
-                service_requests={service_requests}
-                onAccept={() => {}}
-                onReject={() => {}}
-                user={{ admin: true }}
-            />
+            <MemoryRouter>
+                <ServiceRequests
+                    service_requests={service_requests}
+                    onAccept={() => {}}
+                    onReject={() => {}}
+                    user={{ admin: true }}
+                />
+            </MemoryRouter>
         );
         expect(asFragment()).toMatchSnapshot();
     });

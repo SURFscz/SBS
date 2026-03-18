@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "@testing-library/react";
+import {MemoryRouter} from "react-router-dom";
 import CollaborationRequests from "./CollaborationRequests";
 
 const mockOrganisation = {
@@ -12,15 +13,17 @@ const mockUser = {id: "1", name: "Test User"};
 describe("CollaborationRequests", () => {
     it("matches snapshot with default props", () => {
         const {asFragment} = render(
-            <CollaborationRequests
-                user={mockUser}
-                collaborationRequests={[]}
-                onAccept={() => {
-                }}
-                onReject={() => {
-                }}
-                organisation={mockOrganisation}
-            />
+            <MemoryRouter>
+                <CollaborationRequests
+                    user={mockUser}
+                    collaborationRequests={[]}
+                    onAccept={() => {
+                    }}
+                    onReject={() => {
+                    }}
+                    organisation={mockOrganisation}
+                />
+            </MemoryRouter>
         );
         expect(asFragment()).toMatchSnapshot();
     });
@@ -31,15 +34,17 @@ describe("CollaborationRequests", () => {
             {id: "2", user: {id: "3", name: "User Two"}, status: "pending"}
         ];
         const {asFragment} = render(
-            <CollaborationRequests
-                user={mockUser}
-                collaborationRequests={mockRequests}
-                onAccept={() => {
-                }}
-                onReject={() => {
-                }}
-                organisation={mockOrganisation}
-            />
+            <MemoryRouter>
+                <CollaborationRequests
+                    user={mockUser}
+                    collaborationRequests={mockRequests}
+                    onAccept={() => {
+                    }}
+                    onReject={() => {
+                    }}
+                    organisation={mockOrganisation}
+                />
+            </MemoryRouter>
         );
         expect(asFragment()).toMatchSnapshot();
     });

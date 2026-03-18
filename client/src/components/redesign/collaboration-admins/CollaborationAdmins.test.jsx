@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "@testing-library/react";
 import CollaborationAdmins from "./CollaborationAdmins";
+import {MemoryRouter} from "react-router-dom";
 
 const mockCollaboration = {
     id: "1",
@@ -21,10 +22,12 @@ const mockUser = {
 describe("CollaborationAdmins", () => {
     it("matches snapshot with default props", () => {
         const {asFragment} = render(
-            <CollaborationAdmins
-                collaboration={mockCollaboration}
-                user={mockUser}
-            />
+            <MemoryRouter>
+                <CollaborationAdmins
+                    collaboration={mockCollaboration}
+                    user={mockUser}
+                />
+            </MemoryRouter>
         );
         expect(asFragment()).toMatchSnapshot();
     });
