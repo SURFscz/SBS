@@ -109,6 +109,21 @@ class CollaborationRequest extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
+    navigateToCollaborationRequestsPage = () => {
+        const {organisation_id} = this.state.collaborationRequest;
+        const defaultPath = `/organisations/${organisation_id}/collaboration_requests`;
+        
+        const from = this.props.location?.state?.from;
+        if (from) {
+            const fromUrl = new URL(from, window.location.origin);
+            if (fromUrl.pathname === defaultPath) {
+                this.props.history.push(fromUrl.pathname + fromUrl.search);
+                return;
+            }
+        }
+        this.props.history.push(defaultPath);
+    }
+
     deleteCollaborationRequest = () => {
         this.setState({
             confirmationDialogOpen: true,
@@ -119,7 +134,7 @@ class CollaborationRequest extends React.Component {
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
                 () => {
                     deleteRequestCollaboration(this.state.collaborationRequest.id).then(() => {
-                        this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}/collaboration_requests`);
+                        this.navigateToCollaborationRequestsPage();
                         setFlash(I18n.t("collaborationRequest.flash.deleted", {name: this.state.collaborationRequest.name}));
                     });
                 })
@@ -164,7 +179,7 @@ class CollaborationRequest extends React.Component {
                     () => {
                         const {collaborationRequest, rejectionReason} = this.state;
                         denyRequestCollaboration(collaborationRequest.id, rejectionReason).then(() => {
-                            this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}/collaboration_requests`);
+                            this.navigateToCollaborationRequestsPage();
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
                     })
@@ -173,7 +188,7 @@ class CollaborationRequest extends React.Component {
             const {collaborationRequest} = this.state;
             this.setState({loading: true});
             approveRequestCollaboration(collaborationRequest).then(() => {
-                this.props.history.push(`/organisations/${collaborationRequest.organisation_id}/collaboration_requests`);
+                this.navigateToCollaborationRequestsPage();
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
             });
         }

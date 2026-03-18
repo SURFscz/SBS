@@ -10,10 +10,11 @@ import InstituteColumn from "../institute-column/InstituteColumn";
 import UserColumn from "../user-column/UserColumn";
 import {chipTypeForStatus} from "../../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-export default class CollaborationRequests extends React.PureComponent {
+class CollaborationRequestsInner extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -42,9 +43,10 @@ export default class CollaborationRequests extends React.PureComponent {
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
+        const allOptions = filterOptions.concat(statusOptions);
         this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0]
+            filterOptions: allOptions,
+            filterValue: allOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0]
         });
     }
 
@@ -54,7 +56,10 @@ export default class CollaborationRequests extends React.PureComponent {
             return;
         }
         stopEvent(e);
-        this.props.history.push(`/collaboration-requests/${collaborationRequest.id}`);
+        const {pathname, search} = this.props.history.location;
+        this.props.history.push(`/collaboration-requests/${collaborationRequest.id}`, {
+            from: `${pathname}${search}`
+        });
     };
 
     filter = (filterOptions, filterValue) => {
@@ -64,7 +69,10 @@ export default class CollaborationRequests extends React.PureComponent {
                     className={"collaboration-request-filter-select"}
                     value={filterValue}
                     classNamePrefix={"filter-select"}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -141,3 +149,12 @@ export default class CollaborationRequests extends React.PureComponent {
     }
 
 }
+
+const CollaborationRequests = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <CollaborationRequestsInner {...props}
+                                       queryFilterValue={queryFilterValue}
+                                       setQueryFilterValue={setQueryFilterValue}/>;
+};
+
+export default CollaborationRequests;

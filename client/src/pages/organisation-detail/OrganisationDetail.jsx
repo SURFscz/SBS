@@ -118,7 +118,6 @@ class OrganisationDetail extends React.Component {
                         s.objectRole = actionMenuUserRole(user, json, null, null, true)
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
-                    this.tabChanged(tab, json.id);
                     this.setState({
                         organisation: json,
                         adminOfOrganisation: adminOfOrganisation,

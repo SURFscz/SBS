@@ -122,7 +122,7 @@ class ServiceDetail extends React.Component {
             }));
             this.setState({socketSubscribed: true})
         }
-        this.tabChanged(tab, service);
+        this.updateBreadCrumb(service);
         this.setState({
             service: service,
             organisations: organisations,
