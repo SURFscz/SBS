@@ -13,10 +13,11 @@ import {chipTypeForStatus} from "../../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {findAllServiceRequests} from "../../../api";
 import {statusCustomSort, stopEvent} from "../../../utils/Utils";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-export default class ServiceRequests extends React.PureComponent {
+class ServiceRequestsInner extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -70,9 +71,10 @@ export default class ServiceRequests extends React.PureComponent {
                 }));
                 this.setState({socketSubscribed: true})
             }
+            const allOptions = filterOptions.concat(statusOptions);
             this.setState({
-                filterOptions: filterOptions.concat(statusOptions),
-                filterValue: filterOptions[0],
+                filterOptions: allOptions,
+                filterValue: allOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
                 loading: false,
                 service_requests: res
             }, callback);
@@ -84,7 +86,10 @@ export default class ServiceRequests extends React.PureComponent {
             return;
         }
         stopEvent(e);
-        this.props.history.push(`/service-request/${serviceRequest.id}`)
+        const {pathname, search} = this.props.history.location;
+        this.props.history.push(`/service-request/${serviceRequest.id}`, {
+            from: `${pathname}${search}`
+        })
     };
 
 
@@ -95,7 +100,10 @@ export default class ServiceRequests extends React.PureComponent {
                     className={"service-request-filter-select"}
                     classNamePrefix={"filter-select"}
                     value={filterValue}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -169,3 +177,12 @@ export default class ServiceRequests extends React.PureComponent {
     }
 
 }
+
+const ServiceRequests = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <ServiceRequestsInner {...props}
+                                 queryFilterValue={queryFilterValue}
+                                 setQueryFilterValue={setQueryFilterValue}/>;
+};
+
+export default ServiceRequests;

@@ -25,6 +25,8 @@ service_request_api = Blueprint("service_request_api", __name__, url_prefix="/ap
 
 valid_connection_types = ["openIDConnect", "saml2URL", "saml2File", "none"]
 
+valid_grants = ["authorization_code", "implicit", "refresh_token"]
+
 
 @service_request_api.route("/all", methods=["GET"], strict_slashes=False)
 @json_endpoint
@@ -90,6 +92,12 @@ def request_service():
     connection_type = data.get("connection_type")
     if connection_type not in valid_connection_types:
         raise BadRequest(f"{connection_type} not valid. Valid connection_type: {valid_connection_types}")
+
+    if connection_type == "openIDConnect":
+        grants = data.get("grants", "").split(",")
+        invalid_grants = [grant.strip() for grant in grants if grant not in valid_grants]
+        if invalid_grants:
+            raise BadRequest(f"{invalid_grants} not valid. Valid grants: {valid_grants}")
 
     oidc_client_secret_posted = data.get("oidc_client_secret")
     manage_enabled = current_app.app_config.manage.enabled

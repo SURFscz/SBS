@@ -153,7 +153,7 @@ class CollaborationDetail extends React.Component {
                                 tab: tab,
                             }, () => {
                                 callback && callback();
-                                this.tabChanged(tab, collaboration.id);
+                                this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
                             });
                             const {socketSubscribed} = this.state;
                             if (!socketSubscribed) {

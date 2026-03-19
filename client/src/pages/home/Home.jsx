@@ -36,7 +36,9 @@ class Home extends React.Component {
         const refresh = urlSearchParams.get("refresh");
         const redirect = urlSearchParams.get("redirect");
         if (refresh) {
-            history.pushState(null, "", location.protocol + '//' + location.host + location.pathname);
+            urlSearchParams.delete("refresh");
+            const qs = urlSearchParams.toString();
+            history.pushState(null, "", location.pathname + (qs ? `?${qs}` : ""));
             this.refreshUserHook();
         } else {
             const params = this.props.match.params;
@@ -126,7 +128,6 @@ class Home extends React.Component {
                     {path: "/", value: I18n.t("breadcrumb.home")}
                 ];
             });
-            this.tabChanged(tab);
             callback && callback();
             this.setState({role: role, loading: false, tabs: tabs.filter(t => t !== null), tab});
         }

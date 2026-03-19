@@ -87,6 +87,22 @@ class TestServiceRequest(AbstractTest):
         oidc_client_secret = next(rs, (0,))[0]
         self.assertTrue(oidc_client_secret.startswith("$2b$0"))
 
+    def test_request_service_with_invalid_grant(self):
+        self.login("urn:roger", add_default_attributes=False)
+        res = self.get('/api/service_requests/generate_oidc_client_secret')
+        data = {
+            "name": "New Service",
+            "abbreviation": "new_service_abbreviation",
+            "providing_organisation": "cloudy",
+            "privacy_policy": "https://privacy_policy.org",
+            "connection_type": "openIDConnect",
+            "oidc_client_secret": res.get("value"),
+            "grants": "authorization_code, client_credentials",
+            "redirect_urls": "http://localhost/redirect"
+        }
+        res = self.post("/api/service_requests", body=data, with_basic_auth=False, response_status_code=400)
+        self.assertTrue("['client_credentials'] not valid" in res["message"])
+
     def test_request_service_with_oidc_client_secret_tampering(self):
         self.login("urn:roger", add_default_attributes=False)
         data = {

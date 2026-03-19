@@ -35,13 +35,14 @@ import InstituteColumn from "../institute-column/InstituteColumn";
 import ChevronUp from "../../../icons/chevron-up.svg?react";
 import ChevronDown from "../../../icons/chevron-down.svg?react";
 import {emitImpersonation} from "../../../utils/Impersonation";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const memberFilterValue = "members";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
 
-class CollaborationAdmins extends React.Component {
+class CollaborationAdminsInner extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -102,10 +103,11 @@ class CollaborationAdmins extends React.Component {
                 value: group.name
             }));
 
+        const allFilterOptions = filterOptions.concat(groupOptions);
         this.setState({
             selectedMembers,
-            filterValue: filterOptions[0],
-            filterOptions: filterOptions.concat(groupOptions),
+            filterValue: allFilterOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
+            filterOptions: allFilterOptions,
             loading: false,
             expiryDate: null,
             selectedMemberExpiryDate: null,
@@ -485,7 +487,10 @@ class CollaborationAdmins extends React.Component {
                     className={"member-filter-select"}
                     classNamePrefix={"filter-select"}
                     value={filterValue}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -784,5 +789,12 @@ class CollaborationAdmins extends React.Component {
     }
 
 }
+
+const CollaborationAdmins = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <CollaborationAdminsInner {...props}
+                                    queryFilterValue={queryFilterValue}
+                                    setQueryFilterValue={setQueryFilterValue}/>;
+};
 
 export default CollaborationAdmins;

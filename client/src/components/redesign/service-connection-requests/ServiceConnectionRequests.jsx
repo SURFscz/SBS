@@ -19,10 +19,11 @@ import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import {Chip} from "@surfnet/sds";
 import {chipTypeForStatus} from "../../../utils/UserRole";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-class ServiceConnectionRequests extends React.Component {
+class ServiceConnectionRequestsInner extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -60,9 +61,10 @@ class ServiceConnectionRequests extends React.Component {
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
+        const allOptions = filterOptions.concat(statusOptions);
         this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0],
+            filterOptions: allOptions,
+            filterValue: allOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
             loading: false,
             declineDialog: false,
             selectedServiceConnectionRequestId: null
@@ -133,7 +135,10 @@ class ServiceConnectionRequests extends React.Component {
                     className={"service-connection-request-filter-select"}
                     value={filterValue}
                     classNamePrefix={"filter-select"}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -307,5 +312,12 @@ class ServiceConnectionRequests extends React.Component {
         )
     }
 }
+
+const ServiceConnectionRequests = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <ServiceConnectionRequestsInner {...props}
+                                           queryFilterValue={queryFilterValue}
+                                           setQueryFilterValue={setQueryFilterValue}/>;
+};
 
 export default ServiceConnectionRequests;

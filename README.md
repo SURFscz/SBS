@@ -49,6 +49,16 @@ GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 ```
 
+If you are running MySQL in a Docker container while running the server-app on your local machine, create the database user with a wildcard host (`%`) so it accepts connections from outside the container:
+```sql
+DROP DATABASE IF EXISTS sbs;
+CREATE DATABASE sbs CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
+DROP DATABASE IF EXISTS sbs_test;
+CREATE DATABASE sbs_test CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
+CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+```
+
 Create your own config.yaml by copying `server/config/test_config.yaml` and rename it to `config.yaml` (inside the same folder).
 
 Make sure you point to the `sbs` database by changing the `database.uri` from `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"` to `"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs?charset=utf8mb4"`.

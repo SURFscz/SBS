@@ -44,7 +44,7 @@ class Service extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = this.initialState();
-        this.grantOptions = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+        this.grantOptions = ["authorization_code", "implicit", "refresh_token"]
             .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
     }
 
@@ -307,6 +307,21 @@ class Service extends React.Component {
         });
     };
 
+    navigateToServiceRequestsPage = () => {
+        const defaultPath = `/home/service_requests`;
+        const from = this.props.location?.state?.from;
+        if (from) {
+            const fromUrl = new URL(from, window.location.origin);
+            if (fromUrl.pathname === defaultPath) {
+                const params = new URLSearchParams(fromUrl.search);
+                params.set("refresh", "true");
+                this.props.history.push(`${fromUrl.pathname}?${params.toString()}`);
+                return;
+            }
+        }
+        this.props.history.push(`${defaultPath}?refresh=true`);
+    }
+
     deleteServiceRequest = () => {
         this.setState({
             confirmationDialogOpen: true,
@@ -316,7 +331,7 @@ class Service extends React.Component {
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true}, () => {
                 deleteServiceRequest(this.state.serviceRequest.id).then(() => {
-                    this.props.history.push(`/home/service_requests?refresh=true`);
+                    this.navigateToServiceRequestsPage();
                     setFlash(I18n.t("serviceRequest.flash.deleted", {name: this.state.serviceRequest.name}));
                 });
             })
@@ -357,7 +372,7 @@ class Service extends React.Component {
                 grants: joinedGrants,
                 token_validity_days: null
             }).then(() => {
-                this.props.history.push(`/home/service_requests?refresh=true`);
+                this.navigateToServiceRequestsPage();
                 setFlash(I18n.t("serviceRequest.flash.approved", {name: serviceRequest.name}));
             });
         } else {
@@ -380,7 +395,7 @@ class Service extends React.Component {
     doDeny = () => {
         const {serviceRequest, rejectionReason} = this.state;
         denyServiceRequest(serviceRequest.id, rejectionReason).then(() => {
-            this.props.history.push(`/home/service_requests?refresh=true`);
+            this.navigateToServiceRequestsPage();
             setFlash(I18n.t("serviceRequest.flash.denied", {name: serviceRequest.name}));
         });
 
@@ -448,7 +463,11 @@ class Service extends React.Component {
         setFlash(
             I18n.t(`service.flash.${isServiceRequest ? "createdServiceRequest" : "created"}`, {name: name}),
             null, null, null, isServiceRequest ? 42 : null);
-        this.props.history.push(isServiceRequest ? "/home/service_requests?refresh=true" : "/services/" + res.id);
+        if (isServiceRequest) {
+            this.navigateToServiceRequestsPage();
+        } else {
+            this.props.history.push("/services/" + res.id);
+        }
     };
 
     onFileUpload = e => {

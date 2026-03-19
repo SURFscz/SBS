@@ -1,7 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`OrganisationWelcomeDialog > matches snapshot with custom description 1`] = `<DocumentFragment />`;
-
-exports[`OrganisationWelcomeDialog > matches snapshot with custom title 1`] = `<DocumentFragment />`;
-
-exports[`OrganisationWelcomeDialog > matches snapshot with default props 1`] = `<DocumentFragment />`;
