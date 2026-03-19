@@ -1,5 +1,4 @@
 import "core-js/stable";
-import "regenerator-runtime/runtime";
 import {polyfill} from "es6-promise";
 import React from 'react';
 import "react-tooltip/dist/react-tooltip.css";
