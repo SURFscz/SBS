@@ -28,7 +28,7 @@ export default function CollaborationsOverview(props) {
             });
             setRequests(getUserRequests(props.user));
         });
-    }, []);
+    }, [props.user]);
 
     if (loading) {
         return <SpinnerField/>

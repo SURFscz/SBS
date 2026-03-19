@@ -74,7 +74,7 @@
         "analyze": "source-map-explorer build/static/js/main.*.js ",
         "dev": "vite",
         "build": "vite build",
-        "lint": "eslint .",
+        "lint": "eslint ./src",
         "preview": "vite preview",
         "test": "vitest"
     },

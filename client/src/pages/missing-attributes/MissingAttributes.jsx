@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import "./MissingAttributes.scss";
 import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
@@ -6,16 +6,11 @@ import noAccess from "../../undraw/undraw_access_denied_re_awnf.svg";
 
 export default function MissingAttributes() {
 
-    const [entityId, setEntityId] = useState("");
-    const [issuerId, setIssuerId] = useState("");
-    const [userId, setUserId] = useState("");
+    const urlSearchParams = new URLSearchParams(window.location.search);
 
-    useEffect(() => {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        setEntityId(urlSearchParams.get("aud"));
-        setIssuerId(urlSearchParams.get("iss"));
-        setUserId(urlSearchParams.get("sub"));
-    }, [])
+    const entityId = urlSearchParams.get("aud");
+    const issuerId = urlSearchParams.get("iss");
+    const userId = urlSearchParams.get("sub");
 
     const timeStamp = new Date().toUTCString();
     return (
