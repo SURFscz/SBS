@@ -321,7 +321,7 @@ jobs:
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta
-        uses: docker/metadata-action@v5ya
+        uses: docker/metadata-action@v5
         with:
           images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
         env:
