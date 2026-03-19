@@ -1,3 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`Feedback > matches snapshot with default props 1`] = `<DocumentFragment />`;
