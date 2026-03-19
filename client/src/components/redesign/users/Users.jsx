@@ -170,6 +170,7 @@ class Users extends React.Component {
         const countUsers = users.length;
         const countInvitations = invitations.length;
         const hasEntities = countUsers > 0 || countInvitations > 0;
+        // eslint-disable-next-line no-useless-assignment
         let title = "";
 
         if (hasEntities) {

@@ -49,6 +49,7 @@
         "timeago.js": "^4.0.2"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@vitejs/plugin-react": "^6.0.1",
         "dot-prop": "^10.1.0",
         "eslint": "^10.0.3",
