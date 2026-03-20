@@ -31,7 +31,7 @@ fi
 
 if [ -e "$CONF_DIR/disclaimer.css" ]
 then
-    $INSTALL "$CONF_DIR/disclaimer.css" /opt/sbs/client/build/static/disclaimer.css
+    $INSTALL "$CONF_DIR/disclaimer.css" /opt/sbs/client/dist/static/disclaimer.css
 fi
 
 
