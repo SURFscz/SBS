@@ -38,6 +38,7 @@ fi
 # and copy any certs that are provided
 if [ -d "$CONF_DIR/cert" ]
 then
+    shopt -s nullglob dotglob
     mkdir -p /usr/local/share/ca-certificates
     for cert in "$CONF_DIR/cert"/*
     do
