@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./CollaborationRequests.scss";
-import {stopEvent} from "../../../utils/Utils";
+import {stopEvent, unitArraySort} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import Logo from "../logo/Logo";
@@ -102,6 +102,7 @@ class CollaborationRequestsInner extends React.PureComponent {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
+                customSort: unitArraySort,
                 mapper: cr => <div className="unit-container">
                     {(cr.units || [])
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))

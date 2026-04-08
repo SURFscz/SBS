@@ -10,7 +10,7 @@ import {setFlash} from "../../../utils/Flash";
 import Entities from "../entities/Entities";
 import InputField from "../../input-field/InputField";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import {isEmpty, stopEvent} from "../../../utils/Utils";
+import {isEmpty, stopEvent, unitArraySort} from "../../../utils/Utils";
 import SpinnerField from "../spinner-field/SpinnerField";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
 import DOMPurify from "dompurify";
@@ -189,6 +189,7 @@ class ApiKeys extends React.Component {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
+                customSort: unitArraySort,
                 mapper: apiKey => <div className="unit-container">
                     {(apiKey.units || [])
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))

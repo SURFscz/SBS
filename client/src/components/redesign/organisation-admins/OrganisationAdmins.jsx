@@ -29,7 +29,7 @@ import SpinnerField from "../spinner-field/SpinnerField";
 import MembersIcon from "../../../icons/single-neutral.svg?react";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../../utils/Utils";
+import {expiryDateCustomSort, isEmpty, stopEvent, unitArraySort, userColumnsCustomSort} from "../../../utils/Utils";
 import {emitImpersonation} from "../../../utils/Impersonation";
 import SelectField from "../../select-field/SelectField";
 import {InvitationsUnits} from "../../invitation-units/InvitationsUnits";
@@ -554,6 +554,7 @@ class OrganisationAdmins extends React.Component {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
+                customSort: unitArraySort,
                 mapper: membership => <div className="unit-container">
                     {(membership.units || [])
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))
