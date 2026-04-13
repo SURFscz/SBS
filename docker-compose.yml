@@ -9,6 +9,12 @@ services:
   redis:
     image: "redis"
     container_name: "sbs-redis"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 
   client:
     build: "client"
@@ -28,6 +34,11 @@ services:
     build: "server"
     container_name: "sbs-server"
     restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     links:
       - "db"
       - "redis"
@@ -57,6 +68,12 @@ services:
     image: "docker.io/mariadb:11"
     container_name: "sbs-db"
     restart: "no"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     environment:
       MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-sbs}"
       MARIADB_DATABASE: "sbs"
