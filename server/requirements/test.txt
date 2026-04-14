@@ -11,7 +11,7 @@ hbmqtt2==0.9.7
 mock==5.2.0
 pip-tools==7.5.3
 pipdeptree==2.31.0
-pytest==9.0.2
+pytest==9.0.3
 pytest-cov==7.0.0
 pytest-xdist==3.8.0
 responses==0.26.0
