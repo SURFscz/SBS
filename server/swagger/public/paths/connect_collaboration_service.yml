@@ -38,7 +38,7 @@ parameters:
 
 responses:
   201:
-    description: Conection status
+    description: Connection status
     schema:
       $ref: '/swagger/schemas/CollaborationConnectServiceResponse.yaml'
   401:
