@@ -1905,7 +1905,8 @@ const nl = {
             "tags": "Label",
             "service_tokens": "Applicatietokens (allemaal)",
             "user_nonces": "User nonces",
-            "rate_limits_infos": "Rate limit informatie"
+            "rate_limits_infos": "Rate limit informatie",
+            "ip_networks": "IP networken"
         }
     },
     serviceRequest: {
