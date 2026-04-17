@@ -735,7 +735,9 @@ const en = {
         addSSHKey: "Upload new SSH key",
         addSSHKeyManually: "Add SSH key manually",
         deleteHeader: "Delete your profile",
-        deleteDisclaimer: "Deleting your profile will also remove all your memberships and admin roles. This cannot be reverted."
+        deleteDisclaimer: "Deleting your profile will also remove all your memberships and admin roles. This cannot be reverted.",
+        apple: "Apple",
+        android: "Android"
     },
     collaborations: {
         dashboard: "Dashboard for your collaborations",
