@@ -735,7 +735,9 @@ const nl = {
         addSSHKey: "Upload een SSH-sleutel",
         addSSHKeyManually: "Voeg handmatig een SSH-sleutel toe",
         deleteHeader: "Verwijder je profiel",
-        deleteDisclaimer: "Als je je profiel verwijdert, worden ook al je lidmaatschappen en beheerrollen verwijderd. Dit kan niet ongedaan worden gemaakt."
+        deleteDisclaimer: "Als je je profiel verwijdert, worden ook al je lidmaatschappen en beheerrollen verwijderd. Dit kan niet ongedaan worden gemaakt.",
+        apple: "Apple",
+        android: "Android"
     },
     collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",
