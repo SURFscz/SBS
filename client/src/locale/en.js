@@ -1905,7 +1905,8 @@ const en = {
             "tags": "Label",
             "service_tokens": "Application tokens (any)",
             "user_nonces": "User nonces",
-            "rate_limits_infos": "Rate limit information"
+            "rate_limits_infos": "Rate limit information",
+            "ip_networks": "IP networks"
         }
     },
     serviceRequest: {
