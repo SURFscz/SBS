@@ -1,9 +1,10 @@
+import json
 import logging
 import urllib.parse
 import requests
 
 from functools import wraps
-from typing import Union, List
+from typing import Any, Dict, List, Optional, Union
 
 from server.api.base import application_base_url
 from server.auth.tokens import decrypt_scim_bearer_token
@@ -17,6 +18,47 @@ from server.scim.user_template import create_user_template, update_user_template
 
 # (connect_timeout, read_timeout) — split tuple avoids blocking the single SCIM worker indefinitely
 SCIM_TIMEOUT = (3.05, 15)
+
+# Cap request/response bodies in error logs (replay/debug); avoids huge payloads in log sinks.
+_MAX_SCIM_LOG_BODY = 16384
+_MAX_SCIM_RESP_TEXT = 4096
+
+
+def _redact_headers_for_log(headers: Dict[str, str]) -> Dict[str, str]:
+    out = {}
+    for k, v in headers.items():
+        if k.lower() == "authorization":
+            out[k] = "Bearer <redacted>"
+        else:
+            out[k] = v
+    return out
+
+
+def _request_context_for_log(response: requests.Response) -> Optional[Dict[str, Any]]:
+    """Build a JSON-serializable dict to replay/debug the outbound request (Authorization redacted)."""
+    req = getattr(response, "request", None)
+    if not req:
+        return None
+    ctx: Dict[str, Any] = {
+        "method": (req.method or "").upper(),
+        "url": req.url,
+        "headers": _redact_headers_for_log(dict(req.headers)),
+    }
+    body = req.body
+    if not body:
+        return ctx
+    if isinstance(body, bytes):
+        try:
+            text = body.decode("utf-8")
+        except UnicodeDecodeError:
+            ctx["body"] = f"<binary, {len(body)} bytes>"
+            return ctx
+    else:
+        text = str(body)
+    if len(text) > _MAX_SCIM_LOG_BODY:
+        text = text[:_MAX_SCIM_LOG_BODY] + f"... (truncated, {len(text)} chars total)"
+    ctx["body"] = text
+    return ctx
 
 
 def apply_change(f):
@@ -36,13 +78,47 @@ def apply_change(f):
 
 def _log_scim_error(response, service, outside_user_context, extra_logging):
     logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
-    is_json = response and "json" in response.headers.get("Content-Type", "").lower()
-    scim_json = response.json() if is_json else {}
-
     extra_log_msg = ""
     if extra_logging:
         extra_log_msg = f" ({extra_logging})"
-    logger.error(f"Scim endpoint {service.scim_url}{extra_log_msg} returned error {response.status_code}: {scim_json}")
+
+    if not response:
+        logger.error(
+            "Scim endpoint %s%s: no response (network or client error)",
+            service.scim_url,
+            extra_log_msg,
+        )
+        return
+
+    response_payload: Any
+    ct = (response.headers.get("Content-Type") or "").lower()
+    try:
+        if "json" in ct:
+            response_payload = response.json()
+        else:
+            raw = response.text or ""
+            response_payload = raw[:_MAX_SCIM_RESP_TEXT] if raw else ""
+            if len(raw) > _MAX_SCIM_RESP_TEXT:
+                response_payload = f"{response_payload}... (truncated, {len(raw)} chars total)"
+    except ValueError:
+        raw = (response.text or "")[:_MAX_SCIM_RESP_TEXT]
+        response_payload = {"_note": "response body is not valid JSON", "text": raw}
+
+    req_ctx = _request_context_for_log(response)
+    req_json = json.dumps(req_ctx, ensure_ascii=False) if req_ctx else "{}"
+    if isinstance(response_payload, (dict, list)):
+        resp_log = json.dumps(response_payload, ensure_ascii=False)
+    else:
+        resp_log = response_payload
+
+    logger.error(
+        "Scim endpoint %s%s returned HTTP %s. response_body=%s request_for_replay=%s",
+        service.scim_url,
+        extra_log_msg,
+        response.status_code,
+        resp_log,
+        req_json,
+    )
 
 
 def validate_response(response, service, outside_user_context=False, extra_logging=None):
