@@ -30,4 +30,3 @@ responses:
     description: Unauthorized
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
-˚
