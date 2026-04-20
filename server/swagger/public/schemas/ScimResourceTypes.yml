@@ -3,11 +3,11 @@ type: object
 properties:
   itemsPerPage:
     type: number
-    description: "Number of item per page"
+    description: "Number of items returned per page"
     example: 15
   startIndex:
     type: number
-    description: "Zero-based start index of the result for pagination"
+    description: "Zero-based start index of the page"
     example: 0
   totalResults:
     type: number
@@ -15,11 +15,12 @@ properties:
     example: 15
   schemas:
     type: array
-    description: "SCIM schema's"
+    description: "SCIM schemas"
     items:
       type: string
       example: "urn:ietf:params:scim:api:messages:2.0:ListResponse"
   Resources:
     type: array
+    description: "Resource type definitions in the current page"
     items:
       type: object

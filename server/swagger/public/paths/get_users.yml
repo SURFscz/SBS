@@ -1,5 +1,5 @@
-summary: "Get all users details."
-description: "Retrieves all users that can connect to the service."
+summary: "Get all users."
+description: "Retrieves all users provisioned for the SCIM service."
 
 tags:
   - "SCIM client"
@@ -24,7 +24,7 @@ parameters:
 
 responses:
   200:
-    description: All users
+    description: List of users
     schema:
       $ref: '/swagger/schemas/ScimUserListResult.yaml'
   401:
