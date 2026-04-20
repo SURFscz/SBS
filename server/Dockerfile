@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y libxmlsec1-dev gettext && rm -rf /var/l
 WORKDIR /opt
 
 COPY . server
-RUN pip install --no-cache-dir -r server/requirements/test.txt
+RUN pip install --no-cache-dir -e "./server[test]"
 
 EXPOSE 8080
 
