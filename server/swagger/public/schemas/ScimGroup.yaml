@@ -3,11 +3,11 @@ type: object
 properties:
   id:
     type: string
-    description: "Unique identifier of the user in SRAM"
+    description: "Unique identifier of the group in SRAM"
     example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
   externalId:
     type: string
-    description: "Unique external identifier of the user in SRAM"
+    description: "Unique external identifier of the group in SRAM"
     example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
   name:
     type: string
@@ -25,7 +25,7 @@ properties:
           example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
   schemas:
     type: array
-    description: "SCIM schema's"
+    description: "SCIM schemas"
     items:
       type: string
       example: "urn:scim:schemas:core:1.0"

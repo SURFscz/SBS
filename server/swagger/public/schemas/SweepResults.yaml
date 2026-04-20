@@ -3,7 +3,7 @@ type: object
 properties:
   users:
     type: object
-    description: "All operations performed for Users"
+    description: "Operations performed for users"
     properties:
       deleted:
         type: array
@@ -20,7 +20,7 @@ properties:
             $ref: "/swagger/schemas/ScimUser.yaml"
   groups:
     type: object
-    description: "All operations performed for Groups"
+    description: "Operations performed for groups"
     properties:
       deleted:
         type: array

@@ -48,7 +48,7 @@ properties:
           example: "ssh-rsa AAAAB3NzaC1yc...."
   schemas:
     type: array
-    description: "SCIM schema's"
+    description: "SCIM schemas"
     items:
       type: string
       example: "urn:scim:schemas:core:1.0"

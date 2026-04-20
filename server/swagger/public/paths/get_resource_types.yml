@@ -12,6 +12,6 @@ produces:
 
 responses:
   200:
-    description: All users
+    description: List of SCIM resource types
     schema:
       $ref: "/swagger/schemas/ScimResourceTypes.yml"
