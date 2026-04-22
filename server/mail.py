@@ -559,7 +559,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
     _do_send_mail(
         subject=subject,
         recipients=recipients,
-        template="collaboration_suspension_warning" if is_warning else "collaboration_suspensed_notification",
+        template="collaboration_suspension_warning" if is_warning else "collaboration_suspended_notification",
         context={"salutation": "Dear", "now": format_date_time(now), "collaboration": collaboration,
                  "base_url": current_app.app_config.base_url,
                  "suspension_date": suspension_date},
