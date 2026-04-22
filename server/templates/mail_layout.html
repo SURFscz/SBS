@@ -3,21 +3,23 @@
 <head>
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css" media="screen">
+        {% include "mail.css" %}
+    </style>
     <title>{% block title %}Your template must define a 'title' block{% endblock %}</title>
 </head>
 <body>
-<div class="mail-main" style="font-family: Helvetica, Arial, sans-serif;line-height: 18px;font-size: 14px;color: #353535;">
+<div class="mail-main">
     {% if environment is defined and environment != None and environment != "" %}
-        <div class="environment-header" style="margin: 20px 0; font-weight: bold;font-size: 24px;">
-            <p style="margin: 0">Environment: {{ environment }} </p>
+        <div class="environment-header">
+            <p>Environment: {{ environment }} </p>
         </div>
     {% endif %}
     </div>
     {% block content %}
     Your template must define a 'content' block.
     {% endblock %}
-    <div class="mail-footer"
-         style="padding: 20px 40px 40px 10px;line-height: 22px;">
+    <div class="mail-footer">
         <div class="links">
             Sent by
             <a class="external" href="https://edu.nl/vw3jx">SURF Research Access Management</a>
