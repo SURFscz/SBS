@@ -208,12 +208,6 @@ with app.app_context():
             time.sleep(1)
 
 
-def perform_db_migration(_):
-    db_migrations(config.database.uri)
-
-
-obtain_lock(app, "db_migration", perform_db_migration, lambda: None)
-
 # Register CLI commands
 register_commands(app)
 
