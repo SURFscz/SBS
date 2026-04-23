@@ -25,5 +25,5 @@ ENV LDAP_URL=ldap://ldap.example.com/dc=example,dc=com
 ENV LDAP_BIND=cn=admin,dc=entity_id,dc=services,dc=example,dc=com
 
 CMD [ "/bin/bash", "-c", \
-  "envsubst <${CONFIG_TEMPLATE:-server/config/test_config.yml} >server/${CONFIG}; /usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 --timeout 300 --reload server.__main__:app;" \
+  "set -euo pipefail; mkdir -p \"server/$(dirname \"${CONFIG}\")\"; envsubst <\"${CONFIG_TEMPLATE:-server/config/test_config.yml}\" >\"server/${CONFIG}\"; PYTHONPATH=/opt python -m server.run_migrations; exec /usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 --timeout 300 --reload server.__main__:app" \
   ]

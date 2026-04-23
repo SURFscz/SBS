@@ -39,7 +39,8 @@ export default defineConfig({
     },
     server: {
       port: 3000,
-      open: true,
+      // Avoid xdg-open in Docker/CI; use `yarn dev -- --open` locally if you want a browser.
+      open: false,
       allowedHosts: true,
       proxy: {
         '/api': {
@@ -61,8 +62,8 @@ export default defineConfig({
             scss: {
                 additionalData: '@use "vars" as *;\n',
                 loadPaths: [path.resolve(__dirname, 'src/stylesheets')],
-                // ToDo fix?
-                silenceDeprecations: ["mixed-decls", "global-builtin", "color-functions"],
+                // mixed-decls silencing removed: obsolete in dart-sass and triggers noisy warnings.
+                silenceDeprecations: ["global-builtin", "color-functions"],
             },
         },
     },

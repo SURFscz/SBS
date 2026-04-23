@@ -62,7 +62,7 @@ from server.api.user_login_eb import user_login_eb
 from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
-from server.db.db import db, db_migrations
+from server.db.db import db
 from server.db.executor import init_executor
 from server.db.redis import init_redis
 from server.logger.traceback_info_filter import TracebackInfoFilter
@@ -208,11 +208,51 @@ with app.app_context():
             time.sleep(1)
 
 
-def perform_db_migration(_):
-    db_migrations(config.database.uri)
+def ensure_db_migrated():
+    """Block until migrations have run for this process.
+
+    Migrations run in a subprocess (no eventlet monkey_patch). Coordination uses a file
+    lock, not MySQL GET_LOCK: holding a pooled DB connection for the whole migration
+    while other workers block in GET_LOCK exhausts the pool and deadlocks startup.
+    """
+    import subprocess
+
+    log = logging.getLogger("main")
+    server_dir = os.path.dirname(os.path.realpath(__file__))
+    repo_root = os.path.dirname(server_dir)
+    env = os.environ.copy()
+    env["DATABASE_URI"] = config.database.uri
+    pp = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = repo_root if not pp else f"{repo_root}{os.pathsep}{pp}"
+
+    def _migrate() -> None:
+        log.info("Applying database migrations (subprocess)")
+        subprocess.run(
+            [sys.executable, "-m", "server.run_migrations"],
+            cwd=repo_root,
+            env=env,
+            check=True,
+        )
+        log.info("Database migrations finished")
+
+    try:
+        import fcntl
+    except ImportError:
+        fcntl = None
+
+    if fcntl is not None:
+        lock_path = os.path.join(server_dir, ".db_migration.lock")
+        with open(lock_path, "a+", encoding="utf-8") as lock_f:
+            fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)
+            try:
+                _migrate()
+            finally:
+                fcntl.flock(lock_f.fileno(), fcntl.LOCK_UN)
+    else:
+        _migrate()
 
 
-obtain_lock(app, "db_migration", perform_db_migration, lambda: None)
+ensure_db_migrated()
 
 # Register CLI commands
 register_commands(app)

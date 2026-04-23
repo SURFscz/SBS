@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 cd /opt/app/client
 yarn
-PORT=8080 yarn start
+exec yarn dev --host 0.0.0.0 --port 8080

@@ -10,7 +10,14 @@ from server.db.domain import Service, Group, User, Collaboration
 from server.scim import SCIM_GROUPS
 from server.scim.group_template import create_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service
-from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
+from server.scim.sweep import (
+    perform_sweep,
+    _all_remote_scim_objects,
+    _group_changed,
+    _user_changed,
+    _index_remote_groups,
+    _lookup_remote_group,
+)
 from server.scim.schema_template import get_scim_schema_sram_group
 from server.scim.user_template import create_user_template, find_user_by_id_template
 
@@ -228,3 +235,30 @@ class TestSweep(AbstractTest):
         user.suspended = False
         user.ssh_keys = []
         self.assertTrue(_user_changed(user, remote_user))
+
+    def test_index_remote_groups_lookup_by_display_without_external_id(self):
+        """Keycloak-style groups often have no externalId; lookup must use displayName, not collapse on ''."""
+        group = self.find_entity_by_name(Group, group_ai_researchers)
+        remote_list = [
+            {"displayName": group.name, "id": "only-scim-id", "members": []},
+            {"displayName": "other", "id": "2", "members": []},
+        ]
+        by_ext, by_disp = _index_remote_groups(remote_list)
+        self.assertEqual(len(by_ext), 0)
+        self.assertEqual(len(by_disp), 2)
+        found = _lookup_remote_group(group, by_ext, by_disp)
+        self.assertIsNotNone(found)
+        self.assertEqual(found["id"], "only-scim-id")
+
+    def test_user_changed_sparse_keycloak_style_get(self):
+        """GET responses that omit certs and structured name (Keycloak) must not force endless PUTs."""
+        user = self.find_entity_by_name(User, user_john_name)
+        remote_user = {
+            "userName": user.username,
+            "name": {"givenName": "", "familyName": ""},
+            "displayName": user.name,
+            "active": not user.suspended,
+            "emails": [{"primary": True, "value": user.email}],
+            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+        }
+        self.assertFalse(_user_changed(user, remote_user))
