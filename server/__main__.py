@@ -62,7 +62,7 @@ from server.api.user_login_eb import user_login_eb
 from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
-from server.db.db import db, db_migrations
+from server.db.db import db
 from server.db.executor import init_executor
 from server.db.redis import init_redis
 from server.logger.traceback_info_filter import TracebackInfoFilter
@@ -206,13 +206,6 @@ with app.app_context():
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
-
-
-def perform_db_migration(_):
-    db_migrations(config.database.uri)
-
-
-obtain_lock(app, "db_migration", perform_db_migration, lambda: None)
 
 # Register CLI commands
 register_commands(app)
