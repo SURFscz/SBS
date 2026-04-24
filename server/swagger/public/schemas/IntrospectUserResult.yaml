@@ -58,11 +58,16 @@ properties:
         type: string
         example: "jdoe@example.com"
       voperson_external_affiliation:
-        type: string
+        type:
+          - string
+          - "null"
         example: "student"
       uid:
         type: string
         example: "7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org"
+      username:
+        type: string
+        example: "jdoe11"
       eduperson_entitlement:
         type: array
         description: "All the public SSH keys"

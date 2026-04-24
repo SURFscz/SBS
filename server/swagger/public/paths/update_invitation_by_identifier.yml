@@ -37,7 +37,7 @@ parameters:
       $ref: '/swagger/schemas/InvitationPatch.yaml'
 
 responses:
-  200:
+  201:
     description: Invitation details
     schema:
       $ref: '/swagger/schemas/InvitationDetail.yaml'

@@ -47,9 +47,7 @@ responses:
   200:
     description: Organisation
     schema:
-      type: array
-      items:
-        $ref: '/swagger/schemas/OrganisationDetail.yaml'
+      $ref: '/swagger/schemas/OrganisationDetail.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'

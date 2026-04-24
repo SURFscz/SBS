@@ -31,7 +31,7 @@ parameters:
       example: "301ee8e6-b5d1-40b5-a27e-47611f803371"
 
 responses:
-  200:
+  201:
     description: Invitation details including new expiry date
     schema:
       $ref: '/swagger/schemas/InvitationDetail.yaml'

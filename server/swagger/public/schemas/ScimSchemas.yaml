@@ -24,3 +24,4 @@ properties:
     description: "Schema resources in the current page"
     items:
       type: object
+      additionalProperties: true

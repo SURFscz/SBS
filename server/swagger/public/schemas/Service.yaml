@@ -86,3 +86,101 @@ properties:
     type: string
     description: "UID of the user who updated this"
     example: "urn:admin"
+  uri:
+    type: string
+    example: "https://service.cloud.example.com"
+  uri_info:
+    type:
+      - string
+      - "null"
+    example: "More info"
+  grants:
+    type: array
+    items:
+      type: string
+  redirect_urls:
+    type: array
+    items:
+      type: string
+  organisation_name:
+    type: string
+    example: "University of Harderwijk"
+  providing_organisation:
+    type: string
+    example: "SURF"
+  ldap_enabled:
+    type: boolean
+    example: false
+  ldap_identifier:
+    type: string
+    example: "ldap_id"
+  ldap_password:
+    type: string
+    example: ""
+  saml_enabled:
+    type: boolean
+    example: false
+  oidc_enabled:
+    type: boolean
+    example: false
+  oidc_client_secret:
+    type: string
+    example: ""
+  is_public_client:
+    type: boolean
+    example: false
+  acs_locations:
+    type: array
+    items:
+      type: string
+  connection_setting:
+    type: string
+    example: "on_request"
+  pam_web_sso_enabled:
+    type: boolean
+    example: true
+  scim_enabled:
+    type: boolean
+    example: false
+  scim_url:
+    type: string
+    example: "https://scim.example.com"
+  scim_bearer_token:
+    type: string
+    example: ""
+  scim_client_enabled:
+    type: boolean
+    example: false
+  sweep_scim_enabled:
+    type: boolean
+    example: false
+  sweep_scim_daily_rate:
+    type: number
+    example: 0
+  sweep_scim_last_run:
+    type: number
+    example: 0
+  sweep_remove_orphans:
+    type: boolean
+    example: false
+  exported_at:
+    type: number
+    example: 0
+  export_successful:
+    type: boolean
+    example: false
+  export_external_identifier:
+    type: string
+    example: ""
+  export_external_version:
+    type: string
+    example: ""
+  support_email_unauthorized_users:
+    type: string
+    example: ""
+  crm_organisation_id:
+    type: string
+    example: ""
+  access_allowed_for_crm_organisation:
+    type: boolean
+    example: false

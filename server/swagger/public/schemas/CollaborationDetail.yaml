@@ -74,6 +74,19 @@ properties:
     type: string
     description: "UID of the user who updated this"
     example: "urn:admin"
+  updated_at:
+    type: number
+    description: "The date of the last update in epoch seconds"
+    example: 1644015600
+  accepted_user_policy:
+    type: string
+    format: uri
+    example: "https://aup.example.com"
+  support_email:
+    type:
+      - string
+      - "null"
+    example: "support@example.com"
   collaboration_memberships_count:
     type: number
     description: "The number of memberships e.g. 0"

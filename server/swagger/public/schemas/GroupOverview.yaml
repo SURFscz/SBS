@@ -47,4 +47,4 @@ properties:
     type: array
     description: "Identifiers (e.g. id) of the users that are member of this group"
     items:
-      type: int
+      type: integer
