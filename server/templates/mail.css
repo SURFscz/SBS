@@ -1,18 +1,97 @@
+div.environment-header {
+    margin: 20px 0;
+    font-weight: bold;
+    font-size: 24px;
+}
+
 div.mail-main {
     font-family: Helvetica, Arial, sans-serif;
     line-height: 18px;
     font-size: 14px;
     color: #353535;
 }
-div.environment-header {
-    margin: 20px 0;
-    font-weight: bold;
-    font-size: 24px;
+
+div.mail-head {
+    background-color: #f5f5f5;
+    padding: 30px 0 20px 60px;
+
+    p.title {
+        font-weight: 600;
+        font-size: 38px;
+        line-height: 42px;
+        margin: 0;
+    }
+
+    p.mail-subtitle {
+        font-weight: 300;
+        font-size: 26px;
+        line-height: 30px;
+        margin: 0.6em;
+    }
+
+    p.mail-subtitle-small {
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 22px;
+        margin: 0.6em;
+    }
+
+    div.mail-subtitle {
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 22px;
+        margin: 1em 0.6em;
+        max-width: 800px;
+        font-style: italic;
+        border-bottom: 3px solid #f5f5f5;
+    }
+}
+
+
+div.mail-middle {
+    padding: 40px 0 40px 60px;
+    max-width: 800px;
+
+    &.mail-middle-border {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+    }
+
+    &.mail-message {
+        font-style: italic;
+    }
+    
+}
+
+div.mail-end {
+    padding: 30px 0 0 60px;
+    background-color: white;
+    
+    &.mail-end-border {
+        border-top: 3px solid #f5f5f5;
+        width: 100%;
+    }
+}
+
+div.mail-footer {
+    padding: 20px 40px 40px 10px;
+    line-height: 22px;
+}
+
+div.environment-header div.mail-subtitle div.mail-middle div.mail-end {
     p {
         margin: 0;
     }
 }
-div.mail-footer {
-    padding: 20px 40px 40px 10px;
-    line-height: 22px;
+
+a.button {
+    border-radius: 4px;
+    color: white;
+    background-color: #0077c8;
+    text-decoration: none;
+    display: inline-block;
+    margin: 15px 0;
+    cursor: pointer;
+    padding: 14px 26px;
+    font-size: 18px;
 }

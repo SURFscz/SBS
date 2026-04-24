@@ -2,8 +2,8 @@
 {% block title %}SURF collaboration invite{% endblock %}
 {% block content %}
 
-    <div class="mail-head" style="padding: 30px 0 20px 10px;">
-        <p class="title" style="font-weight: 400;font-size: 30px;line-height: 42px; margin: 0;">
+    <div class="mail-head">
+        <p class="title">
         {% if reminder is not defined or reminder == False %}
             {% if invitation.intended_role == "member" %}
             You have been invited by <strong>{{ sender_name }}</strong> to join a collaboration page.
@@ -23,8 +23,7 @@
         </p>
     </div>
 
-    <div class="mail-middle"
-         style="padding: 40px 0 40px 60px;max-width: 800px;border: 1px solid #e0e0e0;border-radius: 6px">
+    <div class="mail-middle mail-middle-border">
         {% if message is defined and message != None and message|length %}
             <p style="white-space: pre-line;margin: 0 0 25px 0;font-style: italic">
                 {{ message | safe }}
@@ -32,7 +31,7 @@
         {% endif %}
         <div style="display: flex">
             <img style="height: 200px;width: auto;border-radius: 8px;"
-                 id="<logo>" src="cid:logo" alt="{{ collaboration.name }}" apple-inline="yes" class="Apple-web-attachment Singleton">
+                 id="logo" src="cid:logo" alt="{{ collaboration.name }}" apple-inline="yes" class="Apple-web-attachment Singleton">
 
             <div style="display: inline-block; margin-left: 25px;">
                 <p style="font-weight: bold;margin: 0 0 10px 0;font-size: 24px; line-height: 28px; display: block">
@@ -41,8 +40,7 @@
                 <p style="margin: 0 0 10px 0;font-size: 18px; line-height: 22px; display: block">
                     {{ collaboration.description }}</p>
                 <div style="margin-bottom: auto">
-                    <a class="button" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
-                       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 0;cursor:pointer;padding: 18px 22px;font-size: 20px;max-width: 200px;">
+                    <a class="button" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}" style="max-width: 200px;">
                         Join this collaboration</a>
                     <p style="font-size: 13px;margin: 8px 0 0 0">Or use this link:
                         <a href="{{ base_url }}/invitations/accept/{{ invitation.hash }}">{{ base_url }}/invitations/accept</a>
@@ -62,8 +60,8 @@
     </div>
     {% endif %}
 
-    <div class="mail-end" style="padding-top: 30px;margin-left: 10px;width: 100%">
-        <p style="margin: 0;">
+    <div class="mail-end mail-end-border">
+        <p>
             If you need help with enrollment, please refer to the
             <a class="external" href="https://edu.nl/pdqdr">documentation</a>.
         </p>
