@@ -195,7 +195,7 @@ jobs:
           tar tvJf /tmp/sbs.tar.xz
 
       - name: Create Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
@@ -268,7 +268,7 @@ jobs:
           find "${{ runner.temp }}/digests/${{ matrix.image }}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "digests__${{ matrix.image }}__${{ matrix.arch }}"
           path: "${{ runner.temp }}/digests/**/*"
