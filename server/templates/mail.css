@@ -1,20 +1,18 @@
-div {
-    & .mail-main {
-        font-family: Helvetica, Arial, sans-serif;
-        line-height: 18px;
-        font-size: 14px;
-        color: #353535;
+div.mail-main {
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 18px;
+    font-size: 14px;
+    color: #353535;
+}
+div.environment-header {
+    margin: 20px 0;
+    font-weight: bold;
+    font-size: 24px;
+    p {
+        margin: 0;
     }
-    & .environment-header {
-        margin: 20px 0;
-        font-weight: bold;
-        font-size: 24px;
-        & p {
-            margin: 0;
-        }
-    }
-    & .mail-footer {
-        padding: 20px 40px 40px 10px;
-        line-height: 22px;
-    }
+}
+div.mail-footer {
+    padding: 20px 40px 40px 10px;
+    line-height: 22px;
 }
