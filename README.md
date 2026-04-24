@@ -37,15 +37,6 @@ DROP DATABASE IF EXISTS sbs_test;
 CREATE DATABASE sbs_test CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
 CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
 GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
-
-
-
-DROP DATABASE IF EXISTS sbs;
-CREATE DATABASE sbs CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
-DROP DATABASE IF EXISTS sbs_test;
-CREATE DATABASE sbs_test CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
-CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
-GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 ```
 
@@ -69,6 +60,14 @@ Now you can start the server from the project root (so outside the server folder
 
 ```bash
 PROFILE=local ALLOW_MOCK_USER_API=1 CONFIG=config/config.yml python -m server
+```
+
+#### [DB migrations](#migrations)
+
+If there are unapplied DB migrations, then the DB migrations can be run with the following command 
+
+```bash
+sh ./db_migrate.sh
 ```
 
 With TESTING=1 no mails will be sent. If you do want to validate the mails you can run a fake smtp server with:
