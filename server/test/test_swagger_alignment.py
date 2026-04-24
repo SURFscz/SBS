@@ -18,7 +18,6 @@ import re
 
 import yaml
 from jsonschema import validate, ValidationError, SchemaError
-from jsonschema import Draft4Validator
 
 from server.db.db import db
 from server.db.domain import Invitation, User
@@ -30,7 +29,6 @@ from server.test.seed import (
     group_ai_researchers_identifier,
     service_storage_token,
     service_network_token,
-    service_wiki_token,
     pam_session_id,
     user_sarah_user_token_network,
 )
@@ -146,11 +144,11 @@ def _find_swag_from_endpoints():
             for decorator in node.decorator_list:
                 # Match @swag_from("some/path.yml")
                 if (
-                    isinstance(decorator, ast.Call)
-                    and isinstance(decorator.func, ast.Name)
-                    and decorator.func.id == "swag_from"
-                    and decorator.args
-                    and isinstance(decorator.args[0], ast.Constant)
+                        isinstance(decorator, ast.Call)
+                        and isinstance(decorator.func, ast.Name)
+                        and decorator.func.id == "swag_from"
+                        and decorator.args
+                        and isinstance(decorator.args[0], ast.Constant)
                 ):
                     rel_yaml = decorator.args[0].value
                     # Resolve relative to the source file's directory
@@ -341,7 +339,6 @@ _REQUEST_BODIES = {
     "sweep": {},
 }
 
-
 # ---------------------------------------------------------------------------
 # Endpoints to skip (require live external services or are otherwise untestable
 # in the unit-test environment)
@@ -386,8 +383,6 @@ class TestSwaggerDocumentationAlignment(AbstractTest):
     # ------------------------------------------------------------------
 
     def _auth_header(self, secret):
-        from base64 import b64encode
-        token = b64encode(f"Bearer {secret}".encode()).decode()
         return {"Authorization": f"bearer {secret}"}
 
     def _call_organisation_endpoint(self, method, url, function_name):
@@ -597,9 +592,9 @@ class TestSwaggerDocumentationAlignment(AbstractTest):
 
         if failures:
             report = (
-                f"\n{len(failures)} swagger alignment failure(s):\n"
-                + "\n".join(f"\n--- Failure {i + 1} ---\n{f}"
-                            for i, f in enumerate(failures))
+                    f"\n{len(failures)} swagger alignment failure(s):\n"
+                    + "\n".join(f"\n--- Failure {i + 1} ---\n{f}"
+                                for i, f in enumerate(failures))
             )
             self.fail(report)
 
