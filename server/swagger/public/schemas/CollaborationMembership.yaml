@@ -1,14 +1,15 @@
 ---
 type: object
-additionalProperties: true
 properties:
   id:
     type: number
     readOnly: true
     example: 999
+  user_id:
+    type: number
+    example: 999
   collaboration_id:
     type: number
-    readOnly: true
     example: 999
   role:
     type: string
@@ -16,12 +17,24 @@ properties:
   status:
     type: string
     example: "active"
+  invitation_id:
+    type:
+      - number
+      - "null"
+    example: 1
   expiry_date:
-    type: number
+    type:
+      - number
+      - "null"
+    description: "Membership expiry timestamp in epoch seconds"
     example: 1642781077
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
+    example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
     example: 1644015600
   created_by:
     type: string

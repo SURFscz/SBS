@@ -5,6 +5,10 @@ properties:
     type: number
     readOnly: true
     example: 888
+  entity_id:
+    type: string
+    format: url
+    example: "https://service.cloud.example.com"
   name:
     type: string
     example: "Cloud research service"
@@ -12,71 +16,256 @@ properties:
     type: string
     example: "cloud"
   description:
-    type: string
-    example: "A cloud research service, configured to mainly research cumulus formations."
-  entity_id:
-    type: string
-    format: url
+    type:
+      - string
+      - "null"
+    example: "A cloud research service."
+  uri:
+    type:
+      - string
+      - "null"
     example: "https://service.cloud.example.com"
+  uri_info:
+    type:
+      - string
+      - "null"
+    example: "More info"
+  accepted_user_policy:
+    type:
+      - string
+      - "null"
+    format: uri
+    example: "https://service.cloud.example.com/aup"
+  privacy_policy:
+    type:
+      - string
+      - "null"
+    format: uri
+    example: "https://service.cloud.example.com/privacy"
   contact_email:
-    type: string
+    type:
+      - string
+      - "null"
     example: "jdoe@cloud.example.com"
   security_email:
-    type: string
+    type:
+      - string
+      - "null"
     example: "jdoe@cloud.example.com"
   support_email:
-    type: string
+    type:
+      - string
+      - "null"
     example: "jdoe@cloud.example.com"
+  logo:
+    type:
+      - string
+      - "null"
+    description: "Base64 encoded logo or URL"
+    example: "http://sram.surf.nl/api/images/services/b7f621e3"
   uuid4:
     type: string
     format: uuid
     readOnly: true
-    description: "Unique generated uuid for the cached image"
     example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
   access_allowed_for_all:
-    type: boolean
+    type:
+      - boolean
+      - "null"
     description: "If true all collaborations can use this service"
-    example: true
+    example: false
   automatic_connection_allowed:
-    type: boolean
-    description: "If true all collaborations can connect to this service"
+    type:
+      - boolean
+      - "null"
+    description: "If true all collaborations can connect to this service without approval"
     example: true
   non_member_users_access_allowed:
-    type: boolean
-    description: "If true then non collaboration members can access this service"
-    example: true
+    type:
+      - boolean
+      - "null"
+    description: "If true non collaboration members can access this service"
+    example: false
   override_access_allowed_all_connections:
-    type: boolean
-    description: "If true in combination access_allowed_for_all equals true then connections need to be requested"
-    example: true
-  token_enabled:
-    type: boolean
-    description: "If true then tokens can be created for users"
-    example: true
+    type:
+      - boolean
+      - "null"
+    description: "If true in combination with access_allowed_for_all, connections need to be requested"
+    example: false
   allow_restricted_orgs:
-    type: boolean
-    description: "If true, this service is allowed to be connected to collaborations of restricted organisations"
-    example: true
+    type:
+      - boolean
+      - "null"
+    description: "If true this service is allowed to be connected to collaborations of restricted organisations"
+    example: false
+  token_enabled:
+    type:
+      - boolean
+      - "null"
+    description: "If true tokens can be created for users"
+    example: false
   token_validity_days:
-    type: number
-    description: "Tokens validity in days"
+    type:
+      - number
+      - "null"
+    description: "Token validity in days"
     example: 30
-  accepted_user_policy:
+  pam_web_sso_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  ldap_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  ldap_identifier:
     type: string
-    format: uri
-    example: "https://service.cloud.example.com/aup"
-  privacy_policy:
-    type: string
-    format: uri
-    example: "https://service.cloud.example.com/privacy"
-  logo:
-    type: string
-    format: uri
-    descriotion: "URL for the logo"
-    example: "http://sram.surf.nl/api/images/collaborations/b7f621e3-de98-4de4-aca0-1573f4eb8339"
+    example: "ldap_id"
+  ldap_password:
+    type:
+      - string
+      - "null"
+    example: ""
+  saml_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  acs_locations:
+    type:
+      - string
+      - "null"
+    description: "Comma-separated ACS locations"
+    example: "https://sp.example.com/acs"
+  oidc_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  oidc_client_secret:
+    type:
+      - string
+      - "null"
+    example: ""
+  is_public_client:
+    type:
+      - boolean
+      - "null"
+    example: false
+  grants:
+    type:
+      - string
+      - "null"
+    description: "Comma-separated OIDC grant types"
+    example: "authorization_code, refresh_token"
+  redirect_urls:
+    type:
+      - string
+      - "null"
+    description: "Comma-separated redirect URLs"
+    example: "https://redirect.com/url1,https://redirect.com/url2"
+  connection_setting:
+    type:
+      - string
+      - "null"
+    example: "on_request"
+  scim_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  scim_url:
+    type:
+      - string
+      - "null"
+    example: "https://scim.example.com"
+  scim_bearer_token:
+    type:
+      - string
+      - "null"
+    example: ""
+  scim_client_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  sweep_scim_enabled:
+    type:
+      - boolean
+      - "null"
+    example: false
+  sweep_scim_daily_rate:
+    type:
+      - number
+      - "null"
+    example: 1
+  sweep_scim_last_run:
+    type:
+      - number
+      - "null"
+    description: "Last SCIM sweep run timestamp in epoch seconds"
+    example: 0
+  sweep_remove_orphans:
+    type:
+      - boolean
+      - "null"
+    example: false
+  export_successful:
+    type:
+      - boolean
+      - "null"
+    example: false
+  exported_at:
+    type:
+      - number
+      - "null"
+    description: "Export timestamp in epoch seconds"
+    example: 0
+  export_external_identifier:
+    type:
+      - string
+      - "null"
+    example: ""
+  export_external_version:
+    type:
+      - number
+      - "null"
+    example: 1
+  crm_organisation_id:
+    type:
+      - number
+      - "null"
+    example: 1
+  support_email_unauthorized_users:
+    type:
+      - boolean
+      - "null"
+    example: false
+  access_allowed_for_crm_organisation:
+    type:
+      - boolean
+      - "null"
+    example: false
+  providing_organisation:
+    type:
+      - string
+      - "null"
+    example: "SURF"
+  organisation_name:
+    type:
+      - string
+      - "null"
+    description: "Name of the organisation that owns this service (computed)"
+    example: "University of Harderwijk"
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
+    example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
     example: 1644015600
   created_by:
     type: string
@@ -86,101 +275,3 @@ properties:
     type: string
     description: "UID of the user who updated this"
     example: "urn:admin"
-  uri:
-    type: string
-    example: "https://service.cloud.example.com"
-  uri_info:
-    type:
-      - string
-      - "null"
-    example: "More info"
-  grants:
-    type: array
-    items:
-      type: string
-  redirect_urls:
-    type: array
-    items:
-      type: string
-  organisation_name:
-    type: string
-    example: "University of Harderwijk"
-  providing_organisation:
-    type: string
-    example: "SURF"
-  ldap_enabled:
-    type: boolean
-    example: false
-  ldap_identifier:
-    type: string
-    example: "ldap_id"
-  ldap_password:
-    type: string
-    example: ""
-  saml_enabled:
-    type: boolean
-    example: false
-  oidc_enabled:
-    type: boolean
-    example: false
-  oidc_client_secret:
-    type: string
-    example: ""
-  is_public_client:
-    type: boolean
-    example: false
-  acs_locations:
-    type: array
-    items:
-      type: string
-  connection_setting:
-    type: string
-    example: "on_request"
-  pam_web_sso_enabled:
-    type: boolean
-    example: true
-  scim_enabled:
-    type: boolean
-    example: false
-  scim_url:
-    type: string
-    example: "https://scim.example.com"
-  scim_bearer_token:
-    type: string
-    example: ""
-  scim_client_enabled:
-    type: boolean
-    example: false
-  sweep_scim_enabled:
-    type: boolean
-    example: false
-  sweep_scim_daily_rate:
-    type: number
-    example: 0
-  sweep_scim_last_run:
-    type: number
-    example: 0
-  sweep_remove_orphans:
-    type: boolean
-    example: false
-  exported_at:
-    type: number
-    example: 0
-  export_successful:
-    type: boolean
-    example: false
-  export_external_identifier:
-    type: string
-    example: ""
-  export_external_version:
-    type: string
-    example: ""
-  support_email_unauthorized_users:
-    type: string
-    example: ""
-  crm_organisation_id:
-    type: string
-    example: ""
-  access_allowed_for_crm_organisation:
-    type: boolean
-    example: false

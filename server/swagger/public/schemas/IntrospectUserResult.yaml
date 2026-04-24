@@ -40,10 +40,14 @@ properties:
         type: string
         example: "John Doe"
       given_name:
-        type: string
+        type:
+          - string
+          - "null"
         example: "John"
       family_name:
-        type: string
+        type:
+          - string
+          - "null"
         example: "Doe"
       email:
         type: string

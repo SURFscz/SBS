@@ -5,14 +5,24 @@ properties:
     type: number
     readOnly: true
     example: 999
-  ssh_name:
+  ssh_value:
     type: string
-    description: "Public SSH key"
-    example: "ssh-rsa AAAAB3NzaC1yc2EAA"
+    description: "The full public SSH key value"
+    example: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
   user_id:
     type: number
     example: 999
+  name:
+    type:
+      - string
+      - "null"
+    description: "Optional label for this SSH key"
+    example: "my-laptop"
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
+    example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
     example: 1644015600
