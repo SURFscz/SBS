@@ -143,6 +143,7 @@ class TestCaseDefaults(TestCase):
         self.assertTrue(valid_tag_label("just_valid-234567890123456789012"))
         self.assertTrue(valid_tag_label("a1234567890123456789012345678901"))
 
+        self.assertFalse(valid_tag_label(None))
         self.assertFalse(valid_tag_label("123456789012345678901234567890123"))
         self.assertFalse(valid_tag_label("123_valid"))
         self.assertFalse(valid_tag_label("Tag_uuc"))
@@ -152,4 +153,5 @@ class TestCaseDefaults(TestCase):
 
     def test_invalid_tag_labels(self):
         self.assertListEqual([], invalid_tag_labels(["tag_uuc", "tag_uuc_2"]))
+        self.assertListEqual([None], invalid_tag_labels([None]))
         self.assertListEqual(["123_valid", "tag value"], invalid_tag_labels(["tag_uuc", "123_valid", "tag value"]))

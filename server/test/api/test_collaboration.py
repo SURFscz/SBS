@@ -4,6 +4,7 @@ import json
 import time
 
 from flask import jsonify
+from werkzeug.exceptions import HTTPException
 
 from server.api.collaboration import generate_short_name, _normalize_tag_values, _validate_tag_request
 from server.db.db import db
@@ -28,9 +29,16 @@ class TestCollaboration(AbstractTest):
             ["tag_uuc", "new_tag"],
             _normalize_tag_values([{"tag_value": "tag_uuc", "id": 1}, "new_tag"])
         )
+        self.assertListEqual([None], _normalize_tag_values([{"id": 1}]))
 
     def test_validate_tag_request_valid(self):
         self.assertIsNone(_validate_tag_request(["tag_uuc", "tag_uuc_2", "project-a"], "collaboration labels"))
+
+    def test_validate_tag_request_invalid(self):
+        with self.assertRaises(HTTPException) as context:
+            _validate_tag_request(["tag_uuc", "123_invalid"], "collaboration labels")
+        self.assertIn("Invalid collaboration labels", context.exception.description)
+        self.assertIn("123_invalid", context.exception.description)
 
     def _find_by_identifier(self, with_basic_auth=True):
         return self.get("/api/collaborations/find_by_identifier",
