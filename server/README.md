@@ -1,4 +1,21 @@
+## CLI Commands
+
+### db-migrate
+
+Runs database migrations using Alembic. This applies any pending schema migrations to the database
+configured in the application config. Use this command to bring the database schema up to date
+after deploying a new version of the application.
+
+```
+$ FLASK_APP='__main__.py' flask db-migrate
+Running database migrations...
+Database migrations completed successfully!
+```
+
+### stress-seed
+
 Sample CLI invocation:
+
 ```
 $ FLASK_APP='__main__.py' flask stress-seed --help
 INFO:main:Initialize server with profile local

@@ -12,6 +12,6 @@ produces:
 
 responses:
     200:
-        description: All users
+        description: List of SCIM schemas
         schema:
             $ref: "/swagger/schemas/ScimSchemas.yaml"

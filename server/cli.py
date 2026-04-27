@@ -83,3 +83,16 @@ def register_commands(app):
             click.echo("Demo data seeded successfully!")
         except Exception as e:
             click.echo(f"Error during demo seed: {str(e)}")
+
+    @app.cli.command("db-migrate")
+    @with_appcontext
+    def db_migrate_command():
+        """Run database migrations"""
+        from server.db.db import db_migrations
+
+        click.echo("Running database migrations...")
+        try:
+            db_migrations(app.app_config.database.uri)
+            click.echo("Database migrations completed successfully!")
+        except Exception as e:
+            click.echo(f"Error during database migrations: {str(e)}")

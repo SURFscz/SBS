@@ -1,5 +1,5 @@
-summary: "Get all group details."
-description: "Retrieves all groups that are linked to the service."
+summary: "Get all groups."
+description: "Retrieves all groups provisioned for the SCIM service."
 
 tags:
   - "SCIM client"
@@ -18,15 +18,15 @@ parameters:
     in: header
     description: Bearer SCIM service token
     required: true
-    schema:
-      type: string
-      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+    type: string
+    example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
 
 responses:
   200:
-    description: All groups
+    description: List of groups
     schema:
       $ref: '/swagger/schemas/ScimGroupListResult.yaml'
   401:
+    description: Unauthorized
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
