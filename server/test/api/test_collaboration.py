@@ -321,7 +321,8 @@ class TestCollaboration(AbstractTest):
         service = service_connection_requests[0]["service"]
         self.assertEqual("help@ssh.com", service["contact_email"])
         self.assertEqual(1, len(service["service_memberships"]))
-        self.assertEqual("betty@example.org", service["service_memberships"][0]["user"]["email"])
+        self.assertEqual(["betty@uuc.org"],
+                         [membership["user"]["email"] for membership in service["service_memberships"]])
 
     def test_collaboration_by_id_api_call(self):
         collaboration_id = self._find_by_identifier()["id"]
