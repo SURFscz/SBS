@@ -505,7 +505,9 @@ def collaboration_by_id(collaboration_id):
                  .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.tags)) \
         .options(selectinload(Collaboration.service_connection_requests)
-                 .selectinload(ServiceConnectionRequest.service)) \
+                 .selectinload(ServiceConnectionRequest.service)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.service_connection_requests)
                  .selectinload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
