@@ -141,8 +141,11 @@ class TestCaseDefaults(TestCase):
     def test_valid_tag_label(self):
         self.assertTrue(valid_tag_label("tag_uuc"))
         self.assertTrue(valid_tag_label("just_valid-234567890123456789012"))
-        self.assertTrue(valid_tag_label("123_valid"))
-        self.assertTrue(valid_tag_label("🌹"))
+        self.assertTrue(valid_tag_label("a1234567890123456789012345678901"))
 
         self.assertFalse(valid_tag_label("123456789012345678901234567890123"))
+        self.assertFalse(valid_tag_label("123_valid"))
+        self.assertFalse(valid_tag_label("Tag_uuc"))
+        self.assertFalse(valid_tag_label("tag value"))
+        self.assertFalse(valid_tag_label("🌹"))
         self.assertFalse(valid_tag_label(" "))

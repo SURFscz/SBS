@@ -591,3 +591,15 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(6, len(tags))
         self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan", "tag_ufra", "tag_uuc_2"]),
                              sorted([tag.tag_value for tag in tags]))
+
+    def test_organisation_update_invalid_default_tags(self):
+        self.login()
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        tags = [tag for tag in organisation["tags"] if tag["is_default"]]
+        tags[0]["tag_value"] = "123_invalid"
+        organisation["tags"] = tags
+
+        res = self.put("/api/organisations", body=organisation, response_status_code=400)
+        self.assertIn("Invalid organisation default labels", res["message"])
+        self.assertIn("123_invalid", res["message"])

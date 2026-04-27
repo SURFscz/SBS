@@ -11,7 +11,7 @@ import "./OrganisationOverview.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../../utils/Flash";
-import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../validations/regExps";
+import {sanitizeShortName, validSchacHomeRegExp, validTagName, validUrlRegExp} from "../../validations/regExps";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";
@@ -81,6 +81,15 @@ class OrganisationOverview extends React.Component {
     }
 
     existingOrganisationAttribute = attr => this.props.organisation[attr];
+
+    hasInvalidDefaultTags = (organisation = this.state.organisation) => {
+        if (!organisation) {
+            return false;
+        }
+        return organisation.tags
+            .filter(tag => tag.is_default)
+            .some(tag => !isEmpty(tag.tag_value.trim()) && !validTagName(tag.tag_value));
+    };
 
     validateOrganisationName = e => {
         const name = e.target.value.trim();
@@ -197,7 +206,8 @@ class OrganisationOverview extends React.Component {
             required.some(attr => isEmpty(organisation[attr])) ||
             duplicatedUnit ||
             duplicatedTag ||
-            Object.keys(invalidInputs).some(key => invalidInputs[key]);
+            Object.keys(invalidInputs).some(key => invalidInputs[key]) ||
+            this.hasInvalidDefaultTags(organisation);
         return !inValid;
     };
 
@@ -555,7 +565,7 @@ class OrganisationOverview extends React.Component {
     }
 
     isValidTab = tab => {
-        const {alreadyExists, invalidInputs, organisation, invalid_schac_home_organisation} = this.state;
+        const {alreadyExists, duplicatedTag, invalidInputs, organisation, invalid_schac_home_organisation} = this.state;
         const {name, short_name} = organisation;
 
         switch (tab) {
@@ -564,7 +574,7 @@ class OrganisationOverview extends React.Component {
             case "units":
                 return true;
             case "labels":
-                return true;
+                return !duplicatedTag && !this.hasInvalidDefaultTags(organisation);
             case "messaging":
                 return true;
             case "settings":

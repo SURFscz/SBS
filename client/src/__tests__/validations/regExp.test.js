@@ -4,6 +4,7 @@ import {
     validUrlRegExp,
     validEmailRegExp,
     sanitizeTagName,
+    validTagName,
     validRedirectUrlRegExp
 } from "../../validations/regExps";
 
@@ -32,6 +33,18 @@ it("Sanitize tag names", () => {
     expect(sanitizeTagName("1234567890123456789012345678901234567890")).toEqual("12345678901234567890123456789012");
     expect(sanitizeTagName("😁")).toEqual("😁");
     expect(sanitizeTagName(" 🌹 ")).toEqual("🌹");
+});
+
+it("Valid tag names", () => {
+    expect(validTagName("tag_uuc")).toBeTruthy();
+    expect(validTagName("just_valid-234567890123456789012")).toBeTruthy();
+    expect(validTagName("a1234567890123456789012345678901")).toBeTruthy();
+
+    expect(validTagName("123_valid")).toBeFalsy();
+    expect(validTagName("Tag_uuc")).toBeFalsy();
+    expect(validTagName("tag value")).toBeFalsy();
+    expect(validTagName("123456789012345678901234567890123")).toBeFalsy();
+    expect(validTagName("")).toBeFalsy();
 });
 
 it("Sanitize short names", () => {
