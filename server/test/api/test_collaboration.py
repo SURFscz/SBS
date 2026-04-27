@@ -5,7 +5,7 @@ import time
 
 from flask import jsonify
 
-from server.api.collaboration import generate_short_name, _normalize_tag_values
+from server.api.collaboration import generate_short_name, _normalize_tag_values, _validate_tag_request
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Tag, Service, Unit
@@ -28,6 +28,9 @@ class TestCollaboration(AbstractTest):
             ["tag_uuc", "new_tag"],
             _normalize_tag_values([{"tag_value": "tag_uuc", "id": 1}, "new_tag"])
         )
+
+    def test_validate_tag_request_valid(self):
+        self.assertIsNone(_validate_tag_request(["tag_uuc", "tag_uuc_2", "project-a"], "collaboration labels"))
 
     def _find_by_identifier(self, with_basic_auth=True):
         return self.get("/api/collaborations/find_by_identifier",

@@ -1,5 +1,6 @@
 import os
 
+from server.api.organisation import _validate_default_tag_request
 from server.cron import idp_metadata_parser
 from server.cron.idp_metadata_parser import idp_metadata_file
 from server.db.db import db
@@ -14,6 +15,12 @@ from server.test.seed import (unihard_name, unifra_name, schac_home_organisation
 
 
 class TestOrganisation(AbstractTest):
+
+    def test_validate_default_tag_request_valid(self):
+        self.assertIsNone(_validate_default_tag_request([
+            {"tag_value": "tag_uuc", "is_default": True},
+            {"tag_value": "123_invalid", "is_default": False}
+        ]))
 
     def _reset_idp(self):
         if os.path.isfile(idp_metadata_file):
