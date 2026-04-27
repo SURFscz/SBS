@@ -6,7 +6,7 @@ from munch import munchify
 from werkzeug.exceptions import BadRequest
 
 from server.db.defaults import (default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes,
-                                uri_re, valid_tag_label)
+                                uri_re, valid_tag_label, invalid_tag_labels)
 from server.db.defaults import split_user_affiliations
 from server.db.domain import Invitation
 from server.db.domain import User
@@ -149,3 +149,7 @@ class TestCaseDefaults(TestCase):
         self.assertFalse(valid_tag_label("tag value"))
         self.assertFalse(valid_tag_label("🌹"))
         self.assertFalse(valid_tag_label(" "))
+
+    def test_invalid_tag_labels(self):
+        self.assertListEqual([], invalid_tag_labels(["tag_uuc", "tag_uuc_2"]))
+        self.assertListEqual(["123_valid", "tag value"], invalid_tag_labels(["tag_uuc", "123_valid", "tag value"]))

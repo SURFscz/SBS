@@ -5,7 +5,7 @@ import time
 
 from flask import jsonify
 
-from server.api.collaboration import generate_short_name
+from server.api.collaboration import generate_short_name, _normalize_tag_values
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Tag, Service, Unit
@@ -20,6 +20,14 @@ from server.tools import dt_now
 
 
 class TestCollaboration(AbstractTest):
+
+    def test_normalize_tag_values(self):
+        self.assertListEqual([], _normalize_tag_values(None))
+        self.assertListEqual(["tag_uuc", "new_tag"], _normalize_tag_values(["tag_uuc", "new_tag"]))
+        self.assertListEqual(
+            ["tag_uuc", "new_tag"],
+            _normalize_tag_values([{"tag_value": "tag_uuc", "id": 1}, "new_tag"])
+        )
 
     def _find_by_identifier(self, with_basic_auth=True):
         return self.get("/api/collaborations/find_by_identifier",
