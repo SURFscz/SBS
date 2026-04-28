@@ -1,5 +1,8 @@
 import os
 
+from werkzeug.exceptions import HTTPException
+
+from server.api.organisation import _validate_default_tag_request
 from server.cron import idp_metadata_parser
 from server.cron.idp_metadata_parser import idp_metadata_file
 from server.db.db import db
@@ -14,6 +17,21 @@ from server.test.seed import (unihard_name, unifra_name, schac_home_organisation
 
 
 class TestOrganisation(AbstractTest):
+
+    def test_validate_default_tag_request_valid(self):
+        self.assertIsNone(_validate_default_tag_request([
+            {"tag_value": "tag_uuc", "is_default": True},
+            {"tag_value": "123_invalid", "is_default": False}
+        ]))
+
+    def test_validate_default_tag_request_invalid(self):
+        with self.assertRaises(HTTPException) as context:
+            _validate_default_tag_request([
+                {"tag_value": "tag_uuc", "is_default": True},
+                {"tag_value": "123_invalid", "is_default": True}
+            ])
+        self.assertIn("Invalid organisation default labels", context.exception.description)
+        self.assertIn("123_invalid", context.exception.description)
 
     def _reset_idp(self):
         if os.path.isfile(idp_metadata_file):
@@ -591,3 +609,15 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(6, len(tags))
         self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan", "tag_ufra", "tag_uuc_2"]),
                              sorted([tag.tag_value for tag in tags]))
+
+    def test_organisation_update_invalid_default_tags(self):
+        self.login()
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        tags = [tag for tag in organisation["tags"] if tag["is_default"]]
+        tags[0]["tag_value"] = "123_invalid"
+        organisation["tags"] = tags
+
+        res = self.put("/api/organisations", body=organisation, response_status_code=400)
+        self.assertIn("Invalid organisation default labels", res["message"])
+        self.assertIn("123_invalid", res["message"])

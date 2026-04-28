@@ -26,7 +26,7 @@ from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes,
-                                generate_short_name, valid_tag_label)
+                                generate_short_name, invalid_tag_labels, tag_label_rule_description)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
 from server.db.image import transform_image
@@ -92,9 +92,6 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, i
         org_tags = collaboration.organisation.tags
         existing_tags = collaboration.tags
 
-        # cleanup tags received from client
-        tags = [t for t in tags if valid_tag_label(t)]
-
         def is_new_tag(label, persisted_tags):
             return label not in [t.tag_value for t in persisted_tags]
 
@@ -115,14 +112,35 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, i
                            allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
     if not is_update:
+        default_tags = []
         for tag in collaboration.organisation.tags:
             add_tag = tag.is_default and tag not in collaboration.tags
             # The units of the organisation tags must match if present
             if add_tag and (not tag.units or set(tag.units) & set(collaboration.units)):
-                tag.collaborations.append(collaboration)
-                tags.append(tag.tag_value)
+                default_tags.append(tag)
+        _validate_tag_request([tag.tag_value for tag in default_tags], "organisation default labels")
+        for tag in default_tags:
+            tag.collaborations.append(collaboration)
+            tags.append(tag.tag_value)
 
     return tags
+
+
+def _validate_tag_request(tag_values, context):
+    invalid_labels = invalid_tag_labels(tag_values)
+    if invalid_labels:
+        invalid_labels_str = ", ".join(f"'{label}'" for label in invalid_labels)
+        raise APIBadRequest(f"Invalid {context}: {invalid_labels_str}. {tag_label_rule_description}")
+
+
+def _normalize_tag_values(tags):
+    normalized_tags = []
+    for tag in tags or []:
+        if isinstance(tag, dict):
+            normalized_tags.append(tag.get("tag_value"))
+        else:
+            normalized_tags.append(tag)
+    return normalized_tags
 
 
 def _get_collaboration_membership(collaboration: Collaboration, user_uid: str) -> CollaborationMembership:
@@ -690,7 +708,9 @@ def save_collaboration_api():
     else:
         data["short_name"] = generate_short_name(Collaboration, data["name"])
     # The do_save_collaboration strips out all non-collaboration keys
-    tags = data.get("tags", None)
+    tags = _normalize_tag_values(data.get("tags", None))
+    if tags is not None:
+        _validate_tag_request(tags, "collaboration labels")
     administrator = data.get("administrator")
     # Ensure to skip current_user is CO admin check
     request_context.skip_collaboration_admin_confirmation = True
@@ -744,7 +764,8 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     if invalid_emails:
         raise BadRequest(f"Invalid emails {invalid_emails}")
     message = data.get("message", organisation.invitation_message)
-    tags = data.get("tags", [])
+    tags = _normalize_tag_values(data.get("tags", []))
+    _validate_tag_request(tags, "collaboration labels")
 
     valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
 
@@ -864,7 +885,9 @@ def update_collaboration():
         data["short_name"] = collaboration.short_name
 
     if "tags" in data:
-        _reconcile_tags(collaboration, data.get("tags", []), is_update=True)
+        data["tags"] = _normalize_tag_values(data.get("tags", []))
+        _validate_tag_request(data["tags"], "collaboration labels")
+        _reconcile_tags(collaboration, data["tags"], is_update=True)
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     res = update(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])

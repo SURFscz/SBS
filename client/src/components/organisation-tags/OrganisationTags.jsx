@@ -1,4 +1,4 @@
-import React, {Fragment, useRef, useState} from "react";
+import React, {Fragment, useEffect, useRef, useState} from "react";
 import "./OrganisationTags.scss";
 import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
@@ -8,6 +8,7 @@ import TrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import ErrorIndicator from "../redesign/error-indicator/ErrorIndicator";
 import SpinnerField from "../redesign/spinner-field/SpinnerField";
 import Select from "react-select";
+import {validTagName} from "../../validations/regExps";
 
 export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
 
@@ -19,6 +20,21 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
     const [removalIndex, setRemovalIndex] = useState(-1);
 
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        const duplicateNames = tags
+            .map(tag => tag.tag_value.trim().toLowerCase())
+            .filter(tagValue => !isEmpty(tagValue));
+        const duplicateIndex = tags.findIndex(tag => {
+            const currentValue = tag.tag_value.trim().toLowerCase();
+            if (isEmpty(currentValue)) {
+                return false;
+            }
+            return duplicateNames.filter(tagValue => tagValue === currentValue).length > 1;
+        });
+        setDuplicateIndex(duplicateIndex);
+        setDuplicated(duplicateIndex !== -1);
+    }, [tags, setDuplicated]);
 
     const focusAfterAdd = () => {
         inputRef.current && inputRef.current.focus();
@@ -40,13 +56,6 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
 
     const internalOnChange = index => e => {
         const value = e.target.value;
-        if (tags.filter(tag => tag.tag_value.toLowerCase() === value.toLowerCase()).length > 0) {
-            setDuplicateIndex(index);
-            setDuplicated(true);
-        } else {
-            setDuplicateIndex(-1);
-            setDuplicated(false);
-        }
         const newTags = [...tags];
         const tag = newTags[index];
         tag.tag_value = value;
@@ -55,8 +64,7 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
     }
 
     const doRemoveTag = index => {
-        tags.splice(index, 1);
-        const newTags = [...tags];
+        const newTags = tags.filter((_, currentIndex) => currentIndex !== index);
         setTags(newTags);
         if (newTags.length === 0) {
             setDeletedAll(true);
@@ -192,6 +200,10 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
                         </div>
                         {duplicateIndex === index &&
                             <ErrorIndicator msg={I18n.t("tags.duplicated", {name: tag.tag_value})}
+                                            standalone={true}/>
+                        }
+                        {!isEmpty(tag.tag_value.trim()) && !validTagName(tag.tag_value) &&
+                            <ErrorIndicator msg={I18n.t("tags.validation")}
                                             standalone={true}/>
                         }
                     </Fragment>)

@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision dd10370a403a (head)
+-- Dump of empty SBS database, alembic revision 5379b7d34505 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('dd10370a403a');
+INSERT INTO `alembic_version` VALUES ('5379b7d34505');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -353,6 +353,20 @@ CREATE TABLE `collaborations` (
 LOCK TABLES `collaborations` WRITE;
 /*!40000 ALTER TABLE `collaborations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `collaborations` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `distributed_locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `distributed_locks` (
+  `lock_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `acquired_at` datetime NOT NULL,
+  PRIMARY KEY (`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `distributed_locks` WRITE;
+/*!40000 ALTER TABLE `distributed_locks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `distributed_locks` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
