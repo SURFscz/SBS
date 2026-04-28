@@ -25,7 +25,7 @@ Create a virtual environment and install the required python packages:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install -e "./server[test]"
+pip install "./server[test]"
 ```
 
 Connect to your local mysql database: `mysql -u root` and create the SBS database and user:
