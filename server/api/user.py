@@ -10,7 +10,7 @@ from flask import Blueprint, current_app, redirect, make_response
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import selectinload
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -574,8 +574,7 @@ def update_user():
         if is_valid_ssh_public_key(ssh_value):
             db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
         else:
-            logger = ctx_logger("user")
-            logger.info(f"Rejecting ssh_key {ssh_value} from user {user.uid}")
+            raise BadRequest(f"Invalid ssh_key {ssh_value}, rejecting update ")
 
     user.updated_by = user.uid
     user_id = user.id

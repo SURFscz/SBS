@@ -3,6 +3,7 @@
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 
+from api.ssh import ssh_api
 from server.cron.shared import obtain_lock
 
 eventlet.monkey_patch(thread=False)
@@ -139,7 +140,7 @@ blueprints = [
     service_connection_request_api, audit_log_api, system_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
     user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api,
-    service_request_api, unit_api, user_login_eb
+    service_request_api, unit_api, user_login_eb, ssh_api
 ]
 
 for api_blueprint in blueprints:

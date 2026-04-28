@@ -1195,3 +1195,9 @@ export function sweep(service) {
 export function allStats() {
     return fetchJson("/api/system/statistics")
 }
+
+//SSH
+export function validateSSHKey(sshPublicKey) {
+    return postPutJson("/api/ssh/validate", {ssh: sshPublicKey}, "POST", false);
+}
+

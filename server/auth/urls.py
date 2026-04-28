@@ -9,6 +9,7 @@ noauth_listing = [
     "/api/tokens/introspect",
     "/api/aup/info",
     "/api/service_invitations/find_by_hash",
+    "/api/ssh/validate",
     "/api/users/acs",
     "/api/users/authorization",
     "/api/users/authz_eb",

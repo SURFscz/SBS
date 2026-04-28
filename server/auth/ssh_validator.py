@@ -68,9 +68,7 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
             serialization.load_ssh_public_key(openssh_key)
             return True
-        except Exception as e:
-            print(e)
-            # print(key)
+        except Exception:
             return False
 
     # ---- 2 OpenSSH format ----------------------------------------
@@ -93,17 +91,14 @@ def is_valid_ssh_public_key(key: str) -> bool:
 
         try:
             base64.b64decode(key_data, validate=True)
-        except Exception as e:
-            print(e)
-            # print(key)
+        except Exception:
             return False
 
         # ensure decoded key actually parses
         try:
             serialization.load_ssh_public_key(key.encode())
             return True
-        except Exception as e:
-            print(e)
+        except Exception:
             return False
 
     # ---- 2 PEM public key ----------------------------------------

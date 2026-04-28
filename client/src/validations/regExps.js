@@ -9,26 +9,6 @@ export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.+)/i
 export const validRedirectUrlRegExp = /(https:\/\/(.+)|http:\/\/localhost(.*)|http:\/\/127\.(.*))/i
 export const validTagNameRegExp = /^[a-z][a-z0-9_-]{0,31}$/;
 
-const validPrefixes = [
-    "---- BEGIN SSH2 PUBLIC KEY ----",
-    "-----BEGIN PUBLIC KEY-----",
-    "-----BEGIN RSA PUBLIC KEY-----",
-    "ecdsa-sha2-nistp256",
-    "ecdsa-sha2-nistp384",
-    "ecdsa-sha2-nistp521",
-    "sk-ecdsa-sha2-nistp256@openssh.com",
-    "sk-ssh-ed25519@openssh.com",
-    "ssh-dss",
-    "ssh-ed25519",
-    "ssh-ed25519",
-    "ssh-rsa"
-]
-
-export const validateSSHKey = sshKey => {
-    return isEmpty(sshKey) || validPrefixes.some(prefix => sshKey.startsWith(prefix));
-}
-
-
 const shortNameRegexp = /^[^a-z]*|[^a-z_0-9]+/gi
 
 export const sanitizeShortName = shortName => {

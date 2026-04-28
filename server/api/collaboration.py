@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request as current_request, current_app, g
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import aliased, load_only, selectinload, joinedload
+from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFound
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
