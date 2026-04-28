@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup mysql server
         run: >
@@ -139,7 +139,7 @@ jobs:
           sudo apt -y install curl
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js 24.3.0
         uses: actions/setup-node@v5
@@ -231,7 +231,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta-sbs
@@ -368,7 +368,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Fetch build
         id: fetch_artifact
@@ -453,7 +453,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup mysql server
         run: >
