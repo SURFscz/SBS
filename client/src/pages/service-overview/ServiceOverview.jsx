@@ -483,7 +483,7 @@ class ServiceOverview extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 leavePage: false,
-                confirmationDialogQuestion: I18n.t(`service.${userServiceAdmin ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
+                confirmationDialogQuestion: I18n.t(`service.${(userServiceAdmin && !user.admin) ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
                     {name: service.name}),
                 warning: true,
                 lastAdminWarning: false,
@@ -493,7 +493,7 @@ class ServiceOverview extends React.Component {
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 cancelDialogAction: this.closeConfirmationDialog,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
-                confirmationDialogAction: userServiceAdmin ? this.doRequestDelete : this.doDelete
+                confirmationDialogAction: (userServiceAdmin && !user.admin) ? this.doRequestDelete : this.doDelete
             });
         }
     };
