@@ -235,7 +235,7 @@ jobs:
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta-sbs
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
           #flavor: "suffix=-${{ matrix.arch }}"
@@ -320,7 +320,7 @@ jobs:
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
         env:
