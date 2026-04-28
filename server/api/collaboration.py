@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request as current_request, current_app, g
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import aliased, load_only, selectinload
+from sqlalchemy.orm import aliased, load_only, selectinload, joinedload
 from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFound
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
@@ -523,9 +523,11 @@ def collaboration_by_id(collaboration_id):
                  .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.tags)) \
         .options(selectinload(Collaboration.service_connection_requests)
-                 .selectinload(ServiceConnectionRequest.service)) \
+                 .joinedload(ServiceConnectionRequest.service)
+                 .selectinload(Service.service_memberships)
+                 .joinedload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.service_connection_requests)
-                 .selectinload(ServiceConnectionRequest.requester)) \
+                 .joinedload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
     collaboration_json = jsonify(collaboration).json
