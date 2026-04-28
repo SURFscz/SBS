@@ -830,7 +830,7 @@ const nl = {
         organisationTooltip: "Iedere samenwerking hoort bij precies één organisatie",
         tags: "Labels",
         tagsPlaceholder: "Zoek of maak labels",
-        tagsTooltip: "Een samenwerking kan meerdere labels hebben. Niet alle tekens zijn toegestaan, omdat labels kunnen worden gebruikt als Linux-groepsnamen.",
+        tagsTooltip: "Een samenwerking kan meerdere labels hebben. Labels moeten 1 tot 32 tekens lang zijn, beginnen met een kleine letter en mogen alleen kleine letters, cijfers, '_' en '-' bevatten.",
         accepted_user_policy: "Acceptable use policy",
         acceptedUserPolicyPlaceholder: "De URL van de samenwerkingsspecifieke acceptable use policy",
         role: "Rol",
@@ -2768,7 +2768,8 @@ const nl = {
         label: "Labelnaam",
         add: "+ Label toevoegen",
         confirmation: "Weet je zeker dat je het label {{name}} wilt verwijderen?",
-        duplicated: "Er bestaat al een label genaamd {{name}} voor deze organisatie"
+        duplicated: "Er bestaat al een label genaamd {{name}} voor deze organisatie",
+        validation: "Een label moet 1 tot 32 tekens lang zijn, beginnen met een kleine letter en mag alleen kleine letters, cijfers, '_' en '-' bevatten."
     },
     bulkUpload: {
         title: "Upload je uitnodigingen",

@@ -14,7 +14,7 @@ RUN tar -xJ -C /opt -f /sbs.tar.xz
 # Create venv dir
 RUN pip cache dir
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r /opt/sbs/server/requirements/test.txt
+    pip install "/opt/sbs/server[test]"
 
 # Set the default workdir
 WORKDIR /opt/sbs

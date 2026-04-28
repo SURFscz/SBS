@@ -7,6 +7,7 @@ export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9]
 export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.+)/i
 
 export const validRedirectUrlRegExp = /(https:\/\/(.+)|http:\/\/localhost(.*)|http:\/\/127\.(.*))/i
+export const validTagNameRegExp = /^[a-z][a-z0-9_-]{0,31}$/;
 
 const validPrefixes = [
     "---- BEGIN SSH2 PUBLIC KEY ----",
@@ -36,6 +37,10 @@ export const sanitizeShortName = shortName => {
 
 export const sanitizeTagName = tagName => {
     return tagName ? tagName.trim().substring(0, 32).toLowerCase() : tagName;
+}
+
+export const validTagName = tagName => {
+    return typeof tagName === "string" && validTagNameRegExp.test(tagName);
 }
 
 export const CO_SHORT_NAME = "{co_short_name}";

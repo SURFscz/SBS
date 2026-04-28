@@ -830,7 +830,7 @@ const en = {
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
         tags: "Labels",
         tagsPlaceholder: "Search or create labels",
-        tagsTooltip: "A collaboration can have multiple labels. Note that labels do not allow all characters as they can be used as Linux group names.",
+        tagsTooltip: "A collaboration can have multiple labels. Labels must be 1 to 32 characters, start with a lowercase letter, and contain only lowercase letters, digits, '_' and '-'.",
         accepted_user_policy: "Acceptable use policy",
         acceptedUserPolicyPlaceholder: "The URL of the collaboration specific acceptable use policy",
         role: "Role",
@@ -2768,7 +2768,8 @@ const en = {
         label: "Label name",
         add: "+ Add label",
         confirmation: "Are you sure you want to remove label {{name}}?",
-        duplicated: "There is already an label named {{name}} for this organisation"
+        duplicated: "There is already an label named {{name}} for this organisation",
+        validation: "A label must be 1 to 32 characters, start with a lowercase letter, and contain only lowercase letters, digits, '_' and '-'."
     },
     bulkUpload: {
         title: "Upload your invitations",

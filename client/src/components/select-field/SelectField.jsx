@@ -24,7 +24,8 @@ export default function SelectField({
                                         copyClipBoard = false,
                                         isOptionDisabled = () => false,
                                         required = false,
-                                        error = false
+                                        error = false,
+                                        ...selectProps
                                     }) {
     const styles = {
         multiValue: (base, state) => state.data.isFixed ? {
@@ -52,6 +53,7 @@ export default function SelectField({
                         isDisabled={disabled}
                         onChange={onChange}
                         options={options}
+                        {...selectProps}
                     />}
                 {!creatable &&
                     <Select
@@ -67,6 +69,7 @@ export default function SelectField({
                         isSearchable={searchable}
                         isClearable={clearable}
                         isOptionDisabled={isOptionDisabled}
+                        {...selectProps}
                     />}
                 {copyClipBoard && <ClipBoardCopy
                     txt={isEmpty(value) ? "" : Array.isArray(value) ? value.map(v => v.label).join(", ") : value}
