@@ -7,7 +7,7 @@ SURF Research Access Management (SRAM) Platform
 
 ### [Overview Requirements](#system-requirements)
 
--   Python >3.9
+-   Python 3.11+
 -   MySQL v5.7.x or MariaDB 10.x
 -   Redis v6.x
 -   Yarn 1.x
@@ -25,7 +25,7 @@ Create a virtual environment and install the required python packages:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install -r ./server/requirements/test.txt
+pip install -e "./server[test]"
 ```
 
 Connect to your local mysql database: `mysql -u root` and create the SBS database and user:
@@ -153,8 +153,8 @@ To run all Python tests and validate syntax / formatting:
 ```bash
 source .venv/bin/activate
 cd server
+flake8 .
 pytest test
-flake8 ./
 ```
 
 To generate the coverage reports:
@@ -322,4 +322,3 @@ $ cd client
 $ nvm use
 $ sh ./regenerate_snapshots.sh
 ```
-
