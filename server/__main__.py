@@ -213,7 +213,7 @@ register_commands(app)
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
 
-if not test:
+if not test and not is_local:
     def perform_generate_unique_username(_):
         users = User.query.filter(User.username == None).all()  # noqa: E711
         for user in users:
