@@ -1,5 +1,3 @@
-import {isEmpty} from "../utils/Utils";
-
 export const validEmailRegExp = /^(?:(?:"[^"]+"|[A-Za-z0-9 .!#$%&'*+/=?^_`{|}~^-]+)\s)?<([A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)>$|^([A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;

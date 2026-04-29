@@ -42,7 +42,6 @@ class Me extends React.Component {
                 ssh_keys.forEach((ssh_key, index) => {
                     ssh_key.fileTypeError = !res[index].valid;
                 })
-                debugger;
                 this.setState({ssh_keys: ssh_keys});
             });
         const urlSearchParams = new URLSearchParams(window.location.search);
