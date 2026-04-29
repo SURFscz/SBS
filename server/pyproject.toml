@@ -76,7 +76,7 @@ include-package-data = true
 "" = ".."
 
 [tool.setuptools.packages.find]
-where = [".."]
+where = ["."]
 include = ["server*"]
 exclude = ["server.test*"]
 
