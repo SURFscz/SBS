@@ -3,7 +3,6 @@
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 
-from api.ssh import ssh_api
 from server.cron.shared import obtain_lock
 
 eventlet.monkey_patch(thread=False)
@@ -27,6 +26,8 @@ from sqlalchemy.exc import OperationalError
 from server.api.api_key import api_key_api
 from server.api.audit_log import audit_log_api
 from server.api.aup import aup_api
+from server.api.ssh import ssh_api
+
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
