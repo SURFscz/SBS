@@ -70,3 +70,25 @@ class TestSshValidator(TestCase):
     def test_fall_through(self):
         actual = is_valid_ssh_public_key("-------")
         self.assertFalse(actual)
+
+    def test_key_type_with_underscore(self):
+        actual = is_valid_ssh_public_key(
+            "ssh-ed25519_AAAAC3NzaC1lZDI1NTE5AAAAIB38UxGiQeKnsLY6rRlfwdLfnv+yXWMy4AZ/yKjaRBg+"
+            " AAAAC3NzaC1lZDI1NTE5AAAAIB38UxGiQeKnsLY6rRlfwdLfnv+yXWMy4AZ/yKjaRBg+ user@host"
+        )
+        self.assertTrue(actual)
+
+    def test_key_type_missing_space(self):
+        actual = is_valid_ssh_public_key(
+            "ssh-ed25519AAAAC3NzaC1lZDI1NTE5AAAAIB38UxGiQeKnsLY6rRlfwdLfnv+yXWMy4AZ/yKjaRBg+"
+        )
+        self.assertTrue(actual)
+
+    def test_invalid_ssh2_no_aaaa_body(self):
+        key = "---- BEGIN SSH2 PUBLIC KEY ----\nno-valid-body-here\n---- END SSH2 PUBLIC KEY ----"
+        actual = is_valid_ssh_public_key(key)
+        self.assertFalse(actual)
+
+    def test_openssh_key_type_only(self):
+        actual = is_valid_ssh_public_key("ssh-rsa")
+        self.assertFalse(actual)
