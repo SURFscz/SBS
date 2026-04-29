@@ -82,7 +82,7 @@ jobs:
           sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -470,7 +470,7 @@ jobs:
           mysql -uroot -proot -h127.0.0.1 sbs < misc/sbs-db.sql
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: 'pip'
