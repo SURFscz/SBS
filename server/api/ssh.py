@@ -1,7 +1,7 @@
 from flask import Blueprint, request as current_request
 
-from api.base import json_endpoint
-from auth.ssh_validator import is_valid_ssh_public_key
+from server.api.base import json_endpoint
+from server.auth.ssh_validator import is_valid_ssh_public_key
 
 ssh_api = Blueprint("ssh_api", __name__, url_prefix="/api/ssh")
 
