@@ -11,35 +11,94 @@ properties:
   short_name:
     type: string
     example: "uniharderwijk"
-  description:
+  identifier:
     type: string
-    example: "University of Harderwijk"
-  category:
-    type: string
-    description: "Type of organisation"
-    example: "Research"
-  collaboration_creation_allowed:
-    type: boolean
-    description: "If true members a collaboration request is approved automatically"
-    example: true
-  services_restricted:
-    type: boolean
-    description: "If true only services exempted from restriction can be used by collaborations in this organisation"
-    example: true
+    format: uuid
+    description: "Unique generated identifier"
+    example: "42de0064-cddc-4c36-9e19-c0fd6e782956"
   uuid4:
     type: string
     format: uuid
     readOnly: true
-    description: "Unique generated uuid for the cached image"
+    description: "Unique generated UUID for the cached image"
     example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+  description:
+    type:
+      - string
+      - "null"
+    example: "University of Harderwijk"
+  category:
+    type:
+      - string
+      - "null"
+    description: "Type of organisation"
+    example: "Research"
   logo:
-    type: string
-    descriotion: "URL for the logo"
-    example: "http://sram.surf.nl/api/images/collaborations/b7f621e3-de98-4de4-aca0-1573f4eb8339"
+    type:
+      - string
+      - "null"
+    description: "Base64 encoded logo or URL"
+    example: "http://sram.surf.nl/api/images/organisations/b7f621e3"
+  on_boarding_msg:
+    type:
+      - string
+      - "null"
+    description: "Markdown on-boarding message for new members"
+    example: "Welcome to the organisation."
+  accepted_user_policy:
+    type:
+      - string
+      - "null"
+    example: "https://aup.example.com"
+  crm_id:
+    type:
+      - string
+      - "null"
+    example: "crm-123"
+  invitation_sender_name:
+    type:
+      - string
+      - "null"
+    example: "Admin User"
+  invitation_message:
+    type:
+      - string
+      - "null"
+    example: "You are invited to join."
+  collaboration_creation_allowed:
+    type:
+      - boolean
+      - "null"
+    description: "If true collaboration creation requests are auto-approved"
+    example: true
+  services_restricted:
+    type:
+      - boolean
+      - "null"
+    description: "If true only exempted services can be used by collaborations in this organisation"
+    example: false
+  service_connection_requires_approval:
+    type:
+      - boolean
+      - "null"
+    description: "If true service connections require approval"
+    example: false
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
     example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"
   collaborations_count:
     type: number
     description: "The number of collaborations"
@@ -48,15 +107,6 @@ properties:
     type: number
     description: "The number of memberships"
     example: 2
-  on_boarding_msg:
-    type: string
-    description: "Markdown on-boarding message for new members"
-    example: "We are using SURF Research Access management to provide access to these research tools:\n- Wiki\n- Cloud\n"
-  identifier:
-    type: string
-    format: uuid
-    description: "Unique generated identifier"
-    example: "42de0064-cddc-4c36-9e19-c0fd6e782956"
   collaborations:
     type: array
     items:
@@ -65,3 +115,12 @@ properties:
     type: array
     items:
       $ref: '/swagger/schemas/SchacHomeOrganisation.yaml'
+  units:
+    type: array
+    items:
+      type: string
+      example: "fac_wiskunde"
+  services:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Service.yaml'

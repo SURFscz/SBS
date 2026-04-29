@@ -24,3 +24,4 @@ properties:
     description: "Resource type definitions in the current page"
     items:
       type: object
+      additionalProperties: true

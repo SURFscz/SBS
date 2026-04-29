@@ -1,5 +1,6 @@
 ---
 type: object
+additionalProperties: true
 properties:
   id:
     type: string
@@ -19,10 +20,7 @@ properties:
     type: array
     items:
       type: object
-      properties:
-        value:
-          type: string
-          example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+      additionalProperties: true
   schemas:
     type: array
     description: "SCIM schemas"

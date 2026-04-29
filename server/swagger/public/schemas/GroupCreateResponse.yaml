@@ -1,6 +1,10 @@
 ---
 type: object
 properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
   name:
     type: string
     example: "AI researchers"
@@ -17,3 +21,41 @@ properties:
   identifier:
     type: string
     example: "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+  collaboration_id:
+    type: number
+    readOnly: true
+    example: 999
+  global_urn:
+    type: string
+    example: "uniharderwijk:cumulusgrp:ai_researchers"
+  service_group_id:
+    type:
+      - number
+      - "null"
+    example: 0
+  service_group:
+    type:
+      - object
+      - "null"
+    additionalProperties: true
+  collaboration:
+    type:
+      - object
+      - "null"
+    additionalProperties: true
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_at:
+    type: number
+    description: "The date of the last update in epoch seconds"
+    example: 1644015600
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"

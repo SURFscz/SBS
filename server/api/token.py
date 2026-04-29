@@ -75,7 +75,7 @@ def introspect():
         "user": {
             "name": user.name,
             "given_name": user.given_name,
-            "familiy_name": user.family_name,
+            "family_name": user.family_name,
             "email": user.email,
             "sub": user.uid,
             "voperson_external_id": user.eduperson_principal_name,

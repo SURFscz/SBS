@@ -40,7 +40,7 @@ parameters:
         - pin
 
 responses:
-  200:
+  201:
     description: PAM WebSSO session result
     schema:
       type: object
@@ -58,11 +58,18 @@ responses:
           type: string
           description: "If the PIN validation was successful the username of the user who logged in"
           example: "jdoe5"
+        collaborations:
+          type: array
+          description: "All collaborations the user is a member of"
+          items:
+            type: object
+            additionalProperties: true
         groups:
-          type: object
-          properties:
-            short_name: string
-            name: string
+          type: array
+          description: "All groups the user is a member of"
+          items:
+            type: object
+            additionalProperties: true
   403:
     schema:
       $ref: '/swagger/components/responses/Forbidden.yaml'
