@@ -111,8 +111,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          cd ./server
-          coverage run -m pytest test --cov-report xml --cov=server  --junitxml=junit.xml -o junit_family=legacy --numprocesses=4
+          coverage run -m pytest server/test --cov-report xml --cov=server --junitxml=junit.xml -o junit_family=legacy --numprocesses=4
         timeout-minutes: 20
 
       - name: Upload coverage to Codecov
