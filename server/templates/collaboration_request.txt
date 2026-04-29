@@ -8,7 +8,7 @@ The user {{ user.name }} has requested to create a new collaboration {{ collabor
 The motivation for this request:
 {{ collaboration_request.message }}
 
-Login to process this request:
+Log in to process this request:
 
 {{base_url}}/collaboration-requests/{{collaboration_request.id}}
 {% endblock %}

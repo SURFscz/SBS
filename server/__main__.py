@@ -26,6 +26,8 @@ from sqlalchemy.exc import OperationalError
 from server.api.api_key import api_key_api
 from server.api.audit_log import audit_log_api
 from server.api.aup import aup_api
+from server.api.ssh import ssh_api
+
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
@@ -62,7 +64,7 @@ from server.api.user_login_eb import user_login_eb
 from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
-from server.db.db import db, db_migrations
+from server.db.db import db
 from server.db.executor import init_executor
 from server.db.redis import init_redis
 from server.logger.traceback_info_filter import TracebackInfoFilter
@@ -139,7 +141,7 @@ blueprints = [
     service_connection_request_api, audit_log_api, system_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
     user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api,
-    service_request_api, unit_api, user_login_eb
+    service_request_api, unit_api, user_login_eb, ssh_api
 ]
 
 for api_blueprint in blueprints:
@@ -207,14 +209,13 @@ with app.app_context():
             logger.info("Waiting for the database...")
             time.sleep(1)
 
-
 # Register CLI commands
 register_commands(app)
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
 
-if not test:
+if not test and not is_local:
     def perform_generate_unique_username(_):
         users = User.query.filter(User.username == None).all()  # noqa: E711
         for user in users:

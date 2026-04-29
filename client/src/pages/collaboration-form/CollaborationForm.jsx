@@ -20,12 +20,12 @@ import Button from "../../components/button/Button";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../../utils/Flash";
-import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../../validations/regExps";
+import {sanitizeShortName, validEmailRegExp, validTagName, validUrlRegExp} from "../../validations/regExps";
 import SelectField from "../../components/select-field/SelectField";
 import {getParameterByName} from "../../utils/QueryParameters";
 import CheckBox from "../../components/checkbox/CheckBox";
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
-import {ReactComponent as CollaborationsIcon} from "../../icons/collaborations.svg";
+import CollaborationsIcon from "../../icons/collaborations.svg?react";
 import {AppStore} from "../../stores/AppStore";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
@@ -61,6 +61,7 @@ class CollaborationForm extends React.Component {
             invalidInputs: {},
             tags: [],
             tagsSelected: [],
+            tagInputValue: "",
             units: [],
             allUnits: [],
             isNew: true,
@@ -164,7 +165,9 @@ class CollaborationForm extends React.Component {
         const accessAllowedToOrg = isUserAllowed(ROLES.ORG_MANAGER, user, organisationId);
         if (accessAllowedToOrg) {
             tagsByOrganisation(organisationId).then(existingTags => {
-                const tagOptions = existingTags.map(tag => ({label: tag.tag_value, value: tag.id}));
+                const tagOptions = existingTags
+                    .filter(tag => validTagName(tag.tag_value))
+                    .map(tag => ({label: tag.tag_value, value: tag.id}));
                 this.setState({tags: tagOptions});
             });
         }
@@ -221,6 +224,18 @@ class CollaborationForm extends React.Component {
         .sort((opt1, opt2) => opt1.name.toLowerCase().localeCompare(opt2.name.toLowerCase()));
 
     existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr];
+
+    hasInvalidTagSelection = (tagsSelected = this.state.tagsSelected) => {
+        return tagsSelected.some(tag => !validTagName(tag.label));
+    };
+
+    hasInvalidTagInput = (tagInputValue = this.state.tagInputValue) => {
+        return !isEmpty(tagInputValue) && !validTagName(tagInputValue);
+    };
+
+    hasInvalidTags = (tagsSelected = this.state.tagsSelected, tagInputValue = this.state.tagInputValue) => {
+        return this.hasInvalidTagSelection(tagsSelected) || this.hasInvalidTagInput(tagInputValue);
+    };
 
     validateEmail = (name, allowWebsite = false) => e => {
         const email = e.target.value;
@@ -303,7 +318,7 @@ class CollaborationForm extends React.Component {
             && isEmpty(units);
 
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) ||
-            Object.keys(invalidInputs).some(key => invalidInputs[key]) || unitsRequired;
+            Object.keys(invalidInputs).some(key => invalidInputs[key]) || unitsRequired || this.hasInvalidTags();
         return !inValid;
     };
 
@@ -423,8 +438,10 @@ class CollaborationForm extends React.Component {
         }
     };
 
-    tagValueChanged = value => {
-        return sanitizeTagName(value);
+    tagValueChanged = (value, actionMeta) => {
+        const tagInputValue = actionMeta && actionMeta.action === "input-change" ? value : "";
+        this.setState({tagInputValue: tagInputValue});
+        return value;
     }
 
     tagsSelectedChanged = selectedOptions => {
@@ -532,6 +549,7 @@ class CollaborationForm extends React.Component {
         const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
         const unitsRequired = !isCollaborationRequest && organisation && !isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)
             && !isEmpty((user.organisation_memberships.filter(member => member.organisation_id === organisation.id && member.role === "manager")[0] || {}).units);
+        const tagsInvalid = this.hasInvalidTags(tagsSelected, this.state.tagInputValue);
         return (
             <div className="mod-new-collaboration-container">
                 {isNew &&
@@ -703,14 +721,22 @@ class CollaborationForm extends React.Component {
                     {!isCollaborationRequest && <SelectField value={tagsSelected}
                                                              disabled={!accessAllowedToOrg}
                                                              options={tags
-                                                                 .filter(tag => !tagsSelected.find(selectedTag => selectedTag.value === tag.value))}
+                                                                 .filter(tag => !tagsSelected.find(selectedTag =>
+                                                                     selectedTag.value === tag.value ||
+                                                                     selectedTag.label === tag.label))}
                                                              creatable={true}
                                                              onInputChange={this.tagValueChanged}
+                                                             isValidNewOption={inputValue => validTagName(inputValue) &&
+                                                                 !tagsSelected.some(tag => tag.label === inputValue) &&
+                                                                 !tags.some(tag => tag.label === inputValue)}
                                                              isMulti={true}
                                                              name={I18n.t("collaboration.tags")}
                                                              placeholder={I18n.t("collaboration.tagsPlaceholder")}
                                                              toolTip={I18n.t("collaboration.tagsTooltip")}
+                                                             error={tagsInvalid}
                                                              onChange={this.tagsSelectedChanged}/>}
+                    {!isCollaborationRequest && tagsInvalid &&
+                        <ErrorIndicator msg={I18n.t("tags.validation")}/>}
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}

@@ -18,9 +18,9 @@ import {
     updateService
 } from "../../api";
 import I18n from "../../locale/I18n";
-import {ReactComponent as CriticalIcon} from "@surfnet/sds/icons/functional-icons/alert-circle.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
+import CriticalIcon from "@surfnet/sds/icons/functional-icons/alert-circle.svg?react";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
+import CheckIcon from "@surfnet/sds/icons/functional-icons/success.svg?react";
 import InputField from "../../components/input-field/InputField";
 import "./ServiceOverview.scss";
 import "../../components/redesign/api-keys/ApiKeys.scss";
@@ -37,7 +37,7 @@ import {
 } from "../../validations/regExps";
 import {RadioOptions, RadioOptionsOrientation, Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import ChevronLeft from "../../icons/chevron-left.svg?react";
 import Entities from "../../components/redesign/entities/Entities";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
@@ -483,7 +483,7 @@ class ServiceOverview extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 leavePage: false,
-                confirmationDialogQuestion: I18n.t(`service.${userServiceAdmin ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
+                confirmationDialogQuestion: I18n.t(`service.${(userServiceAdmin && !user.admin) ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
                     {name: service.name}),
                 warning: true,
                 lastAdminWarning: false,
@@ -493,7 +493,7 @@ class ServiceOverview extends React.Component {
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 cancelDialogAction: this.closeConfirmationDialog,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
-                confirmationDialogAction: userServiceAdmin ? this.doRequestDelete : this.doDelete
+                confirmationDialogAction: (userServiceAdmin && !user.admin) ? this.doRequestDelete : this.doDelete
             });
         }
     };

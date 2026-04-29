@@ -20,7 +20,7 @@ from server.auth.security import confirm_write_access, current_user_id, is_appli
     confirm_organisation_admin_or_manager, is_service_admin_or_manager
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
-from server.db.defaults import default_expiry_date, cleanse_short_name
+from server.db.defaults import default_expiry_date, cleanse_short_name, invalid_tag_labels, tag_label_rule_description
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation, \
@@ -31,6 +31,15 @@ from server.mail import mail_organisation_invitation, mail_platform_admins
 from server.scim.events import broadcast_organisation_deleted
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
+
+
+def _validate_default_tag_request(tags):
+    invalid_labels = invalid_tag_labels([tag.get("tag_value") for tag in tags if tag.get("is_default")])
+    if invalid_labels:
+        invalid_labels_str = ", ".join(f"'{label}'" for label in invalid_labels)
+        raise APIBadRequest(
+            f"Invalid organisation default labels: {invalid_labels_str}. {tag_label_rule_description}"
+        )
 
 
 @organisation_api.route("/name_exists", strict_slashes=False)
@@ -561,6 +570,7 @@ def update_organisation():
     # Corner case: user removed label and added the exact same name again, prevent duplicate entry
     replaced_tags = []
     if "tags" in data:
+        _validate_default_tag_request(data["tags"])
         for persistent_tag in organisation.tags:
             for transient_tag in data["tags"]:
                 if not transient_tag.get("id") and transient_tag["tag_value"] == persistent_tag.tag_value:

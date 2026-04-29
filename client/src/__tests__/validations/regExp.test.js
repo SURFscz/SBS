@@ -1,12 +1,16 @@
+import { describe, it, expect } from 'vitest';
 import {
     sanitizeShortName,
     validUrlRegExp,
     validEmailRegExp,
     sanitizeTagName,
+    validTagName,
     validRedirectUrlRegExp
 } from "../../validations/regExps";
 
-test("Valid emails", () => {
+
+describe('regExp', () => {
+it("Valid emails", () => {
     expect(validEmailRegExp.test("a@a.com")).toBeTruthy();
     expect(validEmailRegExp.test("b@b")).toBeTruthy();
     expect(validEmailRegExp.test("a@a")).toBeTruthy();
@@ -16,12 +20,14 @@ test("Valid emails", () => {
 
     expect(validEmailRegExp.test("nope")).toBeFalsy();
     expect(validEmailRegExp.test("aa")).toBeFalsy();
-    expect(validEmailRegExp.test("a!@a.c")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c")).toBeTruthy();
     expect(validEmailRegExp.test("a!@a.c@")).toBeFalsy();
+    expect(validEmailRegExp.test("person10@example.com <person10@example.com>")).toBeFalsy();
+    expect(validEmailRegExp.test("\"person10@example.com\" <person10@example.com>")).toBeTruthy();
 
 })
 
-test("Sanitize tag names", () => {
+it("Sanitize tag names", () => {
     expect(sanitizeTagName(null)).toEqual(null);
     expect(sanitizeTagName("1QWERTY")).toEqual("1qwerty");
     expect(sanitizeTagName("1234567890123456789012345678901234567890")).toEqual("12345678901234567890123456789012");
@@ -29,7 +35,19 @@ test("Sanitize tag names", () => {
     expect(sanitizeTagName(" 🌹 ")).toEqual("🌹");
 });
 
-test("Sanitize short names", () => {
+it("Valid tag names", () => {
+    expect(validTagName("tag_uuc")).toBeTruthy();
+    expect(validTagName("just_valid-234567890123456789012")).toBeTruthy();
+    expect(validTagName("a1234567890123456789012345678901")).toBeTruthy();
+
+    expect(validTagName("123_valid")).toBeFalsy();
+    expect(validTagName("Tag_uuc")).toBeFalsy();
+    expect(validTagName("tag value")).toBeFalsy();
+    expect(validTagName("123456789012345678901234567890123")).toBeFalsy();
+    expect(validTagName("")).toBeFalsy();
+});
+
+it("Sanitize short names", () => {
     expect(sanitizeShortName(null)).toEqual(null);
     expect(sanitizeShortName("1QWERTY")).toEqual("qwerty");
     expect(sanitizeShortName("123456789012345678X")).toEqual("x");
@@ -38,7 +56,7 @@ test("Sanitize short names", () => {
     expect(sanitizeShortName("$ABC!D@E#F&G(HIJ)KLMNOPQRSTUVWYZ")).toEqual("abcdefghijklmnop");
 });
 
-test("Valid urls", () => {
+it("Valid urls", () => {
     expect(validUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("http://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("https://demo-sp.sram.surf.nl/test")).toEqual(true);
@@ -56,7 +74,7 @@ test("Valid urls", () => {
     expect(validUrlRegExp.test("nope")).toEqual(false);
 });
 
-test("Valid redirect urls", () => {
+it("Valid redirect urls", () => {
     const redirectURLs = {
         "https://localhost/api/scim_mock": true,
         "http://localhost/redirect": true,
@@ -77,4 +95,6 @@ test("Valid redirect urls", () => {
     }
     Object.entries(redirectURLs)
         .forEach((arr) => expect(validRedirectUrlRegExp.test(arr[0])).toEqual(arr[1]));
+});
+
 });

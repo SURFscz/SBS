@@ -8,7 +8,7 @@ import {pseudoIso} from "../../utils/Date";
 import {Pagination} from "@surfnet/sds";
 import Button from "../button/Button";
 import {filterAuditLogs} from "../../utils/AuditLog";
-import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
+import SearchIcon from "@surfnet/sds/icons/functional-icons/search.svg?react";
 import CheckBox from "../checkbox/CheckBox";
 
 const pageCount = 50;
@@ -98,7 +98,7 @@ export default class Activity extends React.PureComponent {
         }
         try {
             return JSON.parse(state);
-        } catch (e) {
+        } catch {
             return {};
         }
     }

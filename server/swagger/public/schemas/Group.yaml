@@ -8,15 +8,17 @@ properties:
   name:
     type: string
     example: "AI researchers"
-  description:
-    type: string
-    example: "AI researchers"
   short_name:
     type: string
     example: "ai_researchers"
   global_urn:
     type: string
     example: "uniharderwijk:cumulusgrp:ai_researchers"
+  description:
+    type:
+      - string
+      - "null"
+    example: "AI researchers group"
   identifier:
     type: string
     format: uuid
@@ -24,16 +26,28 @@ properties:
     description: "Unique generated identifier of the group"
     example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
   auto_provision_members:
-    type: boolean
-    description: "If true then make every member member of this group"
+    type:
+      - boolean
+      - "null"
+    description: "If true then make every collaboration member a member of this group"
     example: true
   collaboration_id:
     type: number
     readOnly: true
     example: 999
+  service_group_id:
+    type:
+      - number
+      - "null"
+    description: "ID of the linked service group, if any"
+    example: 1
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
+    example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
     example: 1644015600
   created_by:
     type: string

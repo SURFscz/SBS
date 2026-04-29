@@ -1,10 +1,10 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import {ReactComponent as UserIcon} from "../../../icons/users.svg";
-import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import UserIcon from "../../../icons/users.svg?react";
+import InviteIcon from "../../../icons/single-neutral-question.svg?react";
+import HandIcon from "../../../icons/puppet_new.svg?react";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import CheckBox from "../../checkbox/CheckBox";
 import {
     deleteServiceMembership,

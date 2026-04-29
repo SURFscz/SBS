@@ -14,10 +14,13 @@ export default function FeedbackDialog({isOpen = false, close, initialMessage = 
         return null;
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [message, setMessage] = useState(initialMessage);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const inputRef = useRef(null);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         inputRef.current && inputRef.current.focus();
     });

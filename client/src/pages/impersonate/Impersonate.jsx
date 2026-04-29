@@ -11,7 +11,7 @@ import InputField from "../../components/input-field/InputField";
 import CheckBox from "../../components/checkbox/CheckBox";
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
+import HandIcon from "../../icons/puppet_new.svg?react";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import {emitImpersonation} from "../../utils/Impersonation";

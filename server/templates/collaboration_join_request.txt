@@ -7,7 +7,7 @@
 The user {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.
 The motivation for this request:
 {{ join_request.message }}
-Login to process this request:
+Log in to process this request:
 
 {{base_url}}/collaborations/{{collaboration.id}}/joinrequests
 

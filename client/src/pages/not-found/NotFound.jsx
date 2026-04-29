@@ -1,7 +1,7 @@
 import React from "react";
 import "./NotFound.scss";
-import {ReactComponent as NotFoundSVG} from "../../lotties/undraw_page_not_found.svg";
-import {ReactComponent as InvitationNotFoundSVG} from "../../icons/invitation_404.svg";
+import NotFoundSVG from "../../lotties/undraw_page_not_found.svg?react";
+import InvitationNotFoundSVG from "../../icons/invitation_404.svg?react";
 
 import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";

@@ -4,7 +4,7 @@ import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import {unitUsage} from "../../api";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import TrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import ErrorIndicator from "../redesign/error-indicator/ErrorIndicator";
 import SpinnerField from "../redesign/spinner-field/SpinnerField";
 

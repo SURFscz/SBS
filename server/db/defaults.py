@@ -101,6 +101,11 @@ def cleanse_short_name(data, attr="short_name"):
 
 
 uri_re = re.compile("^(https?|ssh|ftp)://(.+)$", re.IGNORECASE)
+tag_label_re = re.compile(r"^[a-z][a-z0-9_-]{0,31}$")
+tag_label_rule_description = (
+    "A label must be 1 to 32 characters, start with a lowercase letter, "
+    "and contain only lowercase letters, digits, '_' and '-'."
+)
 
 
 def valid_uri_attributes(data, uri_attributes):
@@ -117,7 +122,11 @@ def valid_uri_attributes(data, uri_attributes):
 
 
 def valid_tag_label(tag_value: Optional[str]) -> bool:
-    return bool(tag_value) and bool(tag_value.strip()) and len(tag_value) < 33
+    return isinstance(tag_value, str) and bool(tag_label_re.fullmatch(tag_value))
+
+
+def invalid_tag_labels(tag_values: list[Optional[str]]) -> list[Optional[str]]:
+    return [tag_value for tag_value in tag_values if not valid_tag_label(tag_value)]
 
 
 def split_user_affiliations(user):

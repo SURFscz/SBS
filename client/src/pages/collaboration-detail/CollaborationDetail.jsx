@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React from "react";
 import {
     activateCollaboration,
@@ -20,9 +21,9 @@ import I18n from "../../locale/I18n";
 import {AppStore} from "../../stores/AppStore";
 import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import Tabs from "../../components/tabs/Tabs";
-import {ReactComponent as MemberIcon} from "../../icons/groups.svg";
-import {ReactComponent as TimerIcon} from "../../icons/streamline/timer2.svg";
-import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
+import MemberIcon from "../../icons/groups.svg?react";
+import TimerIcon from "../../icons/streamline/timer2.svg?react";
+import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
 import CollaborationAdmins from "../../components/redesign/collaboration-admins/CollaborationAdmins";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import UsedServices from "../../components/redesign/used-services/UsedServices";
@@ -152,7 +153,7 @@ class CollaborationDetail extends React.Component {
                                 tab: tab,
                             }, () => {
                                 callback && callback();
-                                this.tabChanged(tab, collaboration.id);
+                                this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
                             });
                             const {socketSubscribed} = this.state;
                             if (!socketSubscribed) {

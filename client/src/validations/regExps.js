@@ -1,32 +1,11 @@
-import {isEmpty} from "../utils/Utils";
-
-export const validEmailRegExp = /^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.?[a-zA-Z]*$/;///^\S+@\S+$/;
+export const validEmailRegExp = /^(?:(?:"[^"]+"|[A-Za-z0-9 .!#$%&'*+/=?^_`{|}~^-]+)\s)?<([A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)>$|^([A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
 export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.+)/i
 
 export const validRedirectUrlRegExp = /(https:\/\/(.+)|http:\/\/localhost(.*)|http:\/\/127\.(.*))/i
-
-const validPrefixes = [
-    "---- BEGIN SSH2 PUBLIC KEY ----",
-    "-----BEGIN PUBLIC KEY-----",
-    "-----BEGIN RSA PUBLIC KEY-----",
-    "ecdsa-sha2-nistp256",
-    "ecdsa-sha2-nistp384",
-    "ecdsa-sha2-nistp521",
-    "sk-ecdsa-sha2-nistp256@openssh.com",
-    "sk-ssh-ed25519@openssh.com",
-    "ssh-dss",
-    "ssh-ed25519",
-    "ssh-ed25519",
-    "ssh-rsa"
-]
-
-export const validateSSHKey = sshKey => {
-    return isEmpty(sshKey) || validPrefixes.some(prefix => sshKey.startsWith(prefix));
-}
-
+export const validTagNameRegExp = /^[a-z][a-z0-9_-]{0,31}$/;
 
 const shortNameRegexp = /^[^a-z]*|[^a-z_0-9]+/gi
 
@@ -36,6 +15,10 @@ export const sanitizeShortName = shortName => {
 
 export const sanitizeTagName = tagName => {
     return tagName ? tagName.trim().substring(0, 32).toLowerCase() : tagName;
+}
+
+export const validTagName = tagName => {
+    return typeof tagName === "string" && validTagNameRegExp.test(tagName);
 }
 
 export const CO_SHORT_NAME = "{co_short_name}";

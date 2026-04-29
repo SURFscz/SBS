@@ -6,10 +6,10 @@ import {
     serviceGroupShortNameExists,
     updateServiceGroup
 } from "../../../api";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
-import {ReactComponent as ThrashIcon} from "../../../icons/trash_new.svg";
-import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
-import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
+import ThrashIcon from "../../../icons/trash_new.svg?react";
+import PencilIcon from "@surfnet/sds/icons/functional-icons/edit.svg?react";
+import BinIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import "./ServiceGroups.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";

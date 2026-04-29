@@ -1,5 +1,5 @@
-@import "../../stylesheets/vars";
-@import "../../stylesheets/input_field";
+@use "../../stylesheets/vars" as *;
+@use "../../stylesheets/input_field" as *;
 
 .input-field {
     @include input-field;

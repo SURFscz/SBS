@@ -167,7 +167,7 @@ export default function PAM() {
                     <h6>{I18n.t("system.pam.memberships")}</h6>
                     <ul>
                         {validatePin.collaborations.concat(validatePin.groups)
-                            .map(membership => <li>{membership.name}</li>)}
+                            .map((membership, index) => <li key={index}>{membership.name}</li>)}
                     </ul>
                 </div>}
                 {(secondPollResult !== null) && <div className="pam-weblogin-results">

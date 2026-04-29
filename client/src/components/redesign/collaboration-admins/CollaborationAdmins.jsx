@@ -1,12 +1,12 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import {ReactComponent as UserIcon} from "../../../icons/users.svg";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
-import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
-import {ReactComponent as EmailIcon} from "../../../icons/email_new.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import UserIcon from "../../../icons/users.svg?react";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
+import InviteIcon from "../../../icons/single-neutral-question.svg?react";
+import HandIcon from "../../../icons/puppet_new.svg?react";
+import EmailIcon from "../../../icons/email_new.svg?react";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import CheckBox from "../../checkbox/CheckBox";
 import {
     deleteCollaborationMembership,
@@ -32,16 +32,17 @@ import {Chip, Tooltip, ChipType} from "@surfnet/sds";
 import LastAdminWarning from "../last-admin-warning/LastAdminWarning";
 import DateField from "../../date-field/DateField";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import {ReactComponent as ChevronUp} from "../../../icons/chevron-up.svg";
-import {ReactComponent as ChevronDown} from "../../../icons/chevron-down.svg";
+import ChevronUp from "../../../icons/chevron-up.svg?react";
+import ChevronDown from "../../../icons/chevron-down.svg?react";
 import {emitImpersonation} from "../../../utils/Impersonation";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const memberFilterValue = "members";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
 
-class CollaborationAdmins extends React.Component {
+class CollaborationAdminsInner extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -102,10 +103,11 @@ class CollaborationAdmins extends React.Component {
                 value: group.name
             }));
 
+        const allFilterOptions = filterOptions.concat(groupOptions);
         this.setState({
             selectedMembers,
-            filterValue: filterOptions[0],
-            filterOptions: filterOptions.concat(groupOptions),
+            filterValue: allFilterOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
+            filterOptions: allFilterOptions,
             loading: false,
             expiryDate: null,
             selectedMemberExpiryDate: null,
@@ -485,7 +487,10 @@ class CollaborationAdmins extends React.Component {
                     className={"member-filter-select"}
                     classNamePrefix={"filter-select"}
                     value={filterValue}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -784,5 +789,12 @@ class CollaborationAdmins extends React.Component {
     }
 
 }
+
+const CollaborationAdmins = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <CollaborationAdminsInner {...props}
+                                    queryFilterValue={queryFilterValue}
+                                    setQueryFilterValue={setQueryFilterValue}/>;
+};
 
 export default CollaborationAdmins;

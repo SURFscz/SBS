@@ -10,7 +10,7 @@ import Logo from "../../components/redesign/logo/Logo";
 import {login} from "../../utils/Login";
 import DOMPurify from "dompurify";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import {ReactComponent as Duplicate} from "../../icons/duplicate.svg";
+import Duplicate from "../../icons/duplicate.svg?react";
 import {poll} from "../../utils/Poll";
 
 class PamWebSSO extends React.Component {

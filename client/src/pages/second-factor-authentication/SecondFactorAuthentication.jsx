@@ -12,7 +12,7 @@ import {isEmpty, pseudoGuid, stopEvent} from "../../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 import FeedbackDialog from "../../components/feedback/Feedback";
-import {ReactComponent as ResetTokenIcon} from "../../icons/reset-token.svg";
+import ResetTokenIcon from "../../icons/reset-token.svg?react";
 import {redirectToProxyLocation} from "../../utils/ProxyAuthz";
 import {dictToQueryParams} from "../../utils/QueryParameters";
 
@@ -271,7 +271,7 @@ class SecondFactorAuthentication extends React.Component {
                         <h3>{I18n.t("mfa.lost.how")}</h3>
                         <ul>
                             {["1", "2", "3", "4", "5"].map(i =>
-                                <li dangerouslySetInnerHTML={{
+                                <li key={i} dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
                                 }}/>
                             )}
@@ -387,7 +387,7 @@ class SecondFactorAuthentication extends React.Component {
                         <h3>{I18n.t("mfa.lost.how")}</h3>
                         <ul>
                             {["1", "2", "3", "4", "5"].map(i =>
-                                <li dangerouslySetInnerHTML={{
+                                <li key={i} dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
                                 }}/>
                             )}

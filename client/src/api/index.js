@@ -102,6 +102,7 @@ export function authorizationUrl(state, idpHint = null) {
 
 export function me(config) {
     if (config.local && 1 == 1) {
+        // eslint-disable-next-line no-useless-assignment
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:sarah";
@@ -1194,3 +1195,9 @@ export function sweep(service) {
 export function allStats() {
     return fetchJson("/api/system/statistics")
 }
+
+//SSH
+export function validateSSHKey(sshPublicKey) {
+    return postPutJson("/api/ssh/validate", {ssh: sshPublicKey}, "POST", false);
+}
+

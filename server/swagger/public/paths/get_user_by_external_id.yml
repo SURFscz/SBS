@@ -1,5 +1,5 @@
 summary: "Get user by external ID."
-description: "Retrieve the details of a user by external ID."
+description: "Retrieves a user by its external ID."
 
 tags:
   - "SCIM client"
@@ -23,7 +23,7 @@ parameters:
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
   - name: user_external_id
     in: path
-    description: Unique external id of the User
+    description: Unique external identifier of the user
     required: true
     schema:
       type: string
@@ -31,7 +31,7 @@ parameters:
 
 responses:
   200:
-    description: User details
+    description: User
     schema:
       $ref: '/swagger/schemas/ScimUser.yaml'
   401:

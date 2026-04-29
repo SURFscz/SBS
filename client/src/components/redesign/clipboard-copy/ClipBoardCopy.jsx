@@ -1,6 +1,6 @@
 import React from "react";
 import "./ClipBoardCopy.scss";
-import {ReactComponent as Duplicate} from "../../../icons/duplicate.svg";
+import Duplicate from "../../../icons/duplicate.svg?react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
 export default function ClipBoardCopy({txt, right = false, transparentBackground = false}) {

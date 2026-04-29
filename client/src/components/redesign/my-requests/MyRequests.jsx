@@ -19,11 +19,11 @@ import {Chip} from "@surfnet/sds";
 import {organisationNames} from "../../../api";
 import {AppStore} from "../../../stores/AppStore";
 import {statusCustomSort} from "../../../utils/Utils";
-
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-export default class MyRequests extends React.PureComponent {
+class MyRequestsInner extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -110,9 +110,10 @@ export default class MyRequests extends React.PureComponent {
         organisationNames(joinRequests).then(res => {
             joinRequests.forEach(jr => jr.organisationName = res[jr.id]);
             requests.forEach(request => request.organisationName = this.organisationName(request));
+            const allOptions = filterOptions.concat(statusOptions);
             this.setState({
-                filterOptions: filterOptions.concat(statusOptions),
-                filterValue: filterOptions[0],
+                filterOptions: allOptions,
+                filterValue: allOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
                 loading: false
             }, callback);
         })
@@ -129,7 +130,10 @@ export default class MyRequests extends React.PureComponent {
                     className={"requests-filter-select"}
                     classNamePrefix={"filter-select"}
                     value={filterValue}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -213,3 +217,12 @@ export default class MyRequests extends React.PureComponent {
     }
 
 }
+
+const MyRequests = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <MyRequestsInner {...props}
+                            queryFilterValue={queryFilterValue}
+                            setQueryFilterValue={setQueryFilterValue}/>;
+};
+
+export default MyRequests;

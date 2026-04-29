@@ -1,6 +1,9 @@
+import { describe, it, expect } from 'vitest';
 import {parseBulkInvitation} from "../../utils/CSVParser";
 
-test("parseWithHeaders", () => {
+
+describe('CSVParser', () => {
+it("parseWithHeaders", () => {
     const csv = `
 short_names,intended_role,invitees,groups,invitation_expiry_date,membership_expiry_date,message,sender_name
 
@@ -19,7 +22,7 @@ coShortName,admin,rdoe@uniharderwijk.nl, , , , ,
     expect(data[2].message).toEqual(null)
 });
 
-test("parseWithoutHeaders", () => {
+it("parseWithoutHeaders", () => {
     const csv = `
 
 cumulusgrp,admin,rdoe@uniharderwijk.nl,301ee8e6-b5d1-40b5-a27e-47611f803371,"2025-05-10","2025-05-10",Please join the Cumulus research group collaboration page.,Organisation XYZ
@@ -33,7 +36,7 @@ cumulusgrp,admin,rdoe@uniharderwijk.nl,301ee8e6-b5d1-40b5-a27e-47611f803371,"202
     expect(data[1].invitees).toEqual(["jdoe@surf.nl","joost@surf.nl"]);
 });
 
-test("parseWithError", () => {
+it("parseWithError", () => {
     const csv = `
 Mumbo Jumbo
     `;
@@ -44,7 +47,7 @@ Mumbo Jumbo
     expect(errors[0].code).toEqual("TooFewFields");
 });
 
-test("parseWithCustomErrors", () => {
+it("parseWithCustomErrors", () => {
     const csv = `
 short_names,intended_role,invitees,groups,invitation_expiry_date,membership_expiry_date,message,sender_name
 cumulusgrp,admin,rdoe@uniharderwijk.nl,301ee8e6-b5d1-40b5-a27e-47611f803371,1743014227,2025-12-30,Please join the Cumulus research group collaboration page.,Organisation XYZ
@@ -55,9 +58,11 @@ cumulusgrp,admin,rdoe@uniharderwijk.nl,301ee8e6-b5d1-40b5-a27e-47611f803371,1743
     expect(results.errors.length).toEqual(1);
 });
 
-test("parseWithDefaults", () => {
+it("parseWithDefaults", () => {
     const csv = "ai_computing,,\"rdoe5@uniharderwijk.nl,rdoe4@uniharderwijk.nl\",,,,,";
     const results = parseBulkInvitation(csv);
     expect(results.data.length).toEqual(1);
     expect(results.errors.length).toEqual(0);
+});
+
 });

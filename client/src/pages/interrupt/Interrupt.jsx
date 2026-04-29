@@ -28,6 +28,6 @@ export default function Interrupt({config, history}) {
             default:
                 doRedirectToProxyLocation();
         }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 }

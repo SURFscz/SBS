@@ -1,16 +1,29 @@
+---
+
 name: User Story
 description: Use this template for new user stories.
-title: "As a [role], I want to [goal] so that [reason]"
+title: "[]"
 type: "feature"
 body:
   - type: markdown
     attributes:
-      value: Please use the title field to name the story and the below fields to provide necessary details.
+      value: >
+        Please use the title field to name the story and the below
+        fields to provide necessary details.
 
   - type: textarea
     attributes:
       label: Description
       description: Provide a brief description of the story.
+      value: "As a [role], I want to [goal] so that [reason]"
+
+  - type: textarea
+    attributes:
+      label: Task Overview
+      description: List the tasks need to complete this story.
+      placeholder: |
+        - [ ] Task 1
+        - [ ] Task 2
 
   - type: textarea
     attributes:
@@ -19,6 +32,30 @@ body:
       placeholder: |
         - [ ] Criterion 1
         - [ ] Criterion 2
+  
+  - type: textarea
+    attributes:
+      label: Definition of Done
+      description: Predefined Definition of Done
+      value: |
+        - [ ] Does the code include backend code?
+          - [ ] Happy flow tested with API test
+          - [ ] One or more unhappy flows tested with API test
+          - [ ] Manually tested with API client (as long as API tests are slightly different)
+          - [ ] Mypy succeeds on new code
+          - [ ] Linting succeeds on new code
+          - [ ] Relevant documentation is updated 
+            - OpenAPI specs
+            - README
+            - Pydocs
+          - [ ] Communicate changes like breaking api changes or a necessary database migration
+        
+        - [ ] Does the code include frontend code?
+          - [ ] New functionality is tested with Playwright, or is too small for Playwright tests
+          - [ ] Adapt existing Playwright tests if they break
+          - [ ] New React components are functional components
+          - [ ] Linting succeeds on new code
+          - [ ] Relevant documentation is updated (maybe none, docs on the react code seems quite scarce 😅 )
 
   - type: textarea
     attributes:

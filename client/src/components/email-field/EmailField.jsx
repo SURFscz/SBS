@@ -66,22 +66,16 @@ export default function EmailField({
         if (!isEmpty(email) && email.indexOf("<") > -1) {
             emails = email.split(/[,\n\t;]/)
                 .map(e => e.trim())
-                .filter(part => {
-                    const indexOf = part.indexOf("<");
-                    part = indexOf > -1 ? part.substring(indexOf + 1, part.length - 1) : part;
-                    return validateEmail(part, invalidEmails);
-                });
+                .filter(part => validateEmail(part, invalidEmails));
         } else if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
             const replacedEmails = email.replace(/[;\s]/g, ",");
             const splitEmails = replacedEmails.split(",");
             emails = splitEmails
                 .filter(part => validateEmail(part, invalidEmails));
         } else if (!isEmpty(email)) {
-            const valid = validEmailRegExp.test(email.trim());
+            const valid = validateEmail(email.trim(), invalidEmails);
             if (valid) {
                 emails = [email];
-            } else {
-                invalidEmails.push(email.trim());
             }
         }
         setEmailErrors((!isEmpty(e.target.value) && !isEmpty(invalidEmails)) ? invalidEmails : []);

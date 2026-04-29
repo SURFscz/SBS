@@ -16,7 +16,6 @@ export default function SyncApplications({config}) {
     const [results, setResults] = useState([]);
 
     useEffect(() => {
-        setLoading(true);
         serviceExportOverview().then(res => {
             setServices(res.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
             setLoading(false);

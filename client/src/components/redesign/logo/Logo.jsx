@@ -1,6 +1,6 @@
 import React from "react";
 
-import {ReactComponent as NotFoundIcon} from "../../../icons/image-not-found.svg";
+import NotFoundIcon from "../../../icons/image-not-found.svg?react";
 import {isEmpty} from "../../../utils/Utils";
 import {srcUrl} from "../../../utils/Image";
 

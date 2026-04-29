@@ -1,5 +1,5 @@
-@import "../../../stylesheets/vars";
-@import "../../../stylesheets/unit_header";
+@use "../../../stylesheets/vars";
+@use "../../../stylesheets/unit_header";
 
 table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
 

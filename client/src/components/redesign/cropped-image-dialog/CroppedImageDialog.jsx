@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "../../../locale/I18n";
 import "./CroppedImageDialog.scss";
-import {ReactComponent as NotFoundIcon} from "../../../icons/image-not-found.svg";
+import NotFoundIcon from "../../../icons/image-not-found.svg?react";
 import {detect} from "detect-browser";
 import Undraw1 from "../../../undraw/undraw_Adventure_re_ncqp.png";
 import Undraw2 from "../../../undraw/undraw_Aircraft_re_m05i.png";

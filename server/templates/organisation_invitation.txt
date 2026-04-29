@@ -15,13 +15,13 @@ Personal Message from {{ invitation.user.name }}:
 {% endif %}
 
 Accept invitation:
-To accept this invitation, please click 'Login to accept this invitation'. After logging in you can review and
+To accept this invitation, please click 'Log in to accept this invitation'. After logging in you can review and
 accept the invitation and become a member of the organisation.
 
 If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
 The invitation automatically will be suspended after {{ expiry_period }}.
 
-Login to accept this invitation:
+Log in to accept this invitation:
 {{ base_url }}/organisation-invitations/accept/{{ invitation.hash }}
 
 Decline this invitation:

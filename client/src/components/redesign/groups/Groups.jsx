@@ -8,9 +8,9 @@ import {
     groupShortNameExists,
     updateGroup
 } from "../../../api";
-import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
-import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import PencilIcon from "@surfnet/sds/icons/functional-icons/edit.svg?react";
+import BinIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 import "./Groups.scss";
 import {isEmpty, stopEvent, userColumnsCustomSort} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
@@ -19,8 +19,8 @@ import {clearFlash, setFlash} from "../../../utils/Flash";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import Entities from "../entities/Entities";
 import SpinnerField from "../spinner-field/SpinnerField";
-import {ReactComponent as UserIcon} from "../../../icons/users.svg";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
+import UserIcon from "../../../icons/users.svg?react";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
 import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import InputField from "../../input-field/InputField";
@@ -33,8 +33,8 @@ import {AppStore} from "../../../stores/AppStore";
 import ErrorIndicator from "../error-indicator/ErrorIndicator";
 import {Chip, ChipType, IconButton, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import {ReactComponent as ThrashIcon} from "../../../icons/trash_new.svg";
-import {ReactComponent as EmailIcon} from "../../../icons/email_new.svg";
+import ThrashIcon from "../../../icons/trash_new.svg?react";
+import EmailIcon from "../../../icons/email_new.svg?react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
 

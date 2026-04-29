@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "./ServiceDenied.scss";
-import {ReactComponent as NoAccessIcon} from "../../icons/service-denied-1.svg";
-import {ReactComponent as LogonPrevIcon} from "../../icons/service-denied-2.svg";
-import {ReactComponent as HappyIcon} from "../../icons/landing/happy.svg";
-import {ReactComponent as ErrorInfoIcon} from "../../icons/service-denied-3.svg";
+import NoAccessIcon from "../../icons/service-denied-1.svg?react";
+import LogonPrevIcon from "../../icons/service-denied-2.svg?react";
+import HappyIcon from "../../icons/landing/happy.svg?react";
+import ErrorInfoIcon from "../../icons/service-denied-3.svg?react";
 import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
 import {capitalize, isEmpty} from "../../utils/Utils";
@@ -13,11 +13,14 @@ import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 
 export default function ServiceDenied(props) {
 
-    const [serviceName, setServiceName] = useState("");
-    const [userId, setUserId] = useState("");
-    const [entityId, setEntityId] = useState("");
-    const [issuerId, setIssuerId] = useState("");
-    const [status, setStatus] = useState(null);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+
+    const serviceName = urlSearchParams.get("service_name");
+    const userId = urlSearchParams.get("user_id");
+    const entityId = urlSearchParams.get("entity_id");
+    const issuerId = urlSearchParams.get("issuer_id");
+    const status = urlSearchParams.get("error_status");
+
     const [serviceConnectionAllowed, setServiceConnectionAllowed] = useState(true);
     const [loading, setLoading] = useState(true);
     const [organisations, setOrganisations] = useState([]);
@@ -27,15 +30,7 @@ export default function ServiceDenied(props) {
     const [supportEmail, setSupportEmail] = useState("");
 
     useEffect(() => {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const entity_id = urlSearchParams.get("entity_id");
-        setServiceName(urlSearchParams.get("service_name"));
-        const user_id = urlSearchParams.get("user_id");
-        setUserId(user_id);
-        setEntityId(entity_id);
-        setIssuerId(urlSearchParams.get("issuer_id"));
-        setStatus(urlSearchParams.get("error_status"));
-        serviceInfo(entity_id, user_id)
+        serviceInfo(entityId, userId)
             .then(res => {
                 setOrganisations(res.organisations);
                 setUserName(res.user_name);
@@ -46,7 +41,7 @@ export default function ServiceDenied(props) {
                 setLoading(false);
             })
             .catch(() => props.history.push("/404"));
-    }, []);
+    }, [entityId, userId, props.history]);
 
     const invitationsBlock = () => {
         return (

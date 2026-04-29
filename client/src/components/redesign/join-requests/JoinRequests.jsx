@@ -1,5 +1,5 @@
 import React from "react";
-import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import ChevronLeft from "../../../icons/chevron-left.svg?react";
 
 import "./JoinRequests.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
@@ -13,15 +13,16 @@ import InputField from "../../input-field/InputField";
 import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../../api";
 import UserColumn from "../user-column/UserColumn";
 import moment from "moment";
-import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
+import MembersIcon from "../../../icons/single-neutral.svg?react";
 import {Chip, Tooltip} from "@surfnet/sds";
 import Select from "react-select";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import {chipTypeForStatus} from "../../../utils/UserRole";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-class JoinRequests extends React.Component {
+class JoinRequestsInner extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -63,9 +64,10 @@ class JoinRequests extends React.Component {
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
+        const allOptions = filterOptions.concat(statusOptions);
         this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0],
+            filterOptions: allOptions,
+            filterValue: allOptions.find(o => o.value === this.props.queryFilterValue) || filterOptions[0],
             loading: false,
             selectedJoinRequestId: null,
             declineDialog: false,
@@ -161,7 +163,10 @@ class JoinRequests extends React.Component {
                     className={"join-request-filter-select"}
                     value={filterValue}
                     classNamePrefix={"filter-select"}
-                    onChange={option => this.setState({filterValue: option})}
+                    onChange={option => {
+                        this.props.setQueryFilterValue(option.value);
+                        this.setState({filterValue: option});
+                    }}
                     options={filterOptions}
                     isSearchable={false}
                     isClearable={false}
@@ -290,5 +295,12 @@ class JoinRequests extends React.Component {
         )
     }
 }
+
+const JoinRequests = (props) => {
+    const [queryFilterValue, setQueryFilterValue] = useQueryParameter('filterValue');
+    return <JoinRequestsInner {...props}
+                              queryFilterValue={queryFilterValue}
+                              setQueryFilterValue={setQueryFilterValue}/>;
+};
 
 export default JoinRequests;

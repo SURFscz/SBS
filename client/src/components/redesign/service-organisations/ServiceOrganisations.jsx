@@ -15,8 +15,8 @@ import {
     toggleReset,
     trustOrganisation
 } from "../../../api";
-import {ReactComponent as ConnectionAllowedIcon} from "@surfnet/sds/icons/illustrative-icons/hr.svg";
-import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg";
+import ConnectionAllowedIcon from "@surfnet/sds/icons/illustrative-icons/hr.svg?react";
+import NoConnectionIcon from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg?react";
 import {clearFlash, setFlash} from "../../../utils/Flash";
 import Logo from "../logo/Logo";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";

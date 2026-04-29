@@ -62,7 +62,7 @@ class ServiceAup extends React.Component {
                     <p className="multiple-collaborations">{I18n.t("aup.service.organisationAccess")}</p>
                 }
                 <div>
-                    {collaborations.map(collaboration => <div className="collaboration-detail">
+                    {collaborations.map(collaboration => <div key={collaboration.id || collaboration.name} className="collaboration-detail">
                         <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
                         <p>{collaboration.description}</p>
                     </div>)}

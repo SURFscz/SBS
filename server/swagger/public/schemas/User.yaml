@@ -5,63 +5,138 @@ properties:
     type: number
     readOnly: true
     example: 999
-  name:
-    type: string
-    example: "Researcher Doe"
   uid:
     type: string
     example: "urn:rdoe"
-  username:
+  external_id:
     type: string
+    example: "a1b2c3d4e5f6"
+  name:
+    type:
+      - string
+      - "null"
+    example: "Researcher Doe"
+  email:
+    type:
+      - string
+      - "null"
+    example: "rdoe@uniharderwijk.nl"
+  nick_name:
+    type:
+      - string
+      - "null"
+    example: "Researcher Doe"
+  username:
+    type:
+      - string
+      - "null"
     example: "rdoe2"
   address:
-    type: string
+    type:
+      - string
+      - "null"
     example: "Postal 1234AA"
   affiliation:
-    type: string
+    type:
+      - string
+      - "null"
+    example: "employee"
+  scoped_affiliation:
+    type:
+      - string
+      - "null"
+    example: "researcher@uniharderwijk.nl"
+  entitlement:
+    type:
+      - string
+      - "null"
     example: "employee"
   eduperson_principal_name:
-    type: string
+    type:
+      - string
+      - "null"
     example: "rdoe@uniharderwijk.nl"
-  email:
-    type: string
-    example: "rdoe@uniharderwijk.nl"
-  entitlement:
-    type: string
-    example: "employee"
   given_name:
-    type: string
+    type:
+      - string
+      - "null"
     example: "Researcher"
   family_name:
-    type: string
+    type:
+      - string
+      - "null"
     example: "Doe"
-  nick_name:
-    type: string
-    example: "Researcher Doe"
   schac_home_organisation:
-    type: string
+    type:
+      - string
+      - "null"
     example: "uniharderwijk.nl"
-  scoped_affiliation:
-    type: string
-    example: "researcher@uniharderwijk.nl"
-  last_accessed_date:
-    type: number
-    description: "The last accessed date at in epoch seconds"
-    example: 1644015600
-  last_login_date:
-    type: number
-    description: "The last login date at in epoch seconds"
-    example: 1644015600
+  application_uid:
+    type:
+      - string
+      - "null"
+    example: "app-uid-123"
+  home_organisation_uid:
+    type:
+      - string
+      - "null"
+    example: "home-uid-123"
+  collab_person_id:
+    type:
+      - string
+      - "null"
+    example: "collab-person-id-123"
   second_factor_auth:
-    type: boolean
-    description: "Indicator if the user has setup MFA in SRAM"
+    type:
+      - boolean
+      - "null"
+    description: "Whether MFA is configured by the user"
+    example: false
+  mfa_reset_token:
+    type:
+      - boolean
+      - "null"
     example: false
   suspended:
-    type: boolean
+    type:
+      - boolean
+      - "null"
     example: false
+  rate_limited:
+    type:
+      - boolean
+      - "null"
+    example: false
+  confirmed_super_user:
+    type:
+      - boolean
+      - "null"
+    example: false
+  last_login_date:
+    type:
+      - number
+      - "null"
+    description: "Last login timestamp in epoch seconds"
+    example: 1644015600
+  last_accessed_date:
+    type:
+      - number
+      - "null"
+    description: "Last accessed timestamp in epoch seconds"
+    example: 1644015600
+  pam_last_login_date:
+    type:
+      - number
+      - "null"
+    description: "Last PAM login timestamp in epoch seconds"
+    example: 1644015600
   created_at:
     type: number
-    description: "The date of the created at in epoch seconds"
+    description: "Created timestamp in epoch seconds"
+    example: 1644015600
+  updated_at:
+    type: number
+    description: "Updated timestamp in epoch seconds"
     example: 1644015600
   created_by:
     type: string
@@ -71,6 +146,11 @@ properties:
     type: string
     description: "UID of the user who updated this"
     example: "urn:admin"
+  edu_members:
+    type:
+      - string
+      - "null"
+    example: null
   ssh_keys:
     type: array
     items:

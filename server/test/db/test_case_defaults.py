@@ -6,7 +6,7 @@ from munch import munchify
 from werkzeug.exceptions import BadRequest
 
 from server.db.defaults import (default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes,
-                                uri_re, valid_tag_label)
+                                uri_re, valid_tag_label, invalid_tag_labels)
 from server.db.defaults import split_user_affiliations
 from server.db.domain import Invitation
 from server.db.domain import User
@@ -141,8 +141,17 @@ class TestCaseDefaults(TestCase):
     def test_valid_tag_label(self):
         self.assertTrue(valid_tag_label("tag_uuc"))
         self.assertTrue(valid_tag_label("just_valid-234567890123456789012"))
-        self.assertTrue(valid_tag_label("123_valid"))
-        self.assertTrue(valid_tag_label("🌹"))
+        self.assertTrue(valid_tag_label("a1234567890123456789012345678901"))
 
+        self.assertFalse(valid_tag_label(None))
         self.assertFalse(valid_tag_label("123456789012345678901234567890123"))
+        self.assertFalse(valid_tag_label("123_valid"))
+        self.assertFalse(valid_tag_label("Tag_uuc"))
+        self.assertFalse(valid_tag_label("tag value"))
+        self.assertFalse(valid_tag_label("🌹"))
         self.assertFalse(valid_tag_label(" "))
+
+    def test_invalid_tag_labels(self):
+        self.assertListEqual([], invalid_tag_labels(["tag_uuc", "tag_uuc_2"]))
+        self.assertListEqual([None], invalid_tag_labels([None]))
+        self.assertListEqual(["123_valid", "tag value"], invalid_tag_labels(["tag_uuc", "123_valid", "tag value"]))

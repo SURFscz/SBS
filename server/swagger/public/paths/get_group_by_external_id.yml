@@ -1,5 +1,5 @@
 summary: "Get group by external ID."
-description: "Retrieve the details of a group by external ID."
+description: "Retrieves a group by its external ID."
 
 tags:
   - "SCIM client"
@@ -23,7 +23,7 @@ parameters:
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
   - name: group_external_id
     in: path
-    description: Unique external id of the Group
+    description: Unique external identifier of the group
     required: true
     schema:
       type: string
@@ -31,7 +31,7 @@ parameters:
 
 responses:
   200:
-    description: Group details
+    description: Group
     schema:
       $ref: '/swagger/schemas/ScimGroup.yaml'
   401:

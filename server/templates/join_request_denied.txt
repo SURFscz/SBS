@@ -6,7 +6,7 @@
 Your request to join collaboration {{ join_request.collaboration.name }} has been denied by the
     administrator {{administrator}} of the collaboration.
 
-Login to view the join request:
+Log in to view the join request:
 
 {{ base_url }}/collaborations/{{ join_request.collaboration.id }}
 {% endblock %}

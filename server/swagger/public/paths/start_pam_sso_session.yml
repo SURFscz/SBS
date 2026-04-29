@@ -45,7 +45,7 @@ parameters:
         - attribute
 
 responses:
-  200:
+  201:
     description: PAM WebSSO session details
     schema:
       type: object
@@ -68,6 +68,18 @@ responses:
           type: string
           description: "The challenge to present to the user"
           example: "'Please sign in to: http://localhost:3000/weblogin/storage/fd69d7dc-df17-4d49-b992-1c447d257ad0'"
+        qr_code_ascii:
+          type: string
+          description: "ASCII QR code for the challenge URL"
+          example: ""
+        qr_code_png:
+          type: string
+          description: "Base64-encoded PNG QR code for the challenge URL"
+          example: ""
+        url:
+          type: string
+          description: "URL for the challenge"
+          example: "http://localhost:3000/weblogin/storage/fd69d7dc-df17-4d49-b992-1c447d257ad0"
   403:
     schema:
       $ref: '/swagger/components/responses/Forbidden.yaml'

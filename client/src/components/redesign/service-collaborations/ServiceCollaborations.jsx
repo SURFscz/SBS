@@ -11,8 +11,8 @@ import Logo from "../logo/Logo";
 import CheckBox from "../../checkbox/CheckBox";
 import {Chip, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import {ReactComponent as EmailIcon} from "../../../icons/email_new.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import EmailIcon from "../../../icons/email_new.svg?react";
+import ThrashIcon from "@surfnet/sds/icons/functional-icons/bin.svg?react";
 import {clearFlash, setFlash} from "../../../utils/Flash";
 import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
 

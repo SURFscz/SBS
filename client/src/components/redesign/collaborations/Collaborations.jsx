@@ -1,5 +1,5 @@
 import React from "react";
-import {ReactComponent as TreeSwing} from "../../../images/tree_swing.svg";
+import TreeSwing from "../../../images/tree_swing.svg?react";
 
 import "./Collaborations.scss";
 import {isEmpty, stopEvent, tagArraySort, unitArraySort} from "../../../utils/Utils";
@@ -16,10 +16,11 @@ import {clearFlash} from "../../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../../utils/Date";
 import moment from "moment";
+import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
-export default class Collaborations extends React.PureComponent {
+class CollaborationsInner extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -52,9 +53,9 @@ export default class Collaborations extends React.PureComponent {
                         standalone: true,
                         collaborations: res,
                         filterOptions: allFilterOptions,
-                        filterValue: allFilterOptions[0],
+                        filterValue: allFilterOptions.find(o => o.value === this.props.queryLabelFilterValue) || allFilterOptions[0],
                         unitFilterOptions: allUnitFilterOptions,
-                        unitFilterValue: allUnitFilterOptions[0],
+                        unitFilterValue: allUnitFilterOptions.find(o => o.value === this.props.queryUnitFilterValue) || allUnitFilterOptions[0],
                         loading: false
                     });
 
@@ -66,9 +67,9 @@ export default class Collaborations extends React.PureComponent {
             this.addLabelInformation(collaborations);
             this.setState({
                 filterOptions: allFilterOptions,
-                filterValue: allFilterOptions[0],
+                filterValue: allFilterOptions.find(o => o.value === this.props.queryLabelFilterValue) || allFilterOptions[0],
                 unitFilterOptions: allUnitFilterOptions,
-                unitFilterValue: allUnitFilterOptions[0],
+                unitFilterValue: allUnitFilterOptions.find(o => o.value === this.props.queryUnitFilterValue) || allUnitFilterOptions[0],
                 loading: false
             })
         }
@@ -182,7 +183,10 @@ export default class Collaborations extends React.PureComponent {
                             className={"collaboration-label-filter-select"}
                             value={unitFilterValue}
                             classNamePrefix={"filter-select"}
-                            onChange={option => this.setState({unitFilterValue: option})}
+                            onChange={option => {
+                                this.props.setQueryUnitFilterValue(option.value);
+                                this.setState({unitFilterValue: option});
+                            }}
                             options={unitFilterOptions}
                             isSearchable={false}
                             isClearable={false}
@@ -193,7 +197,10 @@ export default class Collaborations extends React.PureComponent {
                         className={"collaboration-label-filter-select"}
                         value={filterValue}
                         classNamePrefix={"filter-select"}
-                        onChange={option => this.setState({filterValue: option})}
+                        onChange={option => {
+                            this.props.setQueryLabelFilterValue(option.value);
+                            this.setState({filterValue: option});
+                        }}
                         options={filterOptions}
                         isSearchable={false}
                         isClearable={false}
@@ -379,3 +386,15 @@ export default class Collaborations extends React.PureComponent {
     }
 
 }
+
+const Collaborations = (props) => {
+    const [queryLabelFilterValue, setQueryLabelFilterValue] = useQueryParameter('label');
+    const [queryUnitFilterValue, setQueryUnitFilterValue] = useQueryParameter('unit');
+    return <CollaborationsInner {...props}
+                                queryLabelFilterValue={queryLabelFilterValue}
+                                setQueryLabelFilterValue={setQueryLabelFilterValue}
+                                queryUnitFilterValue={queryUnitFilterValue}
+                                setQueryUnitFilterValue={setQueryUnitFilterValue}/>;
+};
+
+export default Collaborations;

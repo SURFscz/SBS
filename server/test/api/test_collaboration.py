@@ -4,8 +4,9 @@ import json
 import time
 
 from flask import jsonify
+from werkzeug.exceptions import HTTPException
 
-from server.api.collaboration import generate_short_name
+from server.api.collaboration import generate_short_name, _normalize_tag_values, _validate_tag_request
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Tag, Service, Unit
@@ -20,6 +21,24 @@ from server.tools import dt_now
 
 
 class TestCollaboration(AbstractTest):
+
+    def test_normalize_tag_values(self):
+        self.assertListEqual([], _normalize_tag_values(None))
+        self.assertListEqual(["tag_uuc", "new_tag"], _normalize_tag_values(["tag_uuc", "new_tag"]))
+        self.assertListEqual(
+            ["tag_uuc", "new_tag"],
+            _normalize_tag_values([{"tag_value": "tag_uuc", "id": 1}, "new_tag"])
+        )
+        self.assertListEqual([None], _normalize_tag_values([{"id": 1}]))
+
+    def test_validate_tag_request_valid(self):
+        self.assertIsNone(_validate_tag_request(["tag_uuc", "tag_uuc_2", "project-a"], "collaboration labels"))
+
+    def test_validate_tag_request_invalid(self):
+        with self.assertRaises(HTTPException) as context:
+            _validate_tag_request(["tag_uuc", "123_invalid"], "collaboration labels")
+        self.assertIn("Invalid collaboration labels", context.exception.description)
+        self.assertIn("123_invalid", context.exception.description)
 
     def _find_by_identifier(self, with_basic_auth=True):
         return self.get("/api/collaborations/find_by_identifier",
@@ -114,8 +133,6 @@ class TestCollaboration(AbstractTest):
 
         tag_existing = "tag_uuc"
         tag_just_valid = "just_valid-234567890123456789012"
-        tag_too_long = "invalid__--2345678901234567890123"
-        tag_digit_start = "123_valid"
 
         body = {
             "name": "new_collaboration",
@@ -134,21 +151,36 @@ class TestCollaboration(AbstractTest):
         collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
-        # tag too long
-        body["tags"] = [tag_existing, tag_just_valid, tag_too_long]
-        body["name"] += "_"
-        body["short_name"] += "_"
-        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = db.session.get(Collaboration, res["id"])
-        self.assertEqual(2, len(collaboration.tags))
+    def test_collaboration_with_invalid_tags(self):
+        organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id
+        invalid_tags = [
+            "invalid__--2345678901234567890123",
+            "123_valid",
+            "Tag_uuc",
+            "tag value"
+        ]
 
-        # normal, add a tag
-        body["tags"] = [tag_existing, tag_just_valid, tag_digit_start]
-        body["name"] += "_"
-        body["short_name"] += "_"
-        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = db.session.get(Collaboration, res["id"])
-        self.assertEqual(3, len(collaboration.tags))
+        body = {
+            "name": "new_collaboration",
+            "description": "new_collaboration",
+            "organisation_id": organisation_id,
+            "administrators": [],
+            "short_name": "short__",
+            "current_user_admin": False
+        }
+
+        self.login("urn:john")
+
+        for invalid_tag in invalid_tags:
+            body["tags"] = ["tag_uuc", invalid_tag]
+            res = self.post("/api/collaborations",
+                            body=body,
+                            with_basic_auth=False,
+                            response_status_code=400)
+            self.assertIn("Invalid collaboration labels", res["message"])
+            self.assertIn(invalid_tag, res["message"])
+            body["name"] += "_"
+            body["short_name"] += "_"
 
     @staticmethod
     def _collaboration_membership_count(collaboration):
@@ -192,6 +224,15 @@ class TestCollaboration(AbstractTest):
 
         collaboration = db.session.get(Collaboration, collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
+
+    def test_collaboration_update_invalid_tags(self):
+        collaboration_id = self._find_by_identifier()["id"]
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration["tags"] = ["tag_uuc", "123_invalid"]
+        res = self.put("/api/collaborations", body=collaboration, response_status_code=400)
+        self.assertIn("Invalid collaboration labels", res["message"])
+        self.assertIn("123_invalid", res["message"])
 
     def test_collaboration_update_organisation(self):
         collaboration = self._find_by_identifier()
@@ -318,6 +359,11 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         service_connection_requests = collaboration["service_connection_requests"]
         self.assertEqual(1, len(service_connection_requests))
+        service = service_connection_requests[0]["service"]
+        self.assertEqual("help@ssh.com", service["contact_email"])
+        self.assertEqual(1, len(service["service_memberships"]))
+        self.assertEqual(["betty@uuc.org"],
+                         [membership["user"]["email"] for membership in service["service_memberships"]])
 
     def test_collaboration_by_id_api_call(self):
         collaboration_id = self._find_by_identifier()["id"]
@@ -516,13 +562,13 @@ class TestCollaboration(AbstractTest):
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
                                         "logo": read_image("robot.png"),
-                                        "tags": ["label_1", "label_2", "1234567890123456789012345678901234"],
+                                        "tags": ["label_1", "label_2", "label_12345678901234567890123456"],
                                         "units": ["Research", "Support"]
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
         collaboration_json = response.json
-        self.assertEqual(4, len(collaboration_json["tags"]))
+        self.assertEqual(5, len(collaboration_json["tags"]))
         self.assertEqual(1, len(collaboration_json["units"]))
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
@@ -530,7 +576,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("urn:sarah", collaboration.collaboration_memberships[0].user.uid)
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
-        self.assertEqual(4, len(collaboration.tags))
+        self.assertEqual(5, len(collaboration.tags))
         self.assertEqual(1, len(collaboration.units))
 
         one_day_ago = dt_now() - datetime.timedelta(days=1)
@@ -575,7 +621,7 @@ class TestCollaboration(AbstractTest):
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
                                         "logo": "data:image/WHATEVER;base64," + read_image("robot.png"),
-                                        "tags": ["label_1", "label_2", "1234567890123456789012345678901234"],
+                                        "tags": ["label_1", "label_2", "label_12345678901234567890123456"],
                                         "units": ["Research", "Support"]
                                     }),
                                     content_type="application/json")
@@ -596,13 +642,34 @@ class TestCollaboration(AbstractTest):
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
                                         "logo": read_image("uni-harderwijk-small.png"),
-                                        "tags": ["label_1", "label_2", "!-INVALID"]
+                                        "tags": ["label_1", "label_2", "label_3"]
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
 
         collaboration = self.find_entity_by_name(Collaboration, "monitor1")
         self.assertEqual("monitor12", collaboration.short_name)
+
+    def test_api_call_with_invalid_tags(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org"],
+                                        "administrator": "urn:sarah",
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "tags": ["label_1", "!-INVALID"]
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        response_json = response.json
+        self.assertIn("Invalid collaboration labels", response_json["message"])
+        self.assertIn("!-INVALID", response_json["message"])
 
     def test_api_call_invalid_logo(self):
         response = self.client.post("/api/collaborations/v1",
