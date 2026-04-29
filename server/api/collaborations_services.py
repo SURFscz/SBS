@@ -29,7 +29,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
                          f"(service {service_id}, org {organisation.id}, co {collaboration_id})")
 
     if not org_allowed and not org_automatic_allowed \
-            and not service.automatic_connection_allowed and not service.access_allowed_for_all:
+            and not service.access_allowed_for_all:
         raise BadRequest("not_allowed_organisation "
                          f"(service {service_id}, org {organisation.id}, co {collaboration_id})")
 
