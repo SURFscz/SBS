@@ -454,7 +454,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
+        with:
+          persist-credentials: false
+          
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
