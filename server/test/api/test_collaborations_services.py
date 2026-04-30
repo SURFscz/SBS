@@ -1,14 +1,12 @@
 import json
 
-from db.domain import Service
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, co_ai_computing_name, service_cloud_name, co_research_name, \
     service_network_name, service_wiki_name, service_group_wiki_name1, service_group_wiki_name2, \
     co_robotics_disabled_join_request_name, unifra_secret, service_ssh_name, service_storage_name, \
-    service_scheduler_name, \
-    unihard_name, unihard_secret_unit_support, unihard_unit_research_name, unihard_hashed_secret
+    service_scheduler_name, unihard_name, unihard_secret_unit_support, unihard_secret
 
 
 # there are a number of cases to test here:
@@ -426,7 +424,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue("Connection not allowed" in res["message"])
 
     def test_add_collaborations_services_no_allowed_organisations_automatic_connection_allowed(self):
-        service = self.find_entity_by_name(Service, unihard_unit_research_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         service_entity_id = service.entity_id
         service.access_allowed_for_all = False
         service.allowed_organisations.clear()
@@ -435,11 +433,12 @@ class TestCollaborationsServices(AbstractTest):
         self.save_entity(service)
 
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
-        url = f"/api/collaborations_services/v1/connect_collaboration_service/{collaboration['identifier']}"
+        url = f"/api/collaborations_services/v1/connect_collaboration_service/{collaboration.identifier}"
         res = self.client.put(url,
-                              headers={"Authorization": f"Bearer {unihard_hashed_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
-                                  "service_entity_id": service_cloud.entity_id
+                                  "service_entity_id": service_entity_id
                               }), content_type="application/json")
-        self.assertEqual("connected", res.json["status"])
+        self.assertEqual(400, res.status_code)
+        msg = res.json["message"]
+        self.assertTrue("not_allowed_organisation" in msg)
