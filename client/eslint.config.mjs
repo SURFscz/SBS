@@ -2,11 +2,12 @@ import js from "@eslint/js";
 import globals from "globals";
 import pluginReact from "eslint-plugin-react";
 import reactHooks from 'eslint-plugin-react-hooks';
+import tseslint from 'typescript-eslint';
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "coverage/**"]
+    ignores: ["dist/**", "coverage/**", "build/**"]
   },
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
@@ -34,11 +35,30 @@ export default defineConfig([
       "react-hooks/immutability":"off"
     },
   },
+  ...tseslint.configs.recommended.map(config => ({
+    ...config,
+    files: ["**/*.{ts,tsx}"]
+  })),
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: { jsx: true }
+      },
+      globals: globals.browser
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }]
+    }
+  },
   {
     files: [
-      "**/*.test.{js,jsx}",
-      "**/*.spec.{js,jsx}",
-      "**/__tests__/**/*.{js,jsx}"
+      "**/*.test.{js,jsx,ts,tsx}",
+      "**/*.spec.{js,jsx,ts,tsx}",
+      "**/__tests__/**/*.{js,jsx,ts,tsx}"
     ],
     languageOptions: {
       globals: {

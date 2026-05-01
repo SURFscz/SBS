@@ -50,6 +50,10 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@types/node": "^25.6.0",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "@types/react-router-dom": "^5.3.3",
         "@vitejs/plugin-react": "^6.0.1",
         "dot-prop": "^10.1.0",
         "eslint": "^10.1.0",
@@ -60,6 +64,8 @@
         "http-proxy-middleware": "^3.0.5",
         "raw-loader": "^4.0.2",
         "sass": "^1.98.0",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.59.1",
         "vite": "^8.0.10",
         "vite-plugin-svgr": "^4.2.0",
         "vitest": "^4.1.0"
@@ -73,7 +79,8 @@
         "analyze": "source-map-explorer build/static/js/main.*.js ",
         "dev": "vite",
         "build": "vite build",
-        "lint": "eslint ./src",
+        "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx}\"",
+        "typecheck": "tsc --noEmit",
         "preview": "vite preview",
         "test": "vitest"
     },
