@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "APScheduler==3.11.2",
-    "Authlib==1.6.11",
+    "Authlib==1.7.1",
     "bcrypt==5.0.0",
     "click==8.3.1",
     "cryptography==47.0.0",
