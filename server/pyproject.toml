@@ -55,7 +55,7 @@ test = [
     "coverage==7.13.5",
     "Faker==40.15.0",
     "flake8==7.3.0",
-    "flake8-pyproject==1.2.3",
+    "flake8-pyproject==1.2.4",
     "flask-testing==0.8.1",
     "flask-webtest==0.1.6",
     "freezegun==1.5.5",
