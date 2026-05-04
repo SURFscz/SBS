@@ -1057,3 +1057,13 @@ class RateLimitInfo(Base, db.Model):
     user = db.relationship("User")
     last_accessed_date = db.Column("last_accessed_date", TZDateTime(), nullable=False)
     count = db.Column("count", db.Integer(), nullable=False)
+
+
+class DistributedLock(Base, db.Model):
+    __tablename__ = "distributed_locks"
+
+    lock_name = db.Column("lock_name", db.String(255), primary_key=True)
+    acquired_at = db.Column("acquired_at", TZDateTime(), nullable=False)
+    lock_until = db.Column("lock_until", TZDateTime(), nullable=False)
+    fencing_token = db.Column("fencing_token", db.BigInteger, nullable=False, default=0)
+    locked_by = db.Column("locked_by", db.String(255), nullable=False, default="")
