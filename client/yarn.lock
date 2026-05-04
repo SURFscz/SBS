@@ -786,10 +786,10 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/spec/-/spec-1.1.0.tgz#a79b55dbaf8604812f52d140b2c9ab41bc150bb8"
   integrity sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==
 
-"@surfnet/sds@^0.0.162":
-  version "0.0.162"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.162.tgz#f7add4e64bb5140ffc3cab8fb96782ad0735779f"
-  integrity sha512-B4qPsS1d2Hy6QJ/dyrOGMynHaPXvGQh65/G6cfs84d8gEtlN17RaxLa82qw45d1kXVXEyCiAi+gTV7mP9KOuog==
+"@surfnet/sds@^0.0.163":
+  version "0.0.163"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.163.tgz#91f07ec8731f6192da6ecc92a0fe016a7655c87d"
+  integrity sha512-svu+nz3rVHNYrNw4am96aELhixguerXNXZmGYS+jKBMTcElagaDB5BXrjjfC8oAViWrvfhk1Uz2Zg94fUbYcMw==
 
 "@svgr/babel-plugin-add-jsx-attribute@8.0.0":
   version "8.0.0"
