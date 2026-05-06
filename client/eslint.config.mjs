@@ -7,7 +7,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "coverage/**", "build/**"]
+    ignores: ["dist/**", "coverage/**"]
   },
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
