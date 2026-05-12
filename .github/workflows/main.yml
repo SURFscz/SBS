@@ -164,7 +164,7 @@ jobs:
           cd client
           yarn install
           yarn test
-          yarn lint
+          yarn validate
           yarn build
         env:
           CI: true
