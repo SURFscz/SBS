@@ -1,6 +1,7 @@
 import uuid
 
 from server.db.db import db
+from server.db.defaults import STATUS_OPEN
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_connection_request_ssh_hash, co_research_name, service_wiki_name, \
@@ -96,8 +97,18 @@ class TestServiceConnectionRequest(AbstractTest):
         self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=403)
 
     def test_existing_service_connection_request(self):
+
+        ### Arrange
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         service = self.find_entity_by_name(Service, service_ssh_name)
+
+        existing_request = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
+            .filter(ServiceConnectionRequest.service_id == service.id) \
+            .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
+            .first()
+
+        self.assertTrue(existing_request)
 
         self.login("urn:sarah")
         data = {
@@ -105,8 +116,12 @@ class TestServiceConnectionRequest(AbstractTest):
             "service_id": service.id,
             "message": "Pretty please"
         }
+
+        ### Act
         res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
-        self.assertTrue("outstanding_service_connection_request" in res["message"])
+
+        ### Assert
+        self.assertTrue("A service connection request already exists between" in res["message"])
 
     def test_approve_service_connection_request_not_allowed(self):
         service = self.find_entity_by_name(Service, service_ssh_name)
