@@ -84,7 +84,7 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["betty@uuc.org", "james@example.org"], sorted(mail_msg.to))
 
-    def test_service_connection_request_by_member(self):
+    def test_service_connection_request_by_member_not_allowed(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
         service_id = service.id
@@ -96,10 +96,31 @@ class TestServiceConnectionRequest(AbstractTest):
         }
         self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=403)
 
+    def test_service_connection_request_for_nonexistent_co(self):
+        
+        ### Arrange
+        service = self.find_entity_by_name(Service, service_ssh_name)
+        self.login("urn:sarah")
+        data = {
+            "collaboration_id": "1234",
+            "service_id": service.id,
+            "message": "Pretty please"
+        }
+
+        ### Act
+        result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=404)
+
+        ### Assert
+        self.assertTrue("404" in result["message"])
+
+    def test_service_connection_request_for_nonexistent_service(self):
+        pass
+
     def test_existing_service_connection_request(self):
 
         ### Arrange
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        print(collaboration.id)
         service = self.find_entity_by_name(Service, service_ssh_name)
 
         existing_request = ServiceConnectionRequest.query \
@@ -118,10 +139,10 @@ class TestServiceConnectionRequest(AbstractTest):
         }
 
         ### Act
-        res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
+        result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
 
         ### Assert
-        self.assertTrue("A service connection request already exists between" in res["message"])
+        self.assertTrue("A service connection request already exists between" in result["message"])
 
     def test_approve_service_connection_request_not_allowed(self):
         service = self.find_entity_by_name(Service, service_ssh_name)
