@@ -1,6 +1,6 @@
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy.orm import contains_eager, load_only
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
@@ -141,8 +141,11 @@ def delete_service_request_connection(service_connection_request_id):
 @json_endpoint
 def request_service_connection():
     data = current_request.get_json()
-    service = db.session.get(Service, int(data["service_id"]))
+    service = db.session.get(Service, int(data["service_id"]))            
     collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
+
+    if not collaboration:
+        raise NotFound(f"The collaboration with id {data["collaboration_id"]} does not exist")
 
     confirm_collaboration_admin(collaboration.id)
 
@@ -164,6 +167,7 @@ def request_new_service_connection(collaboration, message, service, user):
         .filter(ServiceConnectionRequest.service_id == service.id) \
         .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
         .all()
+    
     if existing_request:
         raise BadRequest(f"A service connection request already exists between {service.name} and {collaboration.name}")
     pending_organisation_approval = collaboration.organisation.service_connection_requires_approval

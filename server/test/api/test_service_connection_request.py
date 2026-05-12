@@ -97,7 +97,6 @@ class TestServiceConnectionRequest(AbstractTest):
         self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=403)
 
     def test_service_connection_request_for_nonexistent_co(self):
-        
         ### Arrange
         service = self.find_entity_by_name(Service, service_ssh_name)
         self.login("urn:sarah")
@@ -111,7 +110,7 @@ class TestServiceConnectionRequest(AbstractTest):
         result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=404)
 
         ### Assert
-        self.assertTrue("404" in result["message"])
+        self.assertTrue("NotFound" in result["message"])
 
     def test_service_connection_request_for_nonexistent_service(self):
         pass
