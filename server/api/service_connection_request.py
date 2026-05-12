@@ -137,11 +137,11 @@ def delete_service_request_connection(service_connection_request_id):
     return delete(ServiceConnectionRequest, service_connection_request_id)
 
 
-@service_connection_request_api.route("/", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def request_service_connection():
+@service_connection_request_api.route("/", methods=["POST"], strict_slashes=False) # type: ignore
+@json_endpoint # type: ignore
+def request_service_connection() -> tuple[object, int]:
     data = current_request.get_json()
-    service = db.session.get(Service, int(data["service_id"]))            
+    service = db.session.get(Service, int(data["service_id"]))
     collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
 
     if not collaboration:
@@ -164,13 +164,13 @@ def request_service_connection():
     return {}, 201
 
 
-def request_new_service_connection(collaboration, message, service, user):
+def request_new_service_connection(collaboration, message, service, user) -> None:
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
         .filter(ServiceConnectionRequest.service_id == service.id) \
         .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
         .all()
-    
+
     if existing_request:
         raise BadRequest(f"A service connection request already exists between {service.name} and {collaboration.name}")
     pending_organisation_approval = collaboration.organisation.service_connection_requires_approval

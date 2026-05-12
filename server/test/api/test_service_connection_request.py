@@ -97,7 +97,8 @@ class TestServiceConnectionRequest(AbstractTest):
         self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=403)
 
     def test_service_connection_request_for_nonexistent_co(self):
-        ### Arrange
+
+        # Arrange
         service = self.find_entity_by_name(Service, service_ssh_name)
         self.login("urn:sarah")
         data = {
@@ -106,14 +107,15 @@ class TestServiceConnectionRequest(AbstractTest):
             "message": "Pretty please"
         }
 
-        ### Act
+        # Act
         result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=404)
 
-        ### Assert
+        # Assert
         self.assertTrue("NotFound" in result["message"])
 
     def test_service_connection_request_for_nonexistent_service(self):
-        ### Arrange
+
+        # Arrange
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         self.login("urn:sarah")
         data = {
@@ -122,15 +124,15 @@ class TestServiceConnectionRequest(AbstractTest):
             "message": "Pretty please"
         }
 
-        ### Act
+        # Act
         result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=404)
 
-        ### Assert
+        # Assert
         self.assertTrue("NotFound" in result["message"])
 
     def test_existing_service_connection_request(self):
 
-        ### Arrange
+        # Arrange
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         service = self.find_entity_by_name(Service, service_ssh_name)
 
@@ -149,10 +151,10 @@ class TestServiceConnectionRequest(AbstractTest):
             "message": "Pretty please"
         }
 
-        ### Act
+        # Act
         result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
 
-        ### Assert
+        # Assert
         self.assertTrue("A service connection request already exists between" in result["message"])
 
     def test_approve_service_connection_request_not_allowed(self):
