@@ -137,8 +137,8 @@ def delete_service_request_connection(service_connection_request_id):
     return delete(ServiceConnectionRequest, service_connection_request_id)
 
 
-@service_connection_request_api.route("/", methods=["POST"], strict_slashes=False) # type: ignore
-@json_endpoint # type: ignore
+@service_connection_request_api.route("/", methods=["POST"], strict_slashes=False)  # type: ignore
+@json_endpoint  # type: ignore
 def request_service_connection() -> tuple[object, int]:
     data = current_request.get_json()
     service = db.session.get(Service, int(data["service_id"]))
