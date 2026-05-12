@@ -113,13 +113,25 @@ class TestServiceConnectionRequest(AbstractTest):
         self.assertTrue("NotFound" in result["message"])
 
     def test_service_connection_request_for_nonexistent_service(self):
-        pass
+        ### Arrange
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        self.login("urn:sarah")
+        data = {
+            "collaboration_id": collaboration.id,
+            "service_id": "1234",
+            "message": "Pretty please"
+        }
+
+        ### Act
+        result = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=404)
+
+        ### Assert
+        self.assertTrue("NotFound" in result["message"])
 
     def test_existing_service_connection_request(self):
 
         ### Arrange
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
-        print(collaboration.id)
         service = self.find_entity_by_name(Service, service_ssh_name)
 
         existing_request = ServiceConnectionRequest.query \
