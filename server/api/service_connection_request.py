@@ -165,7 +165,7 @@ def request_new_service_connection(collaboration, message, service, user):
         .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
         .all()
     if existing_request:
-        raise BadRequest(f"outstanding_service_connection_request: {service.name} and {collaboration.name}")
+        raise BadRequest(f"A service connection request already exists between {service.name} and {collaboration.name}")
     pending_organisation_approval = collaboration.organisation.service_connection_requires_approval
     service_connection_request = ServiceConnectionRequest(message=message,
                                                           hash=generate_token(),
