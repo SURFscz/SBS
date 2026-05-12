@@ -147,6 +147,9 @@ def request_service_connection():
     if not collaboration:
         raise NotFound(f"The collaboration with id {data["collaboration_id"]} does not exist")
 
+    if not service:
+        raise NotFound(f"The service with id {data["service_id"]} does not exist")
+
     confirm_collaboration_admin(collaboration.id)
 
     user = db.session.get(User, current_user_id())
