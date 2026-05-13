@@ -56,6 +56,8 @@ Make sure you point to the `sbs` database by changing the `database.uri` from `"
 
 Run alembic on your sbs database by running `alembic -c migrations/alembic.ini upgrade head` inside the server (alembic points to the correct default, see `server/migrations/alembic.ini`).
 
+To fill the test database as well, `sqlalchemy.url = mysql+mysqldb://sbs:sbs@127.0.0.1/sbs?charset=utf8mb4` to `sqlalchemy.url = mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4` just once, apply the alembic upgrade head command again, and revert the change back so that it points to sbs again.
+
 Now you can start the server from the project root (so outside the server folder):
 
 ```bash
@@ -99,7 +101,7 @@ The GUI can be started with:
 
 ```bash
 cd client
-yarn start
+yarn dev
 ```
 
 To create a GUI production build:
