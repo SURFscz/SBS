@@ -82,7 +82,7 @@ jobs:
           sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -246,7 +246,7 @@ jobs:
 
       - name: Build arch-specific Docker image
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: "."
           file: "Dockerfile.${{ matrix.image }}"
@@ -397,7 +397,7 @@ jobs:
 
       - name: remove all previous "latest" releases
         if: "github.ref_type=='branch'"
-        uses: dev-drprasad/delete-older-releases@v0.3.3
+        uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
           keep_latest: 0
           delete_tag_pattern: "branch+${{github.ref_name}}"
@@ -470,7 +470,7 @@ jobs:
           mysql -uroot -proot -h127.0.0.1 sbs < misc/sbs-db.sql
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: 'pip'
@@ -496,7 +496,7 @@ jobs:
           mysqldump -h 127.0.0.1 -u sbs --password=sbs --skip-comments sbs | sed -E '${/^$/d;}' >> misc/sbs-db.sql
 
       - name: Create Pull Request
-        uses: "peter-evans/create-pull-request@v6"
+        uses: "peter-evans/create-pull-request@v8"
         with:
           add-paths: |
             misc/sbs-db.sql

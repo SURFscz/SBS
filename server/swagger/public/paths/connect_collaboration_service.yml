@@ -48,5 +48,6 @@ responses:
     schema:
       $ref: '/swagger/components/responses/Forbidden.yaml'
   404:
+    description: Either the service or the collaboration does not exist
     schema:
       $ref: '/swagger/components/responses/NotFound.yaml'
