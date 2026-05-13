@@ -141,14 +141,17 @@ def delete_service_request_connection(service_connection_request_id):
 @json_endpoint  # type: ignore
 def request_service_connection() -> tuple[object, int]:
     data = current_request.get_json()
-    service = db.session.get(Service, int(data["service_id"]))
-    collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
+    service_id = int(data["service_id"])
+    service = db.session.get(Service, service_id)
+
+    collaboration_id = int(data["collaboration_id"])
+    collaboration = db.session.get(Collaboration, collaboration_id)
 
     if not collaboration:
-        raise NotFound(f"The collaboration with id {data["collaboration_id"]} does not exist")
+        raise NotFound(f"The collaboration with id {collaboration_id} does not exist")
 
     if not service:
-        raise NotFound(f"The service with id {data["service_id"]} does not exist")
+        raise NotFound(f"The service with id {service_id} does not exist")
 
     confirm_collaboration_admin(collaboration.id)
 
