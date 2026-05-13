@@ -496,7 +496,7 @@ jobs:
           mysqldump -h 127.0.0.1 -u sbs --password=sbs --skip-comments sbs | sed -E '${/^$/d;}' >> misc/sbs-db.sql
 
       - name: Create Pull Request
-        uses: "peter-evans/create-pull-request@v6"
+        uses: "peter-evans/create-pull-request@v8"
         with:
           add-paths: |
             misc/sbs-db.sql
