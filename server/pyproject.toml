@@ -62,7 +62,7 @@ test = [
     "hbmqtt2==0.9.7",
     "mock==5.2.0",
     "pip-tools==7.5.3",
-    "pipdeptree==2.35.1",
+    "pipdeptree==2.35.2",
     "pytest==9.0.3",
     "pytest-cov==7.1.0",
     "pytest-xdist==3.8.0",
