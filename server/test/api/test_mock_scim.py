@@ -151,15 +151,9 @@ class TestMockScim(AbstractTest):  # type: ignore[misc]
 
 class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
     """
-    Verify that the async executor dispatches SCIM events in FIFO order: a collaboration
-    broadcast submitted before a group broadcast must execute before it.
+    Verify per-endpoint FIFO ordering: collaboration before group on the same SCIM URL.
 
-    The test patches apply_collaboration_change and apply_group_change so no real HTTP
-    calls or running server are needed — making it safe to run in CI.
-
-    Relies on EXECUTOR_MAX_WORKERS=1 (set in __main__.py).  With multiple workers the
-    tasks run concurrently and the shorter group task will frequently finish first,
-    causing violations that are caught across N repeated pairs.
+    Uses the SCIM FIFO pool (SCIM_FIFO_WORKERS > 1) with mocked apply_* handlers.
     """
 
     @classmethod
@@ -181,10 +175,8 @@ class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
         lock = threading.Lock()
 
         def record_collab(*args: Any, **kwargs: Any) -> None:
-            # Sleep simulates the longer I/O of apply_collaboration_change (multiple HTTP
-            # calls per child group + the collaboration itself).  Without the fix
-            # (EXECUTOR_MAX_WORKERS > 1) a concurrent worker picks up the group task
-            # and completes it before this sleep ends, flipping the order.
+            # Sleep simulates the longer I/O of apply_collaboration_change. Without per-endpoint
+            # FIFO, a concurrent pool worker could run the shorter group task first.
             time.sleep(0.05)
             with lock:
                 call_log.append("collab")
@@ -211,9 +203,7 @@ class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
             for f in futures:
                 f.result()
 
-        # With EXECUTOR_MAX_WORKERS=1 the single worker processes tasks strictly in
-        # submission order: collab, group, collab, group, ...
-        # So call_log must be exactly ["collab", "group"] * N.
+        # Per-endpoint FIFO: collab, group, collab, group, ...
         self.assertEqual(len(call_log), N * 2,
                          f"Expected {N * 2} recorded calls, got {len(call_log)}: {call_log}")
 

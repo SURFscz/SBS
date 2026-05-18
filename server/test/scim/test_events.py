@@ -1,5 +1,6 @@
 import json
 import os
+from unittest.mock import patch
 
 import responses
 
@@ -55,11 +56,13 @@ class TestEvents(AbstractTest):
     @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json={}, status=400)
+            rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json={"totalResults": 0, "Resources": []}, status=200)
             rsps.add(responses.POST, TEST_SCIM_USERS_ENDPOINT, json=user_created, status=201)
-            broadcast_user_changed(sarah.id).result()
+            with patch("server.scim.events._services_for_user", return_value=[service]):
+                broadcast_user_changed(sarah.id).result()
 
     @responses.activate
     def test_apply_user_change_update(self):
@@ -133,7 +136,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_collaboration_deleted(collaboration.id)
+            broadcast_collaboration_deleted(collaboration.id).result()
 
     @responses.activate
     def test_apply_group_change_create_no_users(self):
@@ -166,7 +169,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_group_deleted(group.id)
+            broadcast_group_deleted(group.id).result()
 
     @responses.activate
     def test_organisation_deleted_existing_users(self):
@@ -182,7 +185,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_organisation_deleted(organisation.id)
+            broadcast_organisation_deleted(organisation.id).result()
 
     @responses.activate
     def test_apply_service_added(self):
@@ -217,7 +220,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_USERS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_service_deleted(collaboration.id, service.id)
+            broadcast_service_deleted(collaboration.id, service.id).result()
 
     @responses.activate
     def test_broadcast_error_response(self):
@@ -225,10 +228,14 @@ class TestEvents(AbstractTest):
             pass
 
         @server.scim.scim.apply_change
-        def raise_exception(*args):
+        def raise_exception(app, *args, **kwargs):
             raise MockException("Mock error")
 
-        future = self.app.executor.submit(raise_exception)
+        future = self.app.scim_fifo_pool.submit(
+            "test-endpoint",
+            raise_exception,
+            self.app,
+        )
 
         # noinspection PyBroadException
         try:
