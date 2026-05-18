@@ -51,5 +51,6 @@ class TestScimFifoEvents(AbstractTest):
 
         self.assertEqual(["collab", "group"] * n, call_log)
 
+
 if __name__ == "__main__":
     unittest.main()
