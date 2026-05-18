@@ -1,6 +1,6 @@
 import os
 from functools import wraps
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Callable, Dict, List, Sequence
 from urllib.parse import urlparse
 
 from flask import current_app
