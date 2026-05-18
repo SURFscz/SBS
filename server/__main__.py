@@ -275,6 +275,68 @@ if not test:
 if not test:
     start_scheduling(app)
 
+# Initialize SCIM per-endpoint FIFO pool for ordered processing across multiple endpoints.
+# Gated on SCIM_DISABLED only (not TESTING): unit tests set SCIM_DISABLED=1; docker-compose uses TESTING=1.
+if not os.environ.get("SCIM_DISABLED"):
+    from server.scim.fifo_pool import FifoPool
+    from server.scim.dispatcher import dispatch_scim_task
+    from server.scim.queue import ScimQueue
+
+    def _dispatch_scim_task_in_context(app, payload_json: str) -> None:
+        """Run dispatch in a Flask app context (ThreadPoolExecutor workers have none)."""
+        log = logging.getLogger("scim_fifo_pool")
+        with app.app_context():
+            try:
+                error = dispatch_scim_task(app, payload_json)
+                if error:
+                    log.error(f"Task dispatch failed: {error}")
+            except Exception as e:
+                log.exception(f"Worker task failed: {str(e)}")
+
+    def _run_scim_fifo_pool():
+        """Run the SCIM FIFO pool loop in the background.
+        
+        Continuously drains per-endpoint Redis queues, maintaining FIFO order per endpoint
+        while allowing parallel processing across different endpoints.
+        """
+        logger = logging.getLogger("scim_fifo_pool")
+        logger.info("Starting SCIM FIFO pool")
+        
+        try:
+            max_workers = int(os.environ.get("SCIM_FIFO_WORKERS", "4"))
+            logger.info(f"SCIM FIFO pool configured with {max_workers} workers")
+            
+            pool = FifoPool(max_workers=max_workers, logger=logger)
+            queue = ScimQueue(app.redis_client)
+            
+            with app.app_context():
+                # Main loop: drain queues and dispatch tasks
+                while True:
+                    try:
+                        # Get next task from any endpoint queue (blocks briefly if no tasks)
+                        endpoint_url, payload_json = queue.dequeue_next_available(timeout=1)
+                        
+                        if endpoint_url and payload_json:
+                            pool.submit(
+                                endpoint_url,
+                                _dispatch_scim_task_in_context,
+                                app,
+                                payload_json,
+                            )
+                        
+                    except Exception as e:
+                        logger.exception(f"Error in SCIM FIFO pool loop: {str(e)}")
+                        # Continue processing despite errors
+                        time.sleep(0.5)
+        
+        except Exception as e:
+            logger = logging.getLogger("scim_fifo_pool")
+            logger.exception(f"Fatal error in SCIM FIFO pool: {str(e)}")
+    
+    # Start the pool loop in a background greenlet
+    eventlet.spawn_n(_run_scim_fifo_pool)
+    logger.info("SCIM FIFO pool spawned in background")
+
 redis_uri = config.redis.uri
 socket_io = SocketIO(app, message_queue=redis_uri, cors_allowed_origins="*")
 app.socket_io = socket_io

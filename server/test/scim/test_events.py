@@ -1,5 +1,6 @@
 import json
 import os
+from unittest import mock
 
 import responses
 
@@ -10,6 +11,7 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_collaboration_deleted, \
     broadcast_organisation_deleted, broadcast_group_changed, broadcast_service_added, \
     broadcast_service_deleted, broadcast_group_deleted
+from server.scim.dispatcher import dispatch_scim_task
 from server.test.abstract_test import AbstractTest
 from server.test.scim import TEST_SCIM_USERS_ENDPOINT, TEST_SCIM_GROUPS_ENDPOINT
 from server.test.seed import user_sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name, \
@@ -33,6 +35,23 @@ class TestEvents(AbstractTest):
         super(TestEvents, self).setUp()
         self.add_bearer_token_to_services()
 
+    def _broadcast_and_dispatch(self, fn, *args):
+        queued_payloads = []
+
+        def _capture_enqueue(_queue, _endpoint_url, payload_json):
+            queued_payloads.append(payload_json)
+            return True
+
+        with mock.patch("server.scim.events.ScimQueue.enqueue_by_endpoint", autospec=True,
+                        side_effect=_capture_enqueue):
+            result = fn(*args)
+
+        self.assertTrue(result)
+        self.assertGreater(len(queued_payloads), 0)
+        for payload_json in queued_payloads:
+            error = dispatch_scim_task(self.app, payload_json)
+            self.assertIsNone(error)
+
     @responses.activate
     def test_apply_user_change_create(self):
         sarah = self.find_entity_by_name(User, user_peter_name)
@@ -41,7 +60,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=no_user_found, status=200)
             rsps.add(responses.POST, TEST_SCIM_USERS_ENDPOINT, json=user_created, status=201)
-            broadcast_user_changed(sarah.id).result()
+            self._broadcast_and_dispatch(broadcast_user_changed, sarah.id)
 
     @responses.activate
     def test_apply_user_change_create_provisioning_error(self):
@@ -50,7 +69,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=no_user_found, status=200)
             rsps.add(responses.POST, TEST_SCIM_USERS_ENDPOINT, status=400)
-            broadcast_user_changed(sarah.id).result()
+            self._broadcast_and_dispatch(broadcast_user_changed, sarah.id)
 
     @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
@@ -59,7 +78,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json={}, status=400)
             rsps.add(responses.POST, TEST_SCIM_USERS_ENDPOINT, json=user_created, status=201)
-            broadcast_user_changed(sarah.id).result()
+            self._broadcast_and_dispatch(broadcast_user_changed, sarah.id)
 
     @responses.activate
     def test_apply_user_change_update(self):
@@ -71,7 +90,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.PUT,
                      f"{TEST_SCIM_USERS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=user_updated, status=201)
-            broadcast_user_changed(sarah.id).result()
+            self._broadcast_and_dispatch(broadcast_user_changed, sarah.id)
 
     @responses.activate
     def test_apply_user_change_delete(self):
@@ -88,7 +107,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.PUT, f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
             collaboration_identifiers = [member.collaboration_id for member in sarah.collaboration_memberships]
-            broadcast_user_deleted(sarah.external_id, collaboration_identifiers).result()
+            self._broadcast_and_dispatch(broadcast_user_deleted, sarah.external_id, collaboration_identifiers)
 
     @responses.activate
     def test_apply_group_change_create_new_users(self):
@@ -103,7 +122,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=no_user_found, status=200)
             rsps.add(responses.POST, TEST_SCIM_USERS_ENDPOINT, json=user_created, status=201)
             rsps.add(responses.POST, TEST_SCIM_GROUPS_ENDPOINT, json=group_created, status=201)
-            broadcast_collaboration_changed(collaboration.id).result()
+            self._broadcast_and_dispatch(broadcast_collaboration_changed, collaboration.id)
 
     @responses.activate
     def test_apply_group_change_update_existing_users(self):
@@ -117,7 +136,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=user_found, status=200)
             rsps.add(responses.PUT, f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
-            broadcast_collaboration_changed(collaboration.id).result()
+            self._broadcast_and_dispatch(broadcast_collaboration_changed, collaboration.id)
 
     @responses.activate
     def test_apply_group_change_delete_existing_users(self):
@@ -133,7 +152,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_collaboration_deleted(collaboration.id)
+            self._broadcast_and_dispatch(broadcast_collaboration_deleted, collaboration.id)
 
     @responses.activate
     def test_apply_group_change_create_no_users(self):
@@ -144,7 +163,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_GROUPS_ENDPOINT, json=no_group_found, status=200)
             rsps.add(responses.POST, TEST_SCIM_GROUPS_ENDPOINT, json=group_created, status=201)
-            broadcast_group_changed(group.id).result()
+            self._broadcast_and_dispatch(broadcast_group_changed, group.id)
 
     @responses.activate
     def test_apply_group_change_create_error_response(self):
@@ -155,7 +174,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_GROUPS_ENDPOINT, json=no_group_found, status=200)
             rsps.add(responses.POST, TEST_SCIM_GROUPS_ENDPOINT, json=group_created, status=400)
-            broadcast_group_changed(group.id).result()
+            self._broadcast_and_dispatch(broadcast_group_changed, group.id)
 
     @responses.activate
     def test_delete_group(self):
@@ -166,7 +185,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_group_deleted(group.id)
+            self._broadcast_and_dispatch(broadcast_group_deleted, group.id)
 
     @responses.activate
     def test_organisation_deleted_existing_users(self):
@@ -182,7 +201,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_GROUPS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_organisation_deleted(organisation.id)
+            self._broadcast_and_dispatch(broadcast_organisation_deleted, organisation.id)
 
     @responses.activate
     def test_apply_service_added(self):
@@ -200,7 +219,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, TEST_SCIM_GROUPS_ENDPOINT, json=no_group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
             rsps.add(responses.POST, TEST_SCIM_GROUPS_ENDPOINT, json=group_created, status=201)
-            broadcast_service_added(collaboration.id, service.id).result()
+            self._broadcast_and_dispatch(broadcast_service_added, collaboration.id, service.id)
 
     @responses.activate
     def test_apply_service_removed(self):
@@ -217,21 +236,11 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      f"{TEST_SCIM_USERS_ENDPOINT}/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            broadcast_service_deleted(collaboration.id, service.id)
+            self._broadcast_and_dispatch(broadcast_service_deleted, collaboration.id, service.id)
 
     @responses.activate
     def test_broadcast_error_response(self):
-        class MockException(Exception):
-            pass
-
-        @server.scim.scim.apply_change
-        def raise_exception(*args):
-            raise MockException("Mock error")
-
-        future = self.app.executor.submit(raise_exception)
-
-        # noinspection PyBroadException
-        try:
-            future.result()
-        except Exception as e:
-            self.fail(f"Exception should have been absorbed, got {str(e)}")
+        with mock.patch("server.scim.dispatcher.apply_user_change", side_effect=Exception("Mock error")):
+            error = dispatch_scim_task(self.app, json.dumps({"action": "user_changed", "user_id": 1}))
+            self.assertIsNotNone(error)
+            self.assertIn("Error dispatching SCIM task", error)

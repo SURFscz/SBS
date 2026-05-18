@@ -151,15 +151,9 @@ class TestMockScim(AbstractTest):  # type: ignore[misc]
 
 class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
     """
-    Verify that the async executor dispatches SCIM events in FIFO order: a collaboration
-    broadcast submitted before a group broadcast must execute before it.
+    Verify per-endpoint FIFO ordering for the Redis queue + FifoPool pipeline.
 
-    The test patches apply_collaboration_change and apply_group_change so no real HTTP
-    calls or running server are needed — making it safe to run in CI.
-
-    Relies on EXECUTOR_MAX_WORKERS=1 (set in __main__.py).  With multiple workers the
-    tasks run concurrently and the shorter group task will frequently finish first,
-    causing violations that are caught across N repeated pairs.
+    See also server.test.scim.test_scim_fifo_pipeline for parallel-endpoint coverage.
     """
 
     @classmethod
@@ -193,27 +187,35 @@ class TestScimFifoOrdering(AbstractTest):  # type: ignore[misc]
             with lock:
                 call_log.append("group")
 
-        # Patch at the name used inside events.py so the executor picks up our stubs.
-        # This avoids any real HTTP calls and works without a running server (CI-safe).
-        with patch("server.scim.events.apply_collaboration_change", side_effect=record_collab), \
-                patch("server.scim.events.apply_group_change", side_effect=record_group):
+        from server.scim.dispatcher import dispatch_scim_task
+        from server.scim.fifo_pool import FifoPool
+        from server.scim.queue import ScimQueue
 
-            # Submit N interleaved (collab, group) pairs.
-            # With N=5 the probability of all N group stubs accidentally finishing
-            # after their collab stub by chance (without the fix) is (1/2)^5 < 4%.
-            # In practice it is far lower because group tasks are always shorter.
+        def _drain(expected_tasks: int) -> None:
+            pool = FifoPool(max_workers=4)
+            queue = ScimQueue(current_app.redis_client)
+            processed = 0
+            deadline = time.time() + 10
+            while processed < expected_tasks and time.time() < deadline:
+                endpoint_url, payload_json = queue.dequeue_next_available(timeout=0)
+                if endpoint_url and payload_json:
+                    pool.submit(endpoint_url, lambda p=payload_json: dispatch_scim_task(current_app, p))
+                    processed += 1
+                else:
+                    time.sleep(0.01)
+            pool.shutdown(wait=True)
+            self.assertEqual(expected_tasks, processed)
+
+        with patch("server.scim.dispatcher.apply_collaboration_change", side_effect=record_collab), \
+                patch("server.scim.dispatcher.apply_group_change", side_effect=record_group):
+
             N = 5
-            futures = []
             for _ in range(N):
-                futures.append(broadcast_collaboration_changed(collaboration.id))
-                futures.append(broadcast_group_changed(group.id))
+                broadcast_collaboration_changed(collaboration.id)
+                broadcast_group_changed(group.id)
+            _drain(N * 2)
 
-            for f in futures:
-                f.result()
-
-        # With EXECUTOR_MAX_WORKERS=1 the single worker processes tasks strictly in
-        # submission order: collab, group, collab, group, ...
-        # So call_log must be exactly ["collab", "group"] * N.
+        # Per-endpoint FIFO: collab, group, collab, group, ...
         self.assertEqual(len(call_log), N * 2,
                          f"Expected {N * 2} recorded calls, got {len(call_log)}: {call_log}")
 
