@@ -17,3 +17,22 @@ def init_scim_fifo_pool(app: Flask) -> FifoPool:
     app.scim_fifo_pool = pool
     logger.info("SCIM FIFO pool configured with %s workers", max_workers)
     return pool
+
+
+def reset_scim_fifo_pool(app: Flask) -> FifoPool:
+    """Shut down the current pool (waiting for in-flight SCIM) and start a fresh one."""
+    pool = getattr(app, "scim_fifo_pool", None)
+    if pool is not None:
+        pool.shutdown(wait=True)
+    return init_scim_fifo_pool(app)
+
+
+def ensure_scim_pool_idle(app: Flask, timeout: float = 30.0) -> None:
+    """Wait for queued SCIM work to finish; reset the pool if it does not drain in time."""
+    pool = getattr(app, "scim_fifo_pool", None)
+    if pool is None:
+        return
+    try:
+        pool.join_idle(timeout)
+    except TimeoutError:
+        reset_scim_fifo_pool(app)

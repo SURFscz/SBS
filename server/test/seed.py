@@ -275,7 +275,7 @@ def seed(db, app_config, skip_seed=False):
                                                       is_suspension=True, is_warning=True)
 
     warning_date = dt_now() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
-                   + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
+        + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
     notification_deletion_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
                                                         is_suspension=True, is_warning=False)
 

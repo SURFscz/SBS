@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import Future
 from functools import wraps
 from typing import Callable, Dict, List, Sequence
 from urllib.parse import urlparse
@@ -50,10 +51,17 @@ def _group_services_by_endpoint(services: Sequence[Service]) -> Dict[str, List[i
 
 def _submit_by_endpoint(services: Sequence[Service], fn: Callable, *args) -> ScimBroadcastFuture:
     app = current_app._get_current_object()
-    pool = app.scim_fifo_pool
     futures = []
     for endpoint_url, service_ids in _group_services_by_endpoint(services).items():
-        futures.append(pool.submit(endpoint_url, fn, app, *args, service_ids))
+        if os.environ.get("SCIM_FIFO_SYNC"):
+            future: Future = Future()
+            try:
+                future.set_result(fn(app, *args, service_ids))
+            except Exception as exc:
+                future.set_exception(exc)
+            futures.append(future)
+        else:
+            futures.append(app.scim_fifo_pool.submit(endpoint_url, fn, app, *args, service_ids))
     return ScimBroadcastFuture(futures)
 
 

@@ -185,13 +185,13 @@ app.db = db
 
 app.redis_client = init_redis(config)
 
-# Initialize the executors to be used in broadcasting SCIM changes
+# Flask executor (non-SCIM); SCIM uses per-endpoint FIFO pool in server.scim.pool
 app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = True
-# Required for FIFO ordering of SCIM events: a single worker guarantees that tasks are
-# executed in submission order. With multiple workers a shorter group task can overtake
-# a longer collaboration task, delivering child-before-parent to the SCIM receiver.
-app.config["EXECUTOR_MAX_WORKERS"] = 1
 init_executor(app, blocking=False)
+
+from server.scim.pool import init_scim_fifo_pool  # noqa: E402
+
+init_scim_fifo_pool(app)
 
 app.app_config = config
 app.app_config["profile"] = profile
@@ -208,6 +208,19 @@ with app.app_context():
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
+
+# Apply migrations on startup unless pytest (separate DB per worker) or Docker entrypoint
+# already ran wait_and_migrate (avoids races with gunicorn --reload).
+if "SBS_DB_URI_OVERRIDE" not in os.environ and not os.environ.get("SKIP_APP_MIGRATIONS"):
+
+    def _run_db_migrations(_app):
+        from server.db.db import db_migrations
+
+        db_migrations(_app.app_config.database.uri)
+        logger.info("Database migrations applied (alembic upgrade head)")
+        return True
+
+    obtain_lock(app, "db_migrations", _run_db_migrations, lambda: False)
 
 # Register CLI commands
 register_commands(app)

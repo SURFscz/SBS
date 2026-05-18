@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import time
 from collections import deque
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any, Callable, Deque, Dict, Hashable, Tuple
@@ -52,6 +53,16 @@ class FifoPool:
             with self._lock:
                 if key not in self._queues:
                     self._active_keys.discard(key)
+
+    def join_idle(self, timeout: float = 30.0) -> None:
+        """Block until all per-key queues are drained (for tests / teardown)."""
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            with self._lock:
+                if not self._queues and not self._active_keys:
+                    return
+            time.sleep(0.01)
+        raise TimeoutError(f"FifoPool still busy after {timeout}s")
 
     def shutdown(self, wait: bool = True) -> None:
         self._executor.shutdown(wait=wait)
