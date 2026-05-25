@@ -127,6 +127,85 @@ jobs:
         if: ${{ !cancelled() }}
 
 
+  Mocked_e2e_tests:
+    name: Mocked Playwright tests
+    if: github.event_name == 'workflow_dispatch'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run errands
+        run: |
+          sudo apt -y install curl
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Use Node.js 24.3.0
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.3.0"
+          cache: "yarn"
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Yarn
+        shell: bash
+        run: |
+          source ~/.nvm/nvm.sh
+          rm -rf ~/.yarn
+          curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
+          export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+          yarn -v
+        env:
+          VNM_DIR: ~/.nvm
+
+      - name: Install frontend dependencies
+        shell: bash
+        run: |
+          cd client
+          yarn install
+
+      - name: Install mocked e2e dependencies
+        shell: bash
+        run: |
+          cd e2e-tests-mocked
+          yarn install
+          yarn playwright install --with-deps chromium
+
+      - name: Start frontend
+        shell: bash
+        run: |
+          cd client
+          yarn dev --host 127.0.0.1 > ../client-vite.log 2>&1 &
+
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000 > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          cat ../client-vite.log
+          exit 1
+
+      - name: Run mocked Playwright tests
+        shell: bash
+        run: |
+          cd e2e-tests-mocked
+          SBS_LOCAL_BASE_URL=http://127.0.0.1:3000 yarn playwright test --project=chromium --reporter=list
+        env:
+          CI: true
+        timeout-minutes: 10
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: mocked-playwright-report
+          path: e2e-tests-mocked/playwright-report/
+          if-no-files-found: ignore
+
+
   Client_build:
     name: Client build
 
