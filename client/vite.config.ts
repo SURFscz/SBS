@@ -10,6 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     resolve: {
         alias: [
+            // @ alias for absolute imports, in sync with paths in tsconfig.json
             {
                 find: '@',
                 replacement: path.resolve(__dirname, 'src'),
