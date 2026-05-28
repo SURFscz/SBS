@@ -176,17 +176,13 @@ jobs:
         shell: bash
         run: |
           cd client
-          yarn dev --host 127.0.0.1 > ../client-vite.log 2>&1 &
+          yarn build
+          yarn preview --host 127.0.0.1 > ../client-vite.log 2>&1 &
 
-          for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:3000 > /dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-
-          cat ../client-vite.log
-          exit 1
+          curl --retry 60 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://127.0.0.1:3000 > /dev/null || {
+            cat ../client-vite.log
+            exit 1
+          }
 
       - name: Run mocked Playwright tests
         shell: bash
