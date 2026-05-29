@@ -10,6 +10,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     resolve: {
         alias: [
+            // @ alias for absolute imports, in sync with paths in tsconfig.json
+            {
+                find: '@',
+                replacement: path.resolve(__dirname, 'src'),
+            },
             {
                 find: /^@surfnet\/sds$/,
                 replacement: '@surfnet/sds/esm/index.js',
@@ -55,6 +60,10 @@ export default defineConfig({
           changeOrigin: true,
         },
       }
+    },
+    preview: {
+      port: 3000,
+      strictPort: true,
     },
     css: {
         preprocessorOptions: {
