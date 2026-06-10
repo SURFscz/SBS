@@ -10,6 +10,7 @@
   "scripts": {
     "test": "SBS_LOCAL_BASE_URL=http://localhost:3000 playwright test",
     "test:ui": "SBS_LOCAL_BASE_URL=http://localhost:3000 playwright test --ui",
+    "test:debug": "SBS_LOCAL_BASE_URL=http://localhost:3000 playwright test --debug --project=chromium",
     "postinstall": "playwright install"
   },
   "dependencies": {}

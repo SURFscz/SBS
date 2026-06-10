@@ -26,8 +26,8 @@ async function mockAupApi(page: Page) {
     headers: jsonHeaders,
     body: JSON.stringify({
       local: false,
-      continue_eduteams_redirect_uri: 'http://localhost',
-      continue_eb_redirect_uri: 'http://localhost',
+      continue_eduteams_redirect_uri: baseURL,
+      continue_eb_redirect_uri: baseURL,
     }),
   }));
   await page.route('**/api/aup/info', route => route.fulfill({
@@ -54,7 +54,7 @@ async function mockAupApi(page: Page) {
     return route.fulfill({
       status: 201,
       headers: jsonHeaders,
-      body: JSON.stringify({ location: `${baseURL}/aup-accepted` }),
+      body: JSON.stringify({ location: `${baseURL}/welcome` }),
     });
   });
 }
