@@ -86,7 +86,7 @@ test.describe('Local AUP happy flow', () => {
     expect(agreeResponse.status()).toBe(201);
     expect(refreshResponse.status()).toBe(200);
 
-    await expect(page).toHaveURL(`${baseURL}/welcome`);
+    await expect(page).toHaveURL(`${baseURL}/aup-accepted`);
     await expect(page.getByRole('heading', { name: /^Hi Playwright/ })).toBeHidden();
   });
 });
