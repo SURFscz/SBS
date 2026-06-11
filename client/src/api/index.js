@@ -71,12 +71,12 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
-function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
+export function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
     return validFetch(path, options, headers, showErrorDialog)
         .then(res => res.json());
 }
 
-function postPutJson(path, body, method, showErrorDialog = true, headers = {}) {
+export function postPutJson(path, body, method, showErrorDialog = true, headers = {}) {
     const jsonBody = JSON.stringify(body);
     return fetchJson(path, {method: method, body: jsonBody}, headers, showErrorDialog);
 }
@@ -815,15 +815,6 @@ export function createApiKey(apiKey) {
 
 export function deleteApiKey(id) {
     return fetchDelete(`/api/api_keys/${id}`)
-}
-
-//Aup
-export function aupLinks() {
-    return fetchJson("/api/aup/info");
-}
-
-export function agreeAup() {
-    return postPutJson("/api/aup/agree", {}, "post");
 }
 
 //CollaborationRequest
