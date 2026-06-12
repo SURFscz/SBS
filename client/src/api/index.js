@@ -95,11 +95,6 @@ export function config() {
 }
 
 //Users
-export function authorizationUrl(state, idpHint = null) {
-    const idpHintPart = isEmpty(idpHint) ? "" : `&aarc_idp_hint=${encodeURIComponent(idpHint)}`
-    return fetchJson(`/api/users/authorization?state=${encodeURIComponent(state)}${idpHintPart}`);
-}
-
 export function me(config) {
     if (config.local && 1 == 1) {
         // eslint-disable-next-line no-useless-assignment
