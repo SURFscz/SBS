@@ -9,7 +9,7 @@ type ButtonProps = {
     disabled?: boolean;
     cancelButton?: boolean;
     warningButton?: boolean;
-    icon?: string | null;
+    icon?: React.ReactNode;
     small?: boolean;
     centralize?: boolean;
     className?: string;
