@@ -90,10 +90,6 @@ export function health() {
     return fetchJson("/health");
 }
 
-export function config() {
-    return fetchJson("/config");
-}
-
 //Users
 export function me(config) {
     if (config.local && 1 == 1) {

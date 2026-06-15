@@ -10,6 +10,7 @@ import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import DOMPurify from "dompurify";
 import {redirectToProxyLocation} from "../../utils/ProxyAuthz";
 import {dictToQueryParams} from "../../utils/QueryParameters";
+import {AppConfig} from "@/api/config";
 
 type CurrentUser = {
     guest: boolean;
@@ -25,7 +26,7 @@ type AupConfig = {
 };
 
 export type AupProps = RouteComponentProps & {
-    config: Record<string, unknown>;
+    config: AppConfig;
     currentUser: CurrentUser;
     refreshUser: (callback: () => void) => void;
     aupConfig: AupConfig;
