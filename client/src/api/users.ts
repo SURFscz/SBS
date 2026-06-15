@@ -7,6 +7,6 @@ export type AuthorizationUrlResponse = {
 };
 
 export function authorizationUrl(state: string, idpHint: string | null = null): Promise<AuthorizationUrlResponse> {
-    const idpHintPart = isEmpty(idpHint) ? "" : `&aarc_idp_hint=${encodeURIComponent(idpHint!)}`;
+    const idpHintPart = isEmpty(idpHint) ? "" : `&aarc_idp_hint=${encodeURIComponent(idpHint ?? "")}`;
     return fetchJson(`/api/users/authorization?state=${encodeURIComponent(state)}${idpHintPart}`);
 }
