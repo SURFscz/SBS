@@ -1,26 +1,32 @@
-import React, {FC} from "react";
+import React, {FC, ReactNode} from "react";
 import {stopEvent} from "../../utils/Utils";
 import {Button as SDSButton, ButtonSize, ButtonType} from "@surfnet/sds";
 import "./Button.scss";
 
-type ButtonProps = {
+export type ButtonProps = {
     onClick: () => void;
     txt?: string;
     disabled?: boolean;
     cancelButton?: boolean;
     warningButton?: boolean;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     small?: boolean;
     centralize?: boolean;
     className?: string;
 };
 
-const Button: FC<ButtonProps> = ({
-    onClick, txt, disabled = false, cancelButton = false,
-    warningButton = false, icon = null, small = false,
-    centralize = false, className = ""
+export const Button: FC<ButtonProps> = ({
+    onClick,
+    txt,
+    disabled = false,
+    cancelButton = false,
+    warningButton = false,
+    icon = null,
+    small = false,
+    centralize = false,
+    className = ""
 }) => {
-    const onClickInternal = (e: React.MouseEvent) => {
+    const onClickInternal = (e: MouseEvent) => {
         stopEvent(e);
         if (!disabled) {
             onClick();

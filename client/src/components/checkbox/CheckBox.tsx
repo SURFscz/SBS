@@ -1,11 +1,11 @@
-import React, { FC } from "react";
+import React, {ChangeEvent, FC} from "react";
 import {Checkbox as SDSCheckbox} from "@surfnet/sds";
 import "./CheckBox.scss";
 
 export type CheckBoxProps = {
     name: string;
     value: boolean;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     readOnly?: boolean;
     hide?: boolean;
     bold?: boolean;
@@ -24,7 +24,7 @@ export const CheckBox: FC<CheckBoxProps> = ({
     className = "checkbox",
     hide = false,
 }) => {
-    const innerOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const innerOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         onChange?.(e);
         return false;
