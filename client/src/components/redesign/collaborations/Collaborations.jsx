@@ -153,12 +153,6 @@ class CollaborationsInner extends React.PureComponent {
         )
     }
 
-    onCheck = collaboration => e => {
-        const {selectedCollaborations} = this.state;
-        selectedCollaborations[collaboration.id] = e.target.checked;
-        this.setState({selectedCollaborations: {...selectedCollaborations}});
-    }
-
     openCollaboration = collaboration => e => {
         if (e.metaKey || e.ctrlKey) {
             return;
@@ -175,12 +169,11 @@ class CollaborationsInner extends React.PureComponent {
             : selectProps.placeholder;
         return (
             <SelectComponents.ValueContainer {...props} getValue={getValue} selectProps={selectProps}>
-                <SelectComponents.SingleValue {...props} getValue={getValue} selectProps={selectProps} innerProps={{}} data={{}}>
+                <SelectComponents.SingleValue {...props}>
                     {label}
                 </SelectComponents.SingleValue>
-                {React.Children.map(children, child =>
-                    child && child.type && child.type.name === "DummyInput" ? child : null
-                )}
+                {/* Helps preserve keyboard/focus functionality */}
+                {React.Children.map(children, child => child?.type?.name === "DummyInput" ? child : null)}
             </SelectComponents.ValueContainer>
         );
     }
