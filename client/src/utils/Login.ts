@@ -1,9 +1,8 @@
-import React from "react";
 import {stopEvent} from "./Utils";
 import {authorizationUrl} from "@/api/users";
 import {logoutUser} from "../api";
 
-export function login(e?: React.SyntheticEvent, currentUrl: string = window.location.href) {
+export function login(e?: Event, currentUrl: string = window.location.href) {
     stopEvent(e);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const state = urlSearchParams.get("state") || currentUrl;
@@ -15,7 +14,7 @@ export function login(e?: React.SyntheticEvent, currentUrl: string = window.loca
     });
 }
 
-export function logout(e?: React.SyntheticEvent) {
+export function logout(e?: Event) {
     stopEvent(e);
     logoutUser().then(() => window.location.href = "/landing?logout=true");
 }
