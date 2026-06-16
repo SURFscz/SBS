@@ -354,6 +354,7 @@ const nl = {
             noCollaborationsUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanmaken?",
             noCollaborationsRequestUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanvragen?",
             allLabels: "Alle labels",
+            labelsSelected: "{{nbr}} label(s) geselecteerd",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",

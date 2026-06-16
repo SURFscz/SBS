@@ -13,10 +13,10 @@ import Logo from "../logo/Logo";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import {clearFlash} from "../../../utils/Flash";
-import Select from "react-select";
+import Select, {components as SelectComponents} from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../../utils/Date";
 import moment from "moment";
-import {useQueryParameter} from "../../../hooks/useQueryParameter";
+import {useQueryParameter, useQueryParameterList} from "../../../hooks/useQueryParameter";
 
 const allValue = "all";
 
@@ -29,7 +29,7 @@ class CollaborationsInner extends React.PureComponent {
             collaborations: [],
             selectedCollaborations: {},
             filterOptions: [],
-            filterValue: {},
+            filterValue: [],
             unitFilterOptions: [],
             unitFilterValue: {},
             confirmationDialogOpen: false,
@@ -53,7 +53,7 @@ class CollaborationsInner extends React.PureComponent {
                         standalone: true,
                         collaborations: res,
                         filterOptions: allFilterOptions,
-                        filterValue: allFilterOptions.find(o => o.value === this.props.queryLabelFilterValue) || allFilterOptions[0],
+                        filterValue: allFilterOptions.filter(o => this.props.queryLabelFilterValue.includes(o.value)),
                         unitFilterOptions: allUnitFilterOptions,
                         unitFilterValue: allUnitFilterOptions.find(o => o.value === this.props.queryUnitFilterValue) || allUnitFilterOptions[0],
                         loading: false
@@ -67,7 +67,7 @@ class CollaborationsInner extends React.PureComponent {
             this.addLabelInformation(collaborations);
             this.setState({
                 filterOptions: allFilterOptions,
-                filterValue: allFilterOptions.find(o => o.value === this.props.queryLabelFilterValue) || allFilterOptions[0],
+                filterValue: allFilterOptions.filter(o => this.props.queryLabelFilterValue.includes(o.value)),
                 unitFilterOptions: allUnitFilterOptions,
                 unitFilterValue: allUnitFilterOptions.find(o => o.value === this.props.queryUnitFilterValue) || allUnitFilterOptions[0],
                 loading: false
@@ -89,11 +89,7 @@ class CollaborationsInner extends React.PureComponent {
     }
 
     allLabelFilterOptions = (collaborations) => {
-        const filterOptions = [{
-            label: I18n.t("models.collaborations.allLabels", {nbr: collaborations.length}),
-            value: allValue
-        }];
-        const tagOptions = collaborations.reduce((acc, coll) => {
+        return collaborations.reduce((acc, coll) => {
             coll.tags.forEach(tag => {
                 const option = acc.find(opt => opt.val === tag.tag_value);
                 if (option) {
@@ -107,8 +103,6 @@ class CollaborationsInner extends React.PureComponent {
             label: `${option.val} (${option.nbr})`,
             value: option.val
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
-
-        return filterOptions.concat(tagOptions);
     }
 
     allUnitFilterOptions = (collaborations, organisation) => {
@@ -174,13 +168,30 @@ class CollaborationsInner extends React.PureComponent {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    filters = (organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue) => {
+    LabelFilterValueContainer = ({ children, getValue, selectProps, ...props }) => {
+        const count = getValue().length;
+        const label = count > 0
+            ? I18n.t("models.collaborations.labelsSelected", {nbr: count})
+            : selectProps.placeholder;
         return (
-            <div className={"collaboration-label-filter-container"}>
+            <SelectComponents.ValueContainer {...props} getValue={getValue} selectProps={selectProps}>
+                <SelectComponents.SingleValue {...props} getValue={getValue} selectProps={selectProps} innerProps={{}} data={{}}>
+                    {label}
+                </SelectComponents.SingleValue>
+                {React.Children.map(children, child =>
+                    child && child.type && child.type.name === "DummyInput" ? child : null
+                )}
+            </SelectComponents.ValueContainer>
+        );
+    }
+
+    filters = (organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue, collaborations) => {
+        return (
+            <div className={"collaboration-filter-container"}>
                 {(!organisation || unitFilterOptions.length > 1) &&
-                    <div className="collaboration-label-filter">
+                    <div className="collaboration-filter">
                         <Select
-                            className={"collaboration-label-filter-select"}
+                            className={"collaboration-unit-filter-select"}
                             value={unitFilterValue}
                             classNamePrefix={"filter-select"}
                             onChange={option => {
@@ -192,18 +203,27 @@ class CollaborationsInner extends React.PureComponent {
                             isClearable={false}
                         />
                     </div>}
-                {(!organisation || filterOptions.length > 1) && <div className="collaboration-label-filter">
+                {(!organisation || filterOptions.length > 1) && <div className="collaboration-filter">
                     <Select
+                        isMulti
+                        closeMenuOnSelect={false}
+                        hideSelectedOptions={false}
                         className={"collaboration-label-filter-select"}
                         value={filterValue}
+                        placeholder={I18n.t("models.collaborations.allLabels", {nbr: collaborations.length})}
                         classNamePrefix={"filter-select"}
-                        onChange={option => {
-                            this.props.setQueryLabelFilterValue(option.value);
-                            this.setState({filterValue: option});
+                        onChange={options => {
+                            const selected = options || [];
+                            this.props.setQueryLabelFilterValue(selected.map(o => o.value));
+                            this.setState({filterValue: selected});
+                        }}
+                        components={{
+                            ValueContainer: this.LabelFilterValueContainer,
+                            MultiValue: () => null,
                         }}
                         options={filterOptions}
                         isSearchable={false}
-                        isClearable={false}
+                        isClearable={true}
                     />
                 </div>}
             </div>
@@ -354,8 +374,10 @@ class CollaborationsInner extends React.PureComponent {
                 header: I18n.t("models.collaborations.memberCount")
             }
         );
-        let filteredCollaborations = filterValue.value === allValue ? collaborations :
-            collaborations.filter(coll => coll.tags.some(tag => tag.tag_value === filterValue.value));
+        const selectedLabels = filterValue.map(o => o.value);
+        let filteredCollaborations = selectedLabels.length === 0
+            ? collaborations
+            : collaborations.filter(coll => coll.tags.some(tag => selectedLabels.includes(tag.tag_value)));
         filteredCollaborations = unitFilterValue.value === allValue ? filteredCollaborations :
             filteredCollaborations.filter(coll => coll.units.some(unit => unit.name === unitFilterValue.value));
         return (
@@ -376,7 +398,7 @@ class CollaborationsInner extends React.PureComponent {
                           columns={columns.filter(col => !isEmpty(col))}
                           onHover={true}
                           newLabel={newLabel}
-                          filters={this.filters(organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue)}
+                          filters={this.filters(organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue, collaborations)}
                           actionHeader={"collaboration-services"}
                           showNew={mayCreateCollaborations || mayRequestCollaboration}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
@@ -388,7 +410,7 @@ class CollaborationsInner extends React.PureComponent {
 }
 
 const Collaborations = (props) => {
-    const [queryLabelFilterValue, setQueryLabelFilterValue] = useQueryParameter('label');
+    const [queryLabelFilterValue, setQueryLabelFilterValue] = useQueryParameterList('label');
     const [queryUnitFilterValue, setQueryUnitFilterValue] = useQueryParameter('unit');
     return <CollaborationsInner {...props}
                                 queryLabelFilterValue={queryLabelFilterValue}
