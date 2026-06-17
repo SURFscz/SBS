@@ -19,17 +19,6 @@ export default defineConfig({
                 find: /^@surfnet\/sds$/,
                 replacement: '@surfnet/sds/esm/index.js',
             },
-            // JS: force browser-safe build
-            {
-                find: /^jsondiffpatch$/,
-                replacement: 'jsondiffpatch/dist/jsondiffpatch.umd.js',
-            },
-
-            // CSS: keep original path working
-            {
-                find: /^jsondiffpatch\/dist\/formatters-styles\/(.*)$/,
-                replacement: 'jsondiffpatch/dist/formatters-styles/$1',
-            },
         ],
     },
     plugins: [
