@@ -590,7 +590,8 @@ const nl = {
             detailsWithService: "Applicatiekoppelaanvraag gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}} en applicatie {{serviceName}}",
             requester: "Aanvrager",
             name: "Samenwerking",
-            serviceName: "Applicatie"
+            serviceName: "Applicatie",
+            createdAt: "Gecreëerd op"
         },
         serviceGroups: {
             backToGroups: "Terug naar alle applicatiegroepen",
