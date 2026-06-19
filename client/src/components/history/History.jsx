@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "../../locale/I18n";
 import "./History.scss";
-import "jsondiffpatch/dist/formatters-styles/html.css";
+import "jsondiffpatch/formatters/styles/html.css";
 import {auditLogsInfo, auditLogsMe} from "../../api";
 import {AppStore} from "../../stores/AppStore";
 import {getParameterByName} from "../../utils/QueryParameters";

@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "../../locale/I18n";
 import "./Activity.scss";
 import {DiffPatcher} from "jsondiffpatch";
-import "jsondiffpatch/dist/formatters-styles/html.css";
+import "jsondiffpatch/formatters/styles/html.css";
 import {escapeDeep, isEmpty} from "../../utils/Utils";
 import {pseudoIso} from "../../utils/Date";
 import {Pagination} from "@surfnet/sds";
