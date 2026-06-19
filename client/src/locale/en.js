@@ -590,7 +590,8 @@ const en = {
             detailsWithService: "Application connection request made by {{name}} on {{date}} for collaboration {{collaborationName}} and application {{serviceName}}",
             requester: "Requester",
             name: "Collaboration",
-            serviceName: "Application"
+            serviceName: "Application",
+            createdAt: "Requested at"
         },
         serviceGroups: {
             backToGroups: "Back to all application groups",
