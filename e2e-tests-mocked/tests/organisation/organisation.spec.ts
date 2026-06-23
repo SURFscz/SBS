@@ -143,7 +143,10 @@ test.describe('Local organisation happy flow', () => {
 
     await page.goto(`${baseURL}/home/organisations`);
 
-    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(4\)|Organisaties \(4\)/);
+    const organisationsHeading = page.locator('.entities-search h2');
+    await expect(organisationsHeading).toBeVisible();
+    await expect(organisationsHeading).toHaveText(/Organisations \(4\)|Organisaties \(4\)/);
+
     await expect(page.getByRole('link', { name: 'Existing Organisation' })).toBeVisible();
 
     await page.getByRole('button', { name: /Add organisation|Voeg organisatie toe/ }).click();
