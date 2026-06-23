@@ -255,7 +255,7 @@ jobs:
         shell: bash
         run: |
           cd e2e-tests-mocked
-          SBS_LOCAL_BASE_URL=http://127.0.0.1:3000 yarn playwright test --project=chromium --reporter=list
+          SBS_LOCAL_BASE_URL=http://127.0.0.1:3000 yarn playwright test --project=chromium --reporter=list,html
         env:
           CI: true
         timeout-minutes: 10
