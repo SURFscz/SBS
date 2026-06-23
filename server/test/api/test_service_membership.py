@@ -73,3 +73,14 @@ class TestServiceMembership(AbstractTest):
             .filter(ServiceMembership.service_id == service_id) \
             .one()
         self.assertEqual("manager", service_membership.role)
+
+    def test_update_service_membership_unknown_role(self):
+        self.login("urn:john")
+        service_id = self.find_entity_by_name(Service, service_wiki_name).id
+        user_id = User.query.filter(User.uid == "urn:service_admin").one().id
+
+        res = self.put("/api/service_memberships",
+                       body={"serviceId": service_id, "userId": user_id, "role": "nope"},
+                       response_status_code=400,
+                       with_basic_auth=False)
+        self.assertTrue("Unknown role: nope" in res["message"])
