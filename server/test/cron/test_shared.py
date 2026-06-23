@@ -1,4 +1,4 @@
-from cron.shared import obtain_lock
+from server.cron.shared import obtain_lock
 from server.test.abstract_test import AbstractTest
 
 
