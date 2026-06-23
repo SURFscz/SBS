@@ -143,13 +143,13 @@ test.describe('Local organisation happy flow', () => {
 
     await page.goto(`${baseURL}/home/organisations`);
 
-    await expect(page.getByRole('heading', { name: /Organisations \(4\)|Organisaties \(4\)/ })).toBeVisible();
+    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(4\)|Organisaties \(4\)/);
     await expect(page.getByRole('link', { name: 'Existing Organisation' })).toBeVisible();
 
     await page.getByRole('button', { name: /Add organisation|Voeg organisatie toe/ }).click();
 
     await expect(page).toHaveURL(`${baseURL}/new-organisation`);
-    await expect(page.getByRole('heading', { name: /Add organisation|Voeg organisatie toe/ })).toBeVisible();
+    await expect(page.locator('.unit-header h1')).toHaveText(/Add organisation|Voeg organisatie toe/);
 
     await page.getByPlaceholder(/The unique name of an organisation|De unieke naam van de organisatie/).fill('Playwright University');
     await page.getByPlaceholder(/Short name of the organisation|Korte naam van de organisatie/).fill('playwright_uni');
@@ -173,7 +173,7 @@ test.describe('Local organisation happy flow', () => {
 
     expect(createResponse.status()).toBe(201);
     await expect(page).toHaveURL(`${baseURL}/home/organisations`);
-    await expect(page.getByRole('heading', { name: /Organisations \(2\)|Organisaties \(2\)/ })).toBeVisible();
+    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(2\)|Organisaties \(2\)/);
     await expect(page.getByRole('link', { name: 'Playwright University' })).toBeVisible();
   });
 });
