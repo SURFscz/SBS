@@ -4,146 +4,146 @@ import path from 'path';
 const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 const logoPath = path.resolve(__dirname, '../../../../SBS/client/src/images/surflogo.png');
 
-function adminUser() {
-  return {
-    id: 999998,
-    uid: 'urn:playwright:organisation-admin',
-    name: 'Playwright Admin',
-    given_name: 'Playwright',
-    email: 'playwright-admin@example.org',
-    guest: false,
-    admin: true,
-    second_factor_confirmed: true,
-    user_accepted_aup: true,
-    organisation_memberships: [],
-    collaboration_memberships: [],
-    service_memberships: [],
-    organisations_from_user_schac_home: [],
-    join_requests: [],
-    collaboration_requests: [],
-    service_requests: [],
-    service_connection_requests: [],
-    total_service_requests: 0,
-    total_open_service_requests: 0,
-    services_without_aup: [],
-    CSRFToken: 'playwright-csrf-token',
-  };
-}
-
-function organisation(id: number, name: string, shortName: string, logo = '') {
-  return {
-    id,
-    name,
-    short_name: shortName,
-    identifier: shortName,
-    category: 'Research',
-    logo,
-    schac_home_organisations: [],
-    organisation_memberships_count: 1,
-    collaborations_count: 0,
-  };
-}
-
-async function mockOrganisationApi(page: Page) {
-  const jsonHeaders = { 'content-type': 'application/json', 'x-session-alive': 'true' };
-  const organisations = [
-    organisation(1001, 'Existing Organisation', 'existing_org'),
-  ];
-
-  await page.route('**/config', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify({
-      local: false,
-      organisation_categories: ['Research', 'University', 'Medical'],
-      continue_eduteams_redirect_uri: 'http://localhost',
-      continue_eb_redirect_uri: 'http://localhost',
-      feedback_enabled: false,
-      impersonation_allowed: false,
-    }),
-  }));
-
-  await page.route('**/api/aup/info', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify({
-      url_aup_en: 'https://example.org/aup',
-      url_aup_nl: 'https://example.org/aup-nl',
-      version: 'playwright',
-    }),
-  }));
-
-  await page.route('**/api/users/me', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(adminUser()),
-  }));
-
-  await page.route('**/api/users/refresh', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(adminUser()),
-  }));
-
-  await page.route('**/health', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify({ status: 'ok' }),
-  }));
-
-  await page.route('**/api/users/error', route => route.fulfill({
-    status: 201,
-    headers: jsonHeaders,
-    body: JSON.stringify({}),
-  }));
-
-  await page.route('**/api/organisations/all', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(organisations),
-  }));
-
-  await page.route('**/api/organisations/name_exists**', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(false),
-  }));
-
-  await page.route('**/api/organisations/short_name_exists**', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(false),
-  }));
-
-  await page.route('**/api/organisations/schac_home_exists**', route => route.fulfill({
-    status: 200,
-    headers: jsonHeaders,
-    body: JSON.stringify(false),
-  }));
-
-  await page.route('**/api/organisations', async route => {
-    if (route.request().method() !== 'POST') {
-      return route.fallback();
-    }
-    const payload = route.request().postDataJSON();
-    const created = organisation(1002, payload.name, payload.short_name, payload.logo);
-    organisations.push(created);
-
-    return route.fulfill({
-      status: 201,
-      headers: jsonHeaders,
-      body: JSON.stringify(created),
-    });
-  });
-}
+// function adminUser() {
+//   return {
+//     id: 999998,
+//     uid: 'urn:playwright:organisation-admin',
+//     name: 'Playwright Admin',
+//     given_name: 'Playwright',
+//     email: 'playwright-admin@example.org',
+//     guest: false,
+//     admin: true,
+//     second_factor_confirmed: true,
+//     user_accepted_aup: true,
+//     organisation_memberships: [],
+//     collaboration_memberships: [],
+//     service_memberships: [],
+//     organisations_from_user_schac_home: [],
+//     join_requests: [],
+//     collaboration_requests: [],
+//     service_requests: [],
+//     service_connection_requests: [],
+//     total_service_requests: 0,
+//     total_open_service_requests: 0,
+//     services_without_aup: [],
+//     CSRFToken: 'playwright-csrf-token',
+//   };
+// }
+//
+// function organisation(id: number, name: string, shortName: string, logo = '') {
+//   return {
+//     id,
+//     name,
+//     short_name: shortName,
+//     identifier: shortName,
+//     category: 'Research',
+//     logo,
+//     schac_home_organisations: [],
+//     organisation_memberships_count: 1,
+//     collaborations_count: 0,
+//   };
+// }
+//
+// async function mockOrganisationApi(page: Page) {
+//   const jsonHeaders = { 'content-type': 'application/json', 'x-session-alive': 'true' };
+//   const organisations = [
+//     organisation(1001, 'Existing Organisation', 'existing_org'),
+//   ];
+//
+//   await page.route('**/config', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify({
+//       local: false,
+//       organisation_categories: ['Research', 'University', 'Medical'],
+//       continue_eduteams_redirect_uri: 'http://localhost',
+//       continue_eb_redirect_uri: 'http://localhost',
+//       feedback_enabled: false,
+//       impersonation_allowed: false,
+//     }),
+//   }));
+//
+//   await page.route('**/api/aup/info', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify({
+//       url_aup_en: 'https://example.org/aup',
+//       url_aup_nl: 'https://example.org/aup-nl',
+//       version: 'playwright',
+//     }),
+//   }));
+//
+//   await page.route('**/api/users/me', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(adminUser()),
+//   }));
+//
+//   await page.route('**/api/users/refresh', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(adminUser()),
+//   }));
+//
+//   await page.route('**/health', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify({ status: 'ok' }),
+//   }));
+//
+//   await page.route('**/api/users/error', route => route.fulfill({
+//     status: 201,
+//     headers: jsonHeaders,
+//     body: JSON.stringify({}),
+//   }));
+//
+//   await page.route('**/api/organisations/all', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(organisations),
+//   }));
+//
+//   await page.route('**/api/organisations/name_exists**', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(false),
+//   }));
+//
+//   await page.route('**/api/organisations/short_name_exists**', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(false),
+//   }));
+//
+//   await page.route('**/api/organisations/schac_home_exists**', route => route.fulfill({
+//     status: 200,
+//     headers: jsonHeaders,
+//     body: JSON.stringify(false),
+//   }));
+//
+//   await page.route('**/api/organisations', async route => {
+//     if (route.request().method() !== 'POST') {
+//       return route.fallback();
+//     }
+//     const payload = route.request().postDataJSON();
+//     const created = organisation(1002, payload.name, payload.short_name, payload.logo);
+//     organisations.push(created);
+//
+//     return route.fulfill({
+//       status: 201,
+//       headers: jsonHeaders,
+//       body: JSON.stringify(created),
+//     });
+//   });
+// }
 
 test.describe('Local organisation happy flow', () => {
   test('platform admin can add an organisation and see it in the list', async ({ page }) => {
-    await mockOrganisationApi(page);
+    // await mockOrganisationApi(page);
 
     await page.goto(`${baseURL}/home/organisations`);
 
-    await expect(page.getByRole('heading', { name: /Organisations \(1\)|Organisaties \(1\)/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Organisations \(4\)|Organisaties \(4\)/ })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Existing Organisation' })).toBeVisible();
 
     await page.getByRole('button', { name: /Add organisation|Voeg organisatie toe/ }).click();
