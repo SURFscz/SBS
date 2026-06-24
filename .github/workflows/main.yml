@@ -221,6 +221,23 @@ jobs:
           pip install --upgrade pip
           pip install -e "./server[test]"
 
+      #     Todo: populate database -- just a copy paste from backend
+
+      - name: Setup mysql server
+        run: >
+          mysql -uroot -proot -h127.0.0.1 -e "
+            DROP DATABASE IF EXISTS sbs_e2e;
+            CREATE DATABASE IF NOT EXISTS sbs_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+          "
+      - name: Load SBS schema
+        # not strictly necessary, but it avoids running 200+ migrations during tests
+        run: |
+          mysql -uroot -proot -h127.0.0.1 sbs_e2e < misc/sbs-db.sql;
+
+      #     End of todo
+
       - name: Start backend
         shell: bash
         run: |
@@ -597,7 +614,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-          
+
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
