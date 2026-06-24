@@ -61,8 +61,6 @@ const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 
 test.describe('Local AUP happy flow', () => {
   test('user can accept the acceptable use policy', async ({ page }) => {
-    // await mockAupApi(page);
-
     await page.goto(`${baseURL}/aup`);
 
     await expect(page.getByRole('heading', { name: /^Hi Doe/ })).toBeVisible();
@@ -86,7 +84,9 @@ test.describe('Local AUP happy flow', () => {
     expect(agreeResponse.status()).toBe(201);
     expect(refreshResponse.status()).toBe(200);
 
-    await expect(page).toHaveURL(`${baseURL}/welcome`);
-    await expect(page.getByRole('heading', { name: /^Hi Playwright/ })).toBeHidden();
+    await expect(page).toHaveURL(`${baseURL}/home`);
+
+    // Verify aup page is not shown anymore
+    await expect(page.getByRole('heading', { name: /^Hi Doe/ })).toBeHidden();
   });
 });
