@@ -53,6 +53,20 @@ export default defineConfig({
     preview: {
       port: 3000,
       strictPort: true,
+      proxy: {
+        '/api': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/config': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+      },
     },
     css: {
         preprocessorOptions: {

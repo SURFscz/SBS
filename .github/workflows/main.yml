@@ -245,9 +245,9 @@ jobs:
         run: |
           cd client
           yarn build
-          yarn preview --host 127.0.0.1 > ../client-vite.log 2>&1 &
+          yarn preview > ../client-vite.log 2>&1 &
 
-          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://127.0.0.1:3000 > /dev/null || {
+          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://localhost:3000 > /dev/null || {
             cat ../client-vite.log
             exit 1
           }
@@ -256,7 +256,7 @@ jobs:
         shell: bash
         run: |
           cd e2e-tests-mocked
-          SBS_LOCAL_BASE_URL=http://127.0.0.1:3000 yarn playwright test --project=chromium --reporter=list,html
+          yarn playwright test --project=chromium --reporter=list,html
         env:
           CI: true
         timeout-minutes: 10
