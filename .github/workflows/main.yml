@@ -222,6 +222,11 @@ jobs:
           pip install --upgrade pip
           pip install -e "./server[test]"
 
+      - name: Seed database
+        run: |
+          cd server
+          SEEDING=1 CONFIG=config/e2e_config.yml FLASK_APP=__main__.py flask seed
+
       - name: Start backend
         shell: bash
         run: |
@@ -240,11 +245,9 @@ jobs:
             exit 1
           }
 
-      - name: Seed database
-        run: |
-          curl --fail --silent --show-error \
-            -u sysadmin:secret \
-            http://127.0.0.1:8080/api/system/seed
+#      - name: Seed database
+#        run: |
+#          curl --fail --silent --show-error -u sysadmin:secret http://127.0.0.1:8080/api/system/seed
 
       - name: Start frontend
         shell: bash
