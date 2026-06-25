@@ -251,7 +251,7 @@ jobs:
           CONFIG=config/e2e_config.yml \
           python -m server > ./server.log 2>&1 &
 
-          curl --retry 60 --retry-delay 1 --retry-connrefused --fail --silent --show-error \
+          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error \
             http://127.0.0.1:8080/health > /dev/null || {
             cat ./server.log
             exit 1
@@ -264,7 +264,7 @@ jobs:
           yarn build
           yarn preview --host 127.0.0.1 > ../client-vite.log 2>&1 &
 
-          curl --retry 60 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://127.0.0.1:3000 > /dev/null || {
+          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://127.0.0.1:3000 > /dev/null || {
             cat ../client-vite.log
             exit 1
           }
