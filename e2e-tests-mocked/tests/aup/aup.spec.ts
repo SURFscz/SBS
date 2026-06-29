@@ -61,7 +61,7 @@ const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe('1) Local AUP happy flow', () => {
+test.describe('AUP', () => {
   test('user can accept the acceptable use policy', async ({ page }) => {
     // await mockAupApi(page);
 
@@ -95,8 +95,11 @@ test.describe('1) Local AUP happy flow', () => {
   });
 });
 
-test.describe('2) Missing Service AUP', () => {
+test.describe('Missing Service AUP', () => {
     test('user can accept the missing service AUPs', async ({ page }) => {
+        await page.goto(`${baseURL}/`);
         await expect(page).toHaveURL(`${baseURL}/missing-service-aup?state=%2Fhome`);
+
+        // Todo: implement handling the Service AUP
     });
 });

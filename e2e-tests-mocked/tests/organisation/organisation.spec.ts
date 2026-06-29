@@ -4,8 +4,18 @@ import path from 'path';
 const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 const logoPath = path.resolve(__dirname, '../../../../SBS/client/src/images/surflogo.png');
 
-const handleAup = async (page: Page, url: string) => {
+// Todo this could be a generic helper to handle forced redirects, like AUP
+const handleAup = async (page: Page, url: string, redirectCounter: number = 0) => {
+  const MAX_ALLOWED_REDIRECTS = 10;
+
   console.log('Navigating to:', url);
+  console.log('RedirectCounter: ', redirectCounter);
+
+  if (redirectCounter >= MAX_ALLOWED_REDIRECTS) {
+      console.error(`HandleAUP - Too many redirects, trying to navigate to "${url}"`);
+      return
+  }
+
   await page.goto(url);
 
   await page.waitForLoadState('networkidle');
@@ -16,14 +26,31 @@ const handleAup = async (page: Page, url: string) => {
   if (currentUrl !== url) {
     console.log('Redirected to:', currentUrl);
 
+    if (currentUrl.includes('/aup')) {
+      console.log('In AUP handler...')
+
+      const terms = page.getByText('I hereby certify that I have read the acceptable use policy and that I accept it');
+      const onwards = page.getByRole('button', { name: 'Onwards' });
+
+      await terms.click();
+      await onwards.click();
+
+      console.log('AUP Handler - Trigger redirect to ', url);
+      return handleAup(page, url, redirectCounter + 1);
+    }
+
     if (currentUrl.includes('/missing-service-aup')) {
+      console.log('In Missing Service AUP handler...')
       // The SDS Checkbox renders a visually-hidden input; clicking the label toggles it.
       await page.locator('label[for="aup"]').click();
       await page.locator('div.actions > button').click();
       await page.waitForLoadState('networkidle');
+
+      console.log('Missing Service AUP Handler - Trigger redirect to ', url);
+      return handleAup(page, url, redirectCounter + 1);
     }
 
-    return await page.goto(url);
+    console.error(`HandleAUP - Uncaught redirect URL "${currentUrl}", trying to navigate to "${url}"`);
   }
 
   console.log('No redirect, already on target page');
