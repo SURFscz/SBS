@@ -148,14 +148,19 @@ const handleAup = async (page: Page, url: string) => {
   console.log('Current URL after navigation:', currentUrl);
 
   if (currentUrl !== url) {
-    console.log('DEBUG: unexpected redirect -- TODO implement');
+    console.log('Redirected to:', currentUrl);
 
-    // Determine the page: /aup or /missing-service-aup
-    // Handle the page accordingly
+    if (currentUrl.includes('/missing-service-aup')) {
+      // The SDS Checkbox renders a visually-hidden input; clicking the label toggles it.
+      await page.locator('label[for="aup"]').click();
+      await page.locator('div.actions > button').click();
+      await page.waitForLoadState('networkidle');
+    }
+
     return await page.goto(url);
   }
 
-  console.log('DEBUG: no redirect needed');
+  console.log('No redirect, already on target page');
 };
 
 test.describe('Local organisation happy flow', () => {
@@ -190,37 +195,37 @@ test.describe('Local organisation happy flow', () => {
     const organisationsHeading = page.locator('.entities-search h2');
     await expect(organisationsHeading).toBeVisible();
     await expect(organisationsHeading).toHaveText(/Organisations \(4\)|Organisaties \(4\)/);
-    //
-    // await expect(page.getByRole('link', { name: 'Existing Organisation' })).toBeVisible();
-    //
-    // await page.getByRole('button', { name: /Add organisation|Voeg organisatie toe/ }).click();
-    //
-    // await expect(page).toHaveURL(`${baseURL}/new-organisation`);
-    // await expect(page.locator('.unit-header h1')).toHaveText(/Add organisation|Voeg organisatie toe/);
-    //
-    // await page.getByPlaceholder(/The unique name of an organisation|De unieke naam van de organisatie/).fill('Playwright University');
-    // await page.getByPlaceholder(/Short name of the organisation|Korte naam van de organisatie/).fill('playwright_uni');
-    //
-    // await page.locator('.cropped-image-field').getByRole('button', { name: /Add an image|Voeg afbeelding toe/ }).click();
-    // await page.locator('#fileUpload_logo').setInputFiles(logoPath);
-    // await expect(page.getByRole('button', { name: /Apply|Toepassen/ })).toBeEnabled();
-    // await page.getByRole('button', { name: /Apply|Toepassen/ }).click();
-    // await expect(page.locator('.cropped-image-field').getByRole('button', { name: /Change image|Wijzig afbeelding/ })).toBeVisible();
-    //
-    // await page.locator('#email-field').fill('organisation-admin@example.org');
-    // await page.locator('#email-field').press('Enter');
-    // await expect(page.getByText('organisation-admin@example.org')).toBeVisible();
-    //
-    // const [createResponse] = await Promise.all([
-    //   page.waitForResponse(response =>
-    //     response.url().endsWith('/api/organisations') && response.request().method() === 'POST'
-    //   ),
-    //   page.getByRole('button', { name: /Save|Opslaan/ }).click(),
-    // ]);
-    //
-    // expect(createResponse.status()).toBe(201);
-    // await expect(page).toHaveURL(`${baseURL}/home/organisations`);
-    // await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(2\)|Organisaties \(2\)/);
-    // await expect(page.getByRole('link', { name: 'Playwright University' })).toBeVisible();
+
+    await expect(page.getByRole('link', { name: 'Test Organisation' })).toBeVisible();
+
+    await page.getByRole('button', { name: /Add organisation|Voeg organisatie toe/ }).click();
+
+    await expect(page).toHaveURL(`${baseURL}/new-organisation`);
+    await expect(page.locator('.unit-header h1')).toHaveText(/Add organisation|Voeg organisatie toe/);
+
+    await page.getByPlaceholder(/The unique name of an organisation|De unieke naam van de organisatie/).fill('Playwright University');
+    await page.getByPlaceholder(/Short name of the organisation|Korte naam van de organisatie/).fill('playwright_uni');
+
+    await page.locator('.cropped-image-field').getByRole('button', { name: /Add an image|Voeg afbeelding toe/ }).click();
+    await page.locator('#fileUpload_logo').setInputFiles(logoPath);
+    await expect(page.getByRole('button', { name: /Apply|Toepassen/ })).toBeEnabled();
+    await page.getByRole('button', { name: /Apply|Toepassen/ }).click();
+    await expect(page.locator('.cropped-image-field').getByRole('button', { name: /Change image|Wijzig afbeelding/ })).toBeVisible();
+
+    await page.locator('#email-field').fill('organisation-admin@example.org');
+    await page.locator('#email-field').press('Enter');
+    await expect(page.getByText('organisation-admin@example.org')).toBeVisible();
+
+    const [createResponse] = await Promise.all([
+      page.waitForResponse(response =>
+        response.url().endsWith('/api/organisations') && response.request().method() === 'POST'
+      ),
+      page.getByRole('button', { name: /Save|Opslaan/ }).click(),
+    ]);
+
+    expect(createResponse.status()).toBe(201);
+    await expect(page).toHaveURL(`${baseURL}/home/organisations`);
+    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(2\)|Organisaties \(2\)/);
+    await expect(page.getByRole('link', { name: 'Playwright University' })).toBeVisible();
   });
 });
