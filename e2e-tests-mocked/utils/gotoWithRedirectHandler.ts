@@ -1,6 +1,6 @@
 import {Page} from "@playwright/test";
 
-export const gotoWithRedirectHandler = async (page: Page, url: string, redirectCounter: number = 0) => {
+export const gotoWithRedirectHandler: (page: Page, url: string, redirectCounter?: number) => Promise<void> = async (page: Page, url: string, redirectCounter: number = 0) => {
     const MAX_ALLOWED_REDIRECTS = 10;
 
     if (redirectCounter >= MAX_ALLOWED_REDIRECTS) {
