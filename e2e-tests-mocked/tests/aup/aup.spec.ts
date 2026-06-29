@@ -6,8 +6,6 @@ test.describe.configure({mode: 'serial'});
 
 test.describe('AUP', () => {
     test('user can accept the acceptable use policy', async ({page}) => {
-        // await mockAupApi(page);
-
         await page.goto(`${baseURL}/aup`);
 
         await expect(page.getByRole('heading', {name: /^Hi Doe/})).toBeVisible();
@@ -43,6 +41,22 @@ test.describe('Missing Service AUP', () => {
         await page.goto(`${baseURL}/`);
         await expect(page).toHaveURL(`${baseURL}/missing-service-aup?state=%2Fhome`);
 
-        // Todo: implement handling the Service AUP
+        await expect(page.getByRole('heading', {name: 'Information about the applications'})).toBeVisible();
+
+        const serviceSections = page.locator('div.service-section');
+        await expect(serviceSections).toHaveCount(2);
+
+        const mailSection = serviceSections.filter({hasText: 'Mail Services'});
+        await expect(mailSection.locator('td.logo img')).toBeVisible();
+        await expect(mailSection.getByText('Mail Services')).toBeVisible();
+        await expect(mailSection.getByRole('link', {name: 'Acceptable use policy'})).toBeVisible();
+        await expect(mailSection.getByRole('link', {name: 'Privacy policy'})).toBeVisible();
+        await expect(mailSection.getByRole('link', {name: 'Contact'})).toBeVisible();
+
+        await page.locator('label[for="aup"]').click();
+        await page.locator('div.actions > button').click();
+        await page.waitForLoadState('networkidle');
+
+        await expect(page).toHaveURL(`${baseURL}/home`);
     });
 });
