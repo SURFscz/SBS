@@ -245,10 +245,6 @@ jobs:
             exit 1
           }
 
-#      - name: Seed database
-#        run: |
-#          curl --fail --silent --show-error -u sysadmin:secret http://127.0.0.1:8080/api/system/seed
-
       - name: Start frontend
         shell: bash
         run: |
