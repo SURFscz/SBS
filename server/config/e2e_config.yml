@@ -100,7 +100,7 @@ manage:
   verify_peer: False
 
 aup:
-  version: 1
+  version: 2
   url_aup_en: https://edu.nl/6wb63
   url_aup_nl: https://edu.nl/6wb63
 
