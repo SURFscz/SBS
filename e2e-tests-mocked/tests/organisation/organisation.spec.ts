@@ -225,7 +225,7 @@ test.describe('Local organisation happy flow', () => {
 
     expect(createResponse.status()).toBe(201);
     await expect(page).toHaveURL(`${baseURL}/home/organisations`);
-    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(2\)|Organisaties \(2\)/);
+    await expect(page.locator('.entities-search h2')).toHaveText(/Organisations \(5\)|Organisaties \(5\)/);
     await expect(page.getByRole('link', { name: 'Playwright University' })).toBeVisible();
   });
 });
