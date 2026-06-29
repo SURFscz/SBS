@@ -186,7 +186,7 @@ jobs:
       - name: Install mocked e2e dependencies
         shell: bash
         run: |
-          cd e2e-tests-mocked
+          cd e2e-tests
           yarn install
           yarn playwright install --with-deps chromium
 
@@ -260,7 +260,7 @@ jobs:
       - name: Run mocked Playwright tests
         shell: bash
         run: |
-          cd e2e-tests-mocked
+          cd e2e-tests
           yarn playwright test --project=chromium --reporter=list,html
         env:
           CI: true
@@ -271,7 +271,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: mocked-playwright-report
-          path: e2e-tests-mocked/playwright-report/
+          path: e2e-tests/playwright-report/
           if-no-files-found: ignore
 
 
