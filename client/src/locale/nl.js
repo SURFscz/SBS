@@ -416,7 +416,7 @@ const nl = {
             noEntities: "Er zijn geen leden",
         },
         servicesAvailable: {
-            title: "Beschikbare applicaties",
+            title: "Beschikbaar",
             searchPlaceHolder: "Zoek applicaties...",
             noEntities: "Er zijn geen applicaties beschikbaar om toe te voegen"
         },
@@ -933,8 +933,8 @@ const nl = {
         add: "Nieuwe applicatie",
         searchPlaceHolder: "Doorzoek alle applicaties",
         toc: {
-            connections: "Koppelingen",
-            available: "Beschikbare applicaties",
+            connections: "Gekoppeld",
+            available: "Beschikbaar",
         }
     },
     service: {

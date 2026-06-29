@@ -416,7 +416,7 @@ const en = {
             noEntities: "There are no members",
         },
         servicesAvailable: {
-            title: "Available applications",
+            title: "Available",
             searchPlaceHolder: "Search for applications...",
             noEntities: "No applications are available to add"
         },
@@ -933,8 +933,8 @@ const en = {
         add: "Create new application",
         searchPlaceHolder: "Search for all applications",
         toc: {
-            connections: "Connections",
-            available: "Available applications",
+            connections: "Connected",
+            available: "Available",
         }
     },
     service: {
