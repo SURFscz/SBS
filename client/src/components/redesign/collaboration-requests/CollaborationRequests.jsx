@@ -9,6 +9,7 @@ import Select from "react-select";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import UserColumn from "../user-column/UserColumn";
 import {chipTypeForStatus} from "../../../utils/UserRole";
+import {dateFromEpoch, pseudoIso} from "../../../utils/Date";
 import {Chip} from "@surfnet/sds";
 import {useQueryParameter} from "../../../hooks/useQueryParameter";
 
@@ -109,6 +110,11 @@ class CollaborationRequestsInner extends React.PureComponent {
                         .map((unit, index) => <span key={index} className="chip-container">
                         {unit.name}</span>)}
                 </div>
+            },
+            {
+                key: "created_at",
+                header: I18n.t("models.collaboration_requests.createdAt"),
+                mapper: cr => <span title={pseudoIso(cr.created_at)}>{dateFromEpoch(cr.created_at)}</span>
             },
             {
                 key: "status",

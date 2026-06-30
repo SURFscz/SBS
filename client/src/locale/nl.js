@@ -496,6 +496,7 @@ const nl = {
         collaboration_requests: {
             title: "Aanvragen voor samenwerkingen",
             requester: "Aanvrager",
+            createdAt: "Gecreëerd op",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
