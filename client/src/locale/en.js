@@ -496,6 +496,7 @@ const en = {
         collaboration_requests: {
             title: "Requests for collaborations",
             requester: "Requester",
+            createdAt: "Requested at",
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
