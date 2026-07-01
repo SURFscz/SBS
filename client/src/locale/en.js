@@ -354,6 +354,7 @@ const en = {
             noCollaborationsUser: "You are not member of any collaboration. Why don't you create one?",
             noCollaborationsRequestUser: "You are not member of any collaboration. Why don't you request one?",
             allLabels: "All labels",
+            labelsSelected: "{{nbr}} label(s) selected",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",

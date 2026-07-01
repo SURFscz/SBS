@@ -21,24 +21,29 @@
 
 .mod-entities {
 
-    .collaboration-label-filter-container {
+    .collaboration-filter-container {
         display: flex;
         gap: 20px;
     }
 
-    .collaboration-label-filter {
+    .collaboration-filter {
         display: flex;
         @media (max-width: $compact-medium) {
             flex-direction: column;
-        }
 
-        .collaboration-label-filter-select {
-            width: 190px;
-            @media (max-width: $compact-medium) {
+            .collaboration-unit-filter-select,
+            .collaboration-label-filter-select {
                 margin: 15px 0;
             }
-
         }
+    }
+
+    .collaboration-unit-filter-select {
+        width: 190px;
+    }
+
+    .collaboration-label-filter-select {
+        width: 290px;
     }
 
 }
