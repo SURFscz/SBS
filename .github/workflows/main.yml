@@ -18,6 +18,9 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_PATH: ghcr.io/surfscz
 
+permissions:
+  contents: write
+
 jobs:
   Server_tests:
     name: Server tests
@@ -514,8 +517,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get token
+        id: get_token
+        uses: machine-learning-apps/actions-app-token@master
+        with:
+          APP_PEM: ${{ secrets.SRAM_ACTIONAPP_PEM }}
+          APP_ID: ${{ secrets.SRAM_ACTIONAPP_APPID }}
+
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          token: ${{ steps.get_token.outputs.app_token }}
 
       - name: Fetch build
         id: fetch_artifact
@@ -560,13 +572,6 @@ jobs:
           tag_name: "branch+${{github.ref_name}}"
           prerelease: true
           files: "${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz"
-
-      - name: Get token
-        id: get_token
-        uses: machine-learning-apps/actions-app-token@master
-        with:
-          APP_PEM: ${{ secrets.SRAM_ACTIONAPP_PEM }}
-          APP_ID: ${{ secrets.SRAM_ACTIONAPP_APPID }}
 
       - name: Test new SBS build in SCZ-deploy's CI-runner
         if: "github.ref_name=='main'"
