@@ -35,7 +35,7 @@ dependencies = [
     "puremagic==1.30",
     "PyJWT==2.13.0",
     "pyotp==2.9.0",
-    "python-socketio==5.16.1",
+    "python-socketio==5.16.2",
     "python2-secrets==1.0.5",
     "pytz==2026.2",
     "PyYAML==6.0.3",
