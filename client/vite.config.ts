@@ -19,17 +19,6 @@ export default defineConfig({
                 find: /^@surfnet\/sds$/,
                 replacement: '@surfnet/sds/esm/index.js',
             },
-            // JS: force browser-safe build
-            {
-                find: /^jsondiffpatch$/,
-                replacement: 'jsondiffpatch/dist/jsondiffpatch.umd.js',
-            },
-
-            // CSS: keep original path working
-            {
-                find: /^jsondiffpatch\/dist\/formatters-styles\/(.*)$/,
-                replacement: 'jsondiffpatch/dist/formatters-styles/$1',
-            },
         ],
     },
     plugins: [
@@ -64,6 +53,20 @@ export default defineConfig({
     preview: {
       port: 3000,
       strictPort: true,
+      proxy: {
+        '/api': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/config': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+      },
     },
     css: {
         preprocessorOptions: {

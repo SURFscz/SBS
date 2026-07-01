@@ -66,7 +66,7 @@ PROFILE=local ALLOW_MOCK_USER_API=1 CONFIG=config/config.yml python -m server
 
 #### [DB migrations](#migrations)
 
-If there are unapplied DB migrations, then the DB migrations can be run with the following command 
+If there are unapplied DB migrations, then the DB migrations can be run with the following command
 
 ```bash
 sh ./db_migrate.sh
@@ -323,4 +323,15 @@ regenerate everything:
 $ cd client
 $ nvm use
 $ sh ./regenerate_snapshots.sh
+```
+
+## E2E Database
+Script to setup the database just like it is in the pipeline
+
+```shell
+mysql -u sbs -psbs -h 127.0.0.1 -e "DROP DATABASE IF EXISTS sbs_e2e; CREATE DATABASE sbs_e2e CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;"
+mysql -u sbs -psbs -h 127.0.0.1 sbs_e2e < misc/sbs-db.sql
+
+source .venv/bin/activate
+SEEDING=1 CONFIG=config/e2e_config.yml FLASK_APP=./server/__main__.py flask seed
 ```

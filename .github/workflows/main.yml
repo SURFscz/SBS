@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup mysql server
         run: >
@@ -115,7 +115,7 @@ jobs:
         timeout-minutes: 20
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
         if: success()
@@ -133,13 +133,31 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - name: Run errands
         run: |
           sudo apt -y install curl
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Use Node.js 24.3.0
         uses: actions/setup-node@v6
@@ -168,18 +186,73 @@ jobs:
       - name: Install mocked e2e dependencies
         shell: bash
         run: |
-          cd e2e-tests-mocked
+          cd e2e-tests
           yarn install
           yarn playwright install --with-deps chromium
+
+      - name: Setup mysql server
+        run: >
+          mysql -uroot -proot -h127.0.0.1 -e "
+            DROP DATABASE IF EXISTS sbs_e2e;
+            CREATE DATABASE IF NOT EXISTS sbs_e2e DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            DROP USER IF EXISTS 'sbs'@'%';
+            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+          "
+
+      - name: Load SBS schema
+        run: |
+          mysql -uroot -proot -h127.0.0.1 sbs_e2e < misc/sbs-db.sql
+
+      - name: Install SAML2 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: 'server/pyproject.toml'
+
+      - name: Install server dependencies
+        run: |
+          python -m pip install pip setuptools wheel
+          pip install --upgrade pip
+          pip install -e "./server[test]"
+
+      - name: Seed database
+        run: |
+          cd server
+          SEEDING=1 CONFIG=config/e2e_config.yml FLASK_APP=__main__.py flask seed
+
+      - name: Start backend
+        shell: bash
+        run: |
+          PROFILE=local \
+          ALLOW_MOCK_USER_API=1 \
+          EVENTLET_HUB=poll \
+          PYDEVD_USE_CYTHON=NO \
+          PYDEVD_USE_FRAME_EVAL=NO \
+          PYTHONUNBUFFERED=1 \
+          CONFIG=config/e2e_config.yml \
+          python -m server > ./server.log 2>&1 &
+
+          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error \
+            http://127.0.0.1:8080/health > /dev/null || {
+            cat ./server.log
+            exit 1
+          }
 
       - name: Start frontend
         shell: bash
         run: |
           cd client
           yarn build
-          yarn preview --host 127.0.0.1 > ../client-vite.log 2>&1 &
+          yarn preview > ../client-vite.log 2>&1 &
 
-          curl --retry 60 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://127.0.0.1:3000 > /dev/null || {
+          curl --retry 200 --retry-delay 1 --retry-connrefused --fail --silent --show-error http://localhost:3000 > /dev/null || {
             cat ../client-vite.log
             exit 1
           }
@@ -187,8 +260,8 @@ jobs:
       - name: Run mocked Playwright tests
         shell: bash
         run: |
-          cd e2e-tests-mocked
-          SBS_LOCAL_BASE_URL=http://127.0.0.1:3000 yarn playwright test --project=chromium --reporter=list
+          cd e2e-tests
+          yarn playwright test --project=chromium --reporter=list,html
         env:
           CI: true
         timeout-minutes: 10
@@ -198,7 +271,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: mocked-playwright-report
-          path: e2e-tests-mocked/playwright-report/
+          path: e2e-tests/playwright-report/
           if-no-files-found: ignore
 
 
@@ -213,7 +286,7 @@ jobs:
           sudo apt -y install curl
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Use Node.js 24.3.0
         uses: actions/setup-node@v6
@@ -305,7 +378,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta-sbs
@@ -442,7 +515,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Fetch build
         id: fetch_artifact
@@ -527,10 +600,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
-          
+
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "

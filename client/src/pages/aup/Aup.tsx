@@ -3,13 +3,14 @@ import {RouteComponentProps, withRouter} from "react-router-dom";
 import I18n from "../../locale/I18n";
 import "./Aup.scss";
 import Button from "../../components/button/Button";
-import {agreeAup} from "../../api";
+import {agreeAup} from "../../api/aup";
 import CheckBox from "../../components/checkbox/CheckBox";
 import {login} from "../../utils/Login";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import DOMPurify from "dompurify";
 import {redirectToProxyLocation} from "../../utils/ProxyAuthz";
 import {dictToQueryParams} from "../../utils/QueryParameters";
+import {AppConfig} from "@/api/config";
 
 type CurrentUser = {
     guest: boolean;
@@ -25,7 +26,7 @@ type AupConfig = {
 };
 
 export type AupProps = RouteComponentProps & {
-    config: Record<string, unknown>;
+    config: AppConfig;
     currentUser: CurrentUser;
     refreshUser: (callback: () => void) => void;
     aupConfig: AupConfig;

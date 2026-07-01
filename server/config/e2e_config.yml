@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"
+  uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_e2e?charset=utf8mb4"
 
 secret_key: secret
 # Must be a base64 encoded key of 128, 192, or 256 bits.
@@ -100,7 +100,7 @@ manage:
   verify_peer: False
 
 aup:
-  version: 1
+  version: 2
   url_aup_en: https://edu.nl/6wb63
   url_aup_nl: https://edu.nl/6wb63
 
@@ -143,9 +143,6 @@ metadata:
   parse_at_startup: False
   scope_override:
     test.nl: "Koninklijke Nederlandse Test"
-
-cron_job_responsible: True
-
 # note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
