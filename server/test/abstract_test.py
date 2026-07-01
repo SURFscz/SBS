@@ -39,6 +39,9 @@ class AbstractTest(TestCase):
     def setUp(self):
         db = self.app.db
         with self.app.app_context():
+            from server.scim.pool import ensure_scim_pool_idle
+            ensure_scim_pool_idle(self.app)
+            db.session.remove()
             os.environ["SEEDING"] = "1"
             seed(db, self.app.app_config)
             del os.environ["SEEDING"]
@@ -51,6 +54,8 @@ class AbstractTest(TestCase):
         os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
         os.environ["TESTING"] = "1"
         os.environ["SCIM_DISABLED"] = "1"
+        # Run SCIM broadcasts on the test thread so seed()/clean_db() do not race pool workers.
+        os.environ["SCIM_FIFO_SYNC"] = "1"
 
         from server.__main__ import app
 

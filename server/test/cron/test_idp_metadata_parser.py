@@ -1,8 +1,5 @@
 import os
 
-from sqlalchemy import text
-from sqlalchemy.orm import sessionmaker
-
 from server.cron import idp_metadata_parser
 from server.cron.idp_metadata_parser import idp_display_name, parse_idp_metadata, \
     idp_metadata_file
@@ -45,22 +42,14 @@ class TestIdpMetadataParser(AbstractTest):
         # Use the cache
         display_name_nl = idp_display_name("uni-franeker.nl", "nl")
         self.assertEqual("Universiteit van Franeker", display_name_nl)
-        with self.app.app_context():
-            with sessionmaker(self.app.db.engine).begin() as session:
-                lock_name = idp_metadata_parser.idp_metadata_lock_name
-                try:
-                    result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
-                    lock_obtained = next(result, (0,))[0]
-                    self.assertTrue(bool(lock_obtained))
-                    # Now we have the lock, and we assert the idp_metadata_parser.idp_metadata is reset
-                    result = parse_idp_metadata(self.app)
-                    self.assertIsNone(result)
-                    self.assertIsNone(idp_metadata_parser.idp_metadata)
-
-                    display_name_nl = idp_display_name("uni-franeker.nl", "nl")
-                    self.assertEqual("Universiteit van Franeker", display_name_nl)
-                finally:
-                    session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
+        try:
+            self.app.app_config.cron_job_responsible = False
+            parse_idp_metadata(self.app)
+            # Assert the job has run
+            display_name_nl = idp_display_name("uni-franeker.nl", "nl")
+            self.assertEqual("Universiteit van Franeker", display_name_nl)
+        finally:
+            self.app.app_config.cron_job_responsible = True
 
     def test_idp_display_name_wildcard(self):
         if os.path.isfile(idp_metadata_file):

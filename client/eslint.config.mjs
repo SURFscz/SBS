@@ -3,6 +3,7 @@ import globals from "globals";
 import pluginReact from "eslint-plugin-react";
 import reactHooks from 'eslint-plugin-react-hooks';
 import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
@@ -16,6 +17,20 @@ export default defineConfig([
     },
     extends: ["js/recommended"],
     languageOptions: { globals: globals.browser }
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: { globals: globals.browser }
+  },
+  ...tseslint.configs.recommended.map(config => ({
+    ...config,
+    files: config.files ?? ["**/*.{ts,tsx}"]
+  })),
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-non-null-assertion": "error"
+    }
   },
   pluginReact.configs.flat.recommended, // React config first
   reactHooks.configs.flat.recommended,
@@ -37,8 +52,11 @@ export default defineConfig([
   {
     files: [
       "**/*.test.{js,jsx}",
+      "**/*.test.{ts,tsx}",
       "**/*.spec.{js,jsx}",
-      "**/__tests__/**/*.{js,jsx}"
+      "**/*.spec.{ts,tsx}",
+      "**/__tests__/**/*.{js,jsx}",
+      "**/__tests__/**/*.{ts,tsx}"
     ],
     languageOptions: {
       globals: {
@@ -67,7 +85,7 @@ export default defineConfig([
     }
   },
   {
-    files: ["vite.config.js", "eslint.config.mjs"],
+    files: ["vite.config.ts", "eslint.config.mjs"],
     languageOptions: {
       globals: {
         ...globals.node

@@ -7,11 +7,11 @@ table.serviceConnectionRequests {
     thead {
         th {
             &.collaboration__name {
-                width: 17%;
+                width: 14%;
                 padding-left: 15px;
 
                 &.has-service {
-                    width: 32%;
+                    width: 28%;
                 }
             }
 
@@ -20,14 +20,18 @@ table.serviceConnectionRequests {
             }
 
             &.requester__name {
-                width: 26%;
+                width: 24%;
 
                 &.has-service {
-                    width: 26%;
+                    width: 24%;
                 }
             }
 
             &.user__schac_home_organisation {
+                width: 15%;
+            }
+
+            &.created_at {
                 width: 15%;
             }
 

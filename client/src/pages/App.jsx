@@ -5,7 +5,8 @@ import I18n from "../locale/I18n";
 import Header from "../components/header/Header";
 import NotFound from "./not-found/NotFound";
 import ServerError from "./server-error/ServerError";
-import {aupLinks, config, me, other, refreshUser, reportError} from "../api";
+import {me, other, refreshUser, reportError} from "../api";
+import {aupLinks} from "../api/aup";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/error-dialog/ErrorDialog";
@@ -59,6 +60,7 @@ import Delay from "./delay/Delay";
 import Interrupt from "./interrupt/Interrupt";
 import MockEB from "./mock-eb/MockEB";
 import BulkUpload from "./bulk-upload/BulkUpload";
+import {config} from "@/api/config";
 
 addIcons();
 

@@ -1,5 +1,5 @@
 import {io} from "socket.io-client";
-import {config} from "../api";
+import {config} from "@/api/config";
 
 let initializedSocket = null;
 
