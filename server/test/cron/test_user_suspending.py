@@ -1,10 +1,8 @@
 from datetime import timedelta
 
 from freezegun import freeze_time
-from sqlalchemy import text
-from sqlalchemy.orm import sessionmaker
 
-from server.cron.user_suspending import suspend_users, suspend_users_lock_name
+from server.cron.user_suspending import suspend_users
 from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
@@ -15,15 +13,14 @@ from server.tools import dt_now
 class TestUserSuspending(AbstractTest):
 
     def test_schedule_lock(self):
-        with sessionmaker(self.app.db.engine).begin() as session:
-            try:
-                session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 1)"))
-                mail = self.app.mail
-                with mail.record_messages() as outbox:
-                    suspend_users(self.app)
-                    self.assertEqual(0, len(outbox))
-            finally:
-                session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+        try:
+            self.app.app_config.cron_job_responsible = False
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                suspend_users(self.app)
+                self.assertEqual(0, len(outbox))
+        finally:
+            self.app.app_config.cron_job_responsible = True
 
     def test_schedule(self):
         mail = self.app.mail

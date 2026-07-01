@@ -354,6 +354,7 @@ const nl = {
             noCollaborationsUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanmaken?",
             noCollaborationsRequestUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanvragen?",
             allLabels: "Alle labels",
+            labelsSelected: "{{nbr}} label(s) geselecteerd",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",
@@ -416,7 +417,7 @@ const nl = {
             noEntities: "Er zijn geen leden",
         },
         servicesAvailable: {
-            title: "Beschikbare applicaties",
+            title: "Beschikbaar",
             searchPlaceHolder: "Zoek applicaties...",
             noEntities: "Er zijn geen applicaties beschikbaar om toe te voegen"
         },
@@ -496,6 +497,7 @@ const nl = {
         collaboration_requests: {
             title: "Aanvragen voor samenwerkingen",
             requester: "Aanvrager",
+            createdAt: "Gecreëerd op",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
@@ -590,7 +592,8 @@ const nl = {
             detailsWithService: "Applicatiekoppelaanvraag gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}} en applicatie {{serviceName}}",
             requester: "Aanvrager",
             name: "Samenwerking",
-            serviceName: "Applicatie"
+            serviceName: "Applicatie",
+            createdAt: "Gecreëerd op"
         },
         serviceGroups: {
             backToGroups: "Terug naar alle applicatiegroepen",
@@ -932,8 +935,8 @@ const nl = {
         add: "Nieuwe applicatie",
         searchPlaceHolder: "Doorzoek alle applicaties",
         toc: {
-            connections: "Koppelingen",
-            available: "Beschikbare applicaties",
+            connections: "Gekoppeld",
+            available: "Beschikbaar",
         }
     },
     service: {

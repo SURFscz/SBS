@@ -12,6 +12,7 @@ import Entities from "../entities/Entities";
 import SpinnerField from "../spinner-field/SpinnerField";
 import InputField from "../../input-field/InputField";
 import {approveServiceConnectionRequest, deleteServiceConnectionRequest, denyServiceConnectionRequest} from "../../../api";
+import {dateFromEpoch} from "../../../utils/Date";
 import moment from "moment";
 import Logo from "../logo/Logo";
 import InstituteColumn from "../institute-column/InstituteColumn";
@@ -286,6 +287,12 @@ class ServiceConnectionRequestsInner extends React.Component {
                 header: I18n.t("models.users.institute"),
                 mapper: serviceConnectionRequest => <InstituteColumn entity={{user: serviceConnectionRequest.requester}}
                                                                      currentUser={currentUser}/>
+            },
+            {
+                key: "created_at",
+                header: I18n.t("models.serviceConnectionRequests.createdAt"),
+                class: isEmpty(service) ? "" : "has-service",
+                mapper: serviceConnectionRequest => dateFromEpoch(serviceConnectionRequest.created_at)
             },
             {
                 key: "status",
