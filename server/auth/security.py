@@ -6,6 +6,8 @@ from server.db.db import db
 from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
                               ServiceMembership, ApiKey)
 
+SERVICE_MEMBERSHIP_ROLES = ["admin", "manager"]
+
 CSRF_TOKEN = "CSRFToken"
 
 
@@ -247,7 +249,8 @@ def is_service_admin_or_manager(service_id=None):
     user_id = current_user_id()
     query = ServiceMembership.query \
         .options(load_only(ServiceMembership.user_id)) \
-        .filter(ServiceMembership.user_id == user_id)
+        .filter(ServiceMembership.user_id == user_id) \
+        .filter(ServiceMembership.role.in_(SERVICE_MEMBERSHIP_ROLES))
     if service_id:
         query = query.filter(ServiceMembership.service_id == service_id)
     return query.count() > 0
