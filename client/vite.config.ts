@@ -10,20 +10,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     resolve: {
         alias: [
+            // @ alias for absolute imports, in sync with paths in tsconfig.json
+            {
+                find: '@',
+                replacement: path.resolve(__dirname, 'src'),
+            },
             {
                 find: /^@surfnet\/sds$/,
                 replacement: '@surfnet/sds/esm/index.js',
-            },
-            // JS: force browser-safe build
-            {
-                find: /^jsondiffpatch$/,
-                replacement: 'jsondiffpatch/dist/jsondiffpatch.umd.js',
-            },
-
-            // CSS: keep original path working
-            {
-                find: /^jsondiffpatch\/dist\/formatters-styles\/(.*)$/,
-                replacement: 'jsondiffpatch/dist/formatters-styles/$1',
             },
         ],
     },
@@ -55,6 +49,24 @@ export default defineConfig({
           changeOrigin: true,
         },
       }
+    },
+    preview: {
+      port: 3000,
+      strictPort: true,
+      proxy: {
+        '/api': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/config': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: `http://${process.env.SBS_SERVER ?? 'localhost:8080'}`,
+          changeOrigin: true,
+        },
+      },
     },
     css: {
         preprocessorOptions: {

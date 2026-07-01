@@ -1864,7 +1864,7 @@ class ServiceOverview extends React.Component {
                             required={true}
                             error={alreadyExists.entity_id || isEmpty(service.entity_id)}
                             copyClipBoard={true}
-                            disabled={!isAdmin && !isServiceAdmin}/>
+                            disabled={!isAdmin}/>
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
                 })}/>}

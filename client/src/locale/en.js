@@ -354,6 +354,7 @@ const en = {
             noCollaborationsUser: "You are not member of any collaboration. Why don't you create one?",
             noCollaborationsRequestUser: "You are not member of any collaboration. Why don't you request one?",
             allLabels: "All labels",
+            labelsSelected: "{{nbr}} label(s) selected",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -416,7 +417,7 @@ const en = {
             noEntities: "There are no members",
         },
         servicesAvailable: {
-            title: "Available applications",
+            title: "Available",
             searchPlaceHolder: "Search for applications...",
             noEntities: "No applications are available to add"
         },
@@ -496,6 +497,7 @@ const en = {
         collaboration_requests: {
             title: "Requests for collaborations",
             requester: "Requester",
+            createdAt: "Requested at",
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
@@ -590,7 +592,8 @@ const en = {
             detailsWithService: "Application connection request made by {{name}} on {{date}} for collaboration {{collaborationName}} and application {{serviceName}}",
             requester: "Requester",
             name: "Collaboration",
-            serviceName: "Application"
+            serviceName: "Application",
+            createdAt: "Requested at"
         },
         serviceGroups: {
             backToGroups: "Back to all application groups",
@@ -932,8 +935,8 @@ const en = {
         add: "Create new application",
         searchPlaceHolder: "Search for all applications",
         toc: {
-            connections: "Connections",
-            available: "Available applications",
+            connections: "Connected",
+            available: "Available",
         }
     },
     service: {

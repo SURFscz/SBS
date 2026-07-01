@@ -3,7 +3,7 @@ import urllib.parse
 import requests
 
 from functools import wraps
-from typing import Union, List
+from typing import Union, List, Optional, Sequence
 
 from server.api.base import application_base_url
 from server.auth.tokens import decrypt_scim_bearer_token
@@ -21,15 +21,17 @@ SCIM_TIMEOUT = (3.05, 15)
 
 def apply_change(f):
     @wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrapper(app, *args, **kwargs):
         try:
-            f(*args, **kwargs)
+            with app.app_context():
+                f(app, *args, **kwargs)
         except Exception as e:
             logger = logging.getLogger("scim")
             logger.error(f"Error (absorbed) during SCIM exchange ({str(e)})")
         finally:
-            db.session.rollback()
-            db.session.close()
+            with app.app_context():
+                db.session.rollback()
+                db.session.close()
 
     return wrapper
 
@@ -66,6 +68,13 @@ def scim_headers(service: Service, is_delete=False):
 # Remove duplicates from services
 def _unique_scim_services(services: List[Service]):
     return [s for s in unique_model_objects(services) if s.scim_enabled]
+
+
+def _filter_services_by_ids(services: List[Service], service_ids: Optional[Sequence[int]]) -> List[Service]:
+    if not service_ids:
+        return _unique_scim_services(services)
+    allowed = set(service_ids)
+    return [s for s in _unique_scim_services(services) if s.id in allowed]
 
 
 # Is the user connected - through memberships excluding collaboration_to_exclude - to the service
@@ -182,70 +191,82 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
 
 # User has been updated. Propagate the changes to the remote SCIM DB to all connected SCIM services
 @apply_change
-def apply_user_change(app, user_id):
-    with app.app_context():
-        user = User.query.filter(User.id == user_id).one()
+def apply_user_change(app, user_id, service_ids: Optional[Sequence[int]] = None):
+    user = User.query.filter(User.id == user_id).one()
+    if service_ids:
+        collaborations = [m.collaboration for m in user.collaboration_memberships if m.is_active()]
+        for service in _filter_services_by_ids(
+                flatten([co.services for co in collaborations]), service_ids):
+            _do_apply_user_change(user, service=service, deletion=False)
+    else:
         _do_apply_user_change(user, service=None, deletion=False)
 
 
 # User has been deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
 @apply_change
-def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
-    with app.app_context():
-        collaborations = Collaboration.query.filter(Collaboration.id.in_(collaboration_identifiers)).all()
-        scim_services = _all_unique_scim_services_of_collaborations(collaborations)
-        for service in scim_services:
-            scim_object = _lookup_scim_object(service, SCIM_USERS, external_id)
-            # No use to delete the user if the user is unknown in the remote system
-            if scim_object:
-                url = f"{service.scim_url}{scim_object['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=SCIM_TIMEOUT)
-                validate_response(response, service, extra_logging=f"user={external_id}, delete=True")
-        for co in collaborations:
-            services = _all_unique_scim_services_of_collaborations([co])
-            _do_apply_group_collaboration_change(co, services, deletion=False)
-            for group in co.groups:
-                _do_apply_group_collaboration_change(group, services, deletion=False)
+def apply_user_deletion(app, external_id, collaboration_identifiers: List[int],
+                        service_ids: Optional[Sequence[int]] = None):
+    collaborations = Collaboration.query.filter(Collaboration.id.in_(collaboration_identifiers)).all()
+    scim_services = _filter_services_by_ids(
+        _all_unique_scim_services_of_collaborations(collaborations), service_ids)
+    for service in scim_services:
+        scim_object = _lookup_scim_object(service, SCIM_USERS, external_id)
+        # No use to delete the user if the user is unknown in the remote system
+        if scim_object:
+            url = f"{service.scim_url}{scim_object['meta']['location']}"
+            response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=SCIM_TIMEOUT)
+            validate_response(response, service, extra_logging=f"user={external_id}, delete=True")
+    for co in collaborations:
+        services = _filter_services_by_ids(_all_unique_scim_services_of_collaborations([co]), service_ids)
+        if not services:
+            continue
+        _do_apply_group_collaboration_change(co, services, deletion=False)
+        for group in co.groups:
+            _do_apply_group_collaboration_change(group, services, deletion=False)
 
 
 # Collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 @apply_change
-def apply_collaboration_change(app, collaboration_id: int, deletion):
-    with app.app_context():
-        collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
-        services = collaboration.services
-        for group in collaboration.groups:
-            _do_apply_group_collaboration_change(group, services, deletion)
-        _do_apply_group_collaboration_change(collaboration, services, deletion)
+def apply_collaboration_change(app, collaboration_id: int, deletion, service_ids: Optional[Sequence[int]] = None):
+    collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
+    services = _filter_services_by_ids(collaboration.services, service_ids)
+    if not services:
+        return
+    for group in collaboration.groups:
+        _do_apply_group_collaboration_change(group, services, deletion)
+    _do_apply_group_collaboration_change(collaboration, services, deletion)
 
 
 # Group has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 @apply_change
-def apply_group_change(app, group_id: int, deletion):
-    with app.app_context():
-        group = Group.query.filter(Group.id == group_id).one()
-        services = group.collaboration.services
-        _do_apply_group_collaboration_change(group, services, deletion)
+def apply_group_change(app, group_id: int, deletion, service_ids: Optional[Sequence[int]] = None):
+    group = Group.query.filter(Group.id == group_id).one()
+    services = _filter_services_by_ids(group.collaboration.services, service_ids)
+    if not services:
+        return
+    _do_apply_group_collaboration_change(group, services, deletion)
 
 
 # Service has been added to collaboration or removed from collaboration
 @apply_change
-def apply_service_changed(app, collaboration_id, service_id, deletion):
-    with app.app_context():
-        collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
-        services = [Service.query.filter(Service.id == service_id).one()]
-        for group in collaboration.groups:
-            _do_apply_group_collaboration_change(group, services, deletion)
-        _do_apply_group_collaboration_change(collaboration, services, deletion)
+def apply_service_changed(app, collaboration_id, service_id, deletion, service_ids: Optional[Sequence[int]] = None):
+    if service_ids is not None and service_id not in service_ids:
+        return
+    collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
+    services = [Service.query.filter(Service.id == service_id).one()]
+    for group in collaboration.groups:
+        _do_apply_group_collaboration_change(group, services, deletion)
+    _do_apply_group_collaboration_change(collaboration, services, deletion)
 
 
 # Organisation has been deleted
 @apply_change
-def apply_organisation_change(app, organisation_id: int, deletion):
-    with app.app_context():
-        organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
-        for co in organisation.collaborations:
-            services = co.services
-            for group in co.groups:
-                _do_apply_group_collaboration_change(group, services, deletion)
-            _do_apply_group_collaboration_change(co, services, deletion)
+def apply_organisation_change(app, organisation_id: int, deletion, service_ids: Optional[Sequence[int]] = None):
+    organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
+    for co in organisation.collaborations:
+        services = _filter_services_by_ids(co.services, service_ids)
+        if not services:
+            continue
+        for group in co.groups:
+            _do_apply_group_collaboration_change(group, services, deletion)
+        _do_apply_group_collaboration_change(co, services, deletion)

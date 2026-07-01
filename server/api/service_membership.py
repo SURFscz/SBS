@@ -1,8 +1,9 @@
 from flask import Blueprint, request as current_request
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, emit_socket
-from server.auth.security import confirm_service_admin, confirm_write_access, current_user_id, current_user_uid
+from server.auth.security import confirm_service_admin, confirm_write_access, current_user_id, current_user_uid, \
+    SERVICE_MEMBERSHIP_ROLES
 from server.db.db import db
 from server.db.domain import ServiceMembership, Service
 
@@ -57,6 +58,8 @@ def update_service_membership_role():
     service_id = client_data["serviceId"]
     user_id = client_data["userId"]
     role = client_data["role"]
+    if role not in SERVICE_MEMBERSHIP_ROLES:
+        raise BadRequest(f"Unknown role: {role}. Allowed roles are 'admin' or 'manager'")
 
     confirm_service_admin(service_id)
 

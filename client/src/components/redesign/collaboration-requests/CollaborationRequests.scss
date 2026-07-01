@@ -5,25 +5,29 @@ table.collaboration_requests {
     thead {
         th {
             &.name {
-                width: 20%;
+                width: 18%;
                 padding-left: 15px;
             }
 
             &.units {
-                width: 17%;
+                width: 15%;
+            }
+
+            &.created_at {
+                width: 14%;
             }
 
             &.status {
-                width: 22%;
+                width: 18%;
                 text-align: center;
             }
 
             &.requester {
-                width: 25%;
+                width: 21%;
             }
 
             &.user__schac_home_organisation {
-                width: 15%;
+                width: 14%;
             }
         }
     }

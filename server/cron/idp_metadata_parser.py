@@ -8,8 +8,6 @@ from urllib import request
 
 from flask import current_app
 
-from server.cron.shared import obtain_lock
-
 idp_metadata = None
 
 idp_metadata_lock_name = "idp_metadata_lock"
@@ -98,19 +96,8 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
         return idp_metadata
 
 
-def _reset_idp_meta_data():
-    logger = logging.getLogger("scheduler")
-    logger.info("Resetting idp_metadata as no lock could be obtained ")
-    global idp_metadata
-    idp_metadata = None
-    return None
-
-
 def parse_idp_metadata(app):
-    return obtain_lock(app,
-                       idp_metadata_lock_name,
-                       _do_parse_idp_metadata,
-                       _reset_idp_meta_data)
+    return _do_parse_idp_metadata(app)
 
 
 def idp_display_name(schac_home, lang="en", use_default=True):
