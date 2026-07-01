@@ -26,6 +26,12 @@ export default defineConfig([
     ...config,
     files: config.files ?? ["**/*.{ts,tsx}"]
   })),
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-non-null-assertion": "error"
+    }
+  },
   pluginReact.configs.flat.recommended, // React config first
   reactHooks.configs.flat.recommended,
   {
