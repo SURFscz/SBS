@@ -63,7 +63,7 @@ test = [
     "mock==5.2.0",
     "pip-tools==7.5.3",
     "pipdeptree==2.35.3",
-    "pytest==9.0.3",
+    "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "pytest-xdist==3.8.0",
     "responses==0.26.1",
