@@ -52,7 +52,7 @@ dependencies = [
 test = [
     "alembic==1.18.4",
     "blinker==1.9.0",
-    "coverage==7.14.0",
+    "coverage==7.15.0",
     "Faker==40.20.0",
     "flake8==7.3.0",
     "flake8-pyproject==1.2.4",
