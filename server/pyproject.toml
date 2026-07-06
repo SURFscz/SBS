@@ -42,7 +42,7 @@ dependencies = [
     "qrcode==8.2",
     "redis==8.0.0",
     "requests==2.34.2",
-    "SQLAlchemy==2.0.50",
+    "SQLAlchemy==2.0.51",
     "urllib3==2.7.0",
     "websockets==16.0",
     "werkzeug==3.1.8",
