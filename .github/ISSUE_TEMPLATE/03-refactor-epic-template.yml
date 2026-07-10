@@ -1,0 +1,54 @@
+---
+
+name: Refactor Story
+description: Use this temporary template for stories related to the SRAM Refactor milestone.
+title: "[SRAM Refactor]: Refactor all functionality used by <role>"
+type: "feature"
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please use the title field to name the story and the below
+        fields to provide necessary details.
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: Provide a brief description of the story.
+      value: "The SRAM refactor milestone is prioritised per role (https://github.com/SURFnet/SRAM-Projects/issues/89). In this issue, the <role> functionality will be refactored, that is Python typing will be defined for the flask endpoints, typescript for the frontend components using the API data, and regression tests will be added in Playwright."
+
+  - type: textarea
+    attributes:
+      label: Task Overview
+      description: List the tasks need to complete this story.
+      placeholder: |
+        - [ ] Make sure you login as the correct role by changing client/src/api/index.js:94
+        - [ ] Write a Playwright test for all the functionality that you are able to use now (up to dev to estimate what functionality is crucial enough to be included)
+        - [ ] Record all the endpoints that are called when using that functionality
+        - [ ] Type the Python endpoints in mypy, to record the data that is returned by the API
+        - [ ] Convert the JS components that consume that API data to TypeScript
+          - [ ] If convenient, convert any class components to functional components when rewriting them in TypeScript
+        - [ ] Remove all unnecessary properties from the Python DTO
+
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria
+      description: List the criteria to consider this story complete.
+      placeholder: |
+        - [ ] Playwright test still work after refactoring
+        - [ ] Used endpoints return a Python type
+        - [ ] No unnecessary data is returned by the API
+  
+  - type: textarea
+    attributes:
+      label: Definition of Done
+      description: Predefined Definition of Done
+      value: |
+        - [ ] Mypy succeeds on new code
+        - [ ] Linting succeeds on new code
+        - [ ] New React components are functional components
+
+  - type: textarea
+    attributes:
+      label: Notes
+      description: Any additional notes or context.
