@@ -52,3 +52,4 @@ body:
     attributes:
       label: Notes
       description: Any additional notes or context.
+      value: "If this turns out to be too much work for one issue, focus on the endpoints that return user data, and frontend components that consume it"
