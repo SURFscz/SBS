@@ -21,7 +21,7 @@ body:
     attributes:
       label: Task Overview
       description: List the tasks need to complete this story.
-      placeholder: |
+      value: |
         - [ ] Make sure you login as the correct role by changing client/src/api/index.js:94
         - [ ] Write a Playwright test for all the functionality that you are able to use now (up to dev to estimate what functionality is crucial enough to be included)
         - [ ] Record all the endpoints that are called when using that functionality
@@ -34,7 +34,7 @@ body:
     attributes:
       label: Acceptance Criteria
       description: List the criteria to consider this story complete.
-      placeholder: |
+      value: |
         - [ ] Playwright test still work after refactoring
         - [ ] Used endpoints return a Python type
         - [ ] No unnecessary data is returned by the API
