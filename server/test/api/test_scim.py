@@ -23,6 +23,42 @@ class TestScim(AbstractTest):
         res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_network_token}"},
                        with_basic_auth=False)
         self.assertEqual(6, len(res["Resources"]))
+        self.assertEqual(6, res["totalResults"])
+        self.assertEqual(1, res["startIndex"])
+        self.assertEqual(6, res["itemsPerPage"])
+
+    def test_users_pagination(self):
+        headers = {"Authorization": f"bearer {service_network_token}"}
+        res = self.get("/api/scim/v2/Users",
+                       query_data={"startIndex": 2, "count": 2},
+                       headers=headers,
+                       with_basic_auth=False)
+        self.assertEqual(6, res["totalResults"])
+        self.assertEqual(2, res["startIndex"])
+        self.assertEqual(2, res["itemsPerPage"])
+        self.assertEqual(2, len(res["Resources"]))
+
+        res = self.get("/api/scim/v2/Users",
+                       query_data={"startIndex": 7},
+                       headers=headers,
+                       with_basic_auth=False)
+        self.assertEqual(6, res["totalResults"])
+        self.assertEqual(7, res["startIndex"])
+        self.assertEqual(0, res["itemsPerPage"])
+        self.assertEqual(0, len(res["Resources"]))
+
+    def test_users_pagination_invalid_params(self):
+        headers = {"Authorization": f"bearer {service_network_token}"}
+        self.get("/api/scim/v2/Users",
+                 query_data={"startIndex": 0},
+                 headers=headers,
+                 with_basic_auth=False,
+                 response_status_code=400)
+        self.get("/api/scim/v2/Users",
+                 query_data={"count": "nope"},
+                 headers=headers,
+                 with_basic_auth=False,
+                 response_status_code=400)
 
     def test_users_no_scim_enabled(self):
         wiki = self.find_entity_by_name(Service, service_wiki_name)
@@ -53,6 +89,20 @@ class TestScim(AbstractTest):
         res = self.get("/api/scim/v2/Groups", headers={"Authorization": f"bearer {service_network_token}"},
                        with_basic_auth=False)
         self.assertEqual(3, len(res["Resources"]))
+        self.assertEqual(3, res["totalResults"])
+        self.assertEqual(1, res["startIndex"])
+        self.assertEqual(3, res["itemsPerPage"])
+
+    def test_groups_pagination(self):
+        headers = {"Authorization": f"bearer {service_network_token}"}
+        res = self.get("/api/scim/v2/Groups",
+                       query_data={"startIndex": 2, "count": 1},
+                       headers=headers,
+                       with_basic_auth=False)
+        self.assertEqual(3, res["totalResults"])
+        self.assertEqual(2, res["startIndex"])
+        self.assertEqual(1, res["itemsPerPage"])
+        self.assertEqual(1, len(res["Resources"]))
 
     def test_collaboration_by_identifier(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)

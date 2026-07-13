@@ -3,6 +3,7 @@ from typing import Union, List
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX, external_id_postfix
+from server.scim.pagination import paginate_items
 from server.scim.schema_template import SCIM_SCHEMA_CORE_GROUP, SCIM_API_MESSAGES
 from server.scim.user_template import version_value, date_time_format, replace_none_values
 
@@ -87,17 +88,15 @@ def find_group_by_id_template(group: Union[Group, Collaboration]):
     return group_template
 
 
-def find_groups_template(groups: List[Union[Group, Collaboration]]):
-    base = {
+def find_groups_template(groups: List[Union[Group, Collaboration]], start_index: int = 1, count: int = None):
+    page_groups, total, items_per_page = paginate_items(groups, start_index, count)
+    resources = [find_group_by_id_template(group) for group in page_groups]
+    return {
         "schemas": [
             f"{SCIM_API_MESSAGES}:ListResponse"
         ],
-        "totalResults": len(groups),
-        "startIndex": 0,
-        "itemsPerPage": len(groups),
+        "totalResults": total,
+        "startIndex": start_index,
+        "itemsPerPage": items_per_page,
+        "Resources": resources,
     }
-    resources = []
-    for group in groups:
-        resources.append(find_group_by_id_template(group))
-    base["Resources"] = resources
-    return base

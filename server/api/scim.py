@@ -19,6 +19,7 @@ from server.db.domain import User, Collaboration, Group, Service
 from server.logger.context_logger import ctx_logger
 from server.scim import SCIM_URL_PREFIX, strip_external_id_postfix
 from server.scim.group_template import find_groups_template, find_group_by_id_template
+from server.scim.pagination import parse_pagination_params
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
 from server.scim.resource_type_template import resource_type_template, resource_type_user_template, \
     resource_type_group_template
@@ -106,7 +107,11 @@ def service_users():
         users = User.query.filter(func.lower(User.uid) == func.lower(uid)).all()
     else:
         users = all_scim_users_by_service(service)
-    return find_users_template(users), 200
+    start_index, count = parse_pagination_params(
+        query_param("startIndex", required=False),
+        query_param("count", required=False),
+    )
+    return find_users_template(users, start_index, count), 200
 
 
 @scim_api.route("/Users/<user_external_id>", methods=["GET"], strict_slashes=False)
@@ -125,7 +130,11 @@ def service_user_by_external_id(user_external_id: str):
 def service_groups():
     service = validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     all_scim_groups = all_scim_groups_by_service(service)
-    return find_groups_template(all_scim_groups), 200
+    start_index, count = parse_pagination_params(
+        query_param("startIndex", required=False),
+        query_param("count", required=False),
+    )
+    return find_groups_template(all_scim_groups, start_index, count), 200
 
 
 @scim_api.route("/Groups/<group_external_id>", methods=["GET"], strict_slashes=False)
