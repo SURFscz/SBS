@@ -50,7 +50,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@types/node": "^25.7.0",
+        "@types/node": "^26.1.1",
         "@types/react": "18",
         "@types/react-dom": "18",
         "@types/react-router-dom": "^5.3.3",
