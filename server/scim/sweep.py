@@ -6,7 +6,7 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
-from server.scim import external_id_postfix, strip_external_id_postfix, SCIM_GROUPS, SCIM_USERS
+from server.scim import strip_external_id_postfix, SCIM_GROUPS, SCIM_USERS
 from server.scim.group_template import create_group_template, update_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.scim import scim_headers, validate_response
