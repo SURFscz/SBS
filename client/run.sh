@@ -1,4 +1,6 @@
-#!/usr/bin/bash
+#!/bin/bash
+set -euo pipefail
 cd /opt/app/client
 yarn
-PORT=8080 yarn start
+export PORT="${PORT:-8080}"
+exec yarn start

@@ -78,6 +78,7 @@
     "scripts": {
         "analyze": "source-map-explorer build/static/js/main.*.js ",
         "dev": "vite",
+        "start": "vite --host 0.0.0.0",
         "build": "vite build",
         "lint": "eslint ./src",
         "preview": "vite preview",
