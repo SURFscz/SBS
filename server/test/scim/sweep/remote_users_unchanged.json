@@ -15,7 +15,7 @@
                     "value": "john@example.org"
                 }
             ],
-            "externalId": "86eee601-770f-4df3-bd4c-181a2edcbb2f@sram.surf.nl",
+            "externalId": "86eee601-770f-4df3-bd4c-181a2edcbb2f@test.sram.surf.nl",
             "id": "3DC907C5-58D1-425A-A1D4-36D4A119B0FA",
             "meta": {
                 "created": "2022-12-14T16:41:01",
@@ -47,7 +47,7 @@
                     "value": "boss@example.org"
                 }
             ],
-            "externalId": "e906cf88-cdb3-480d-8bb3-ce53bdcda4e7@sram.surf.nl",
+            "externalId": "e906cf88-cdb3-480d-8bb3-ce53bdcda4e7@test.sram.surf.nl",
             "id": "4EDA5BB4-A708-4782-BCFB-D76588F79D4B",
             "meta": {
                 "created": "2022-12-14T16:41:01",
@@ -75,7 +75,7 @@
                     "value": "jane@ucc.org"
                 }
             ],
-            "externalId": "502e861e-f548-4335-89d8-f1764f803964@sram.surf.nl",
+            "externalId": "502e861e-f548-4335-89d8-f1764f803964@test.sram.surf.nl",
             "id": "B608F146-73F4-4613-A2E8-05A40C77F3F3",
             "meta": {
                 "created": "2022-12-14T16:41:01",
@@ -103,7 +103,7 @@
                     "value": "sarah@uni-franeker.nl"
                 }
             ],
-            "externalId": "8297d8a5-a2a4-4208-9fb6-100a5865f022@sram.surf.nl",
+            "externalId": "8297d8a5-a2a4-4208-9fb6-100a5865f022@test.sram.surf.nl",
             "id": "CC7352C1-D752-4588-9FF3-014800EA094B",
             "meta": {
                 "created": "2022-12-14T16:41:01",
@@ -135,7 +135,7 @@
                     "value": "betty@uuc.org"
                 }
             ],
-            "externalId": "bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6@sram.surf.nl",
+            "externalId": "bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6@test.sram.surf.nl",
             "id": "BA0DF4D5-E57E-46CA-A997-BEF2D0D0A174",
             "meta": {
                 "created": "2022-12-14T16:41:01",
@@ -163,7 +163,7 @@
                     "value": "ebbe@example.org"
                 }
             ],
-            "externalId": "43b26575-b243-42ef-a7ac-6033d51372fe@sram.surf.nl",
+            "externalId": "43b26575-b243-42ef-a7ac-6033d51372fe@test.sram.surf.nl",
             "id": "D1D64FD9-7A8F-41E5-A6F1-78BF54BD7954",
             "meta": {
                 "created": "2022-12-14T16:41:01",

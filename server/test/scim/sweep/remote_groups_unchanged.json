@@ -6,36 +6,36 @@
     "Resources": [
         {
             "displayName": "AI computing",
-            "externalId": "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2@sram.surf.nl",
+            "externalId": "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2@test.sram.surf.nl",
             "id": "768F27CF-98E2-42B4-9913-3AACF370D8FD",
             "members": [
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@test.sram.surf.nl",
                     "display": "John Doe",
                     "value": "3DC907C5-58D1-425A-A1D4-36D4A119B0FA"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/e906cf88-cdb3-480d-8bb3-ce53bdcda4e7@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/e906cf88-cdb3-480d-8bb3-ce53bdcda4e7@test.sram.surf.nl",
                     "display": "The Boss",
                     "value": "4EDA5BB4-A708-4782-BCFB-D76588F79D4B"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/502e861e-f548-4335-89d8-f1764f803964@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/502e861e-f548-4335-89d8-f1764f803964@test.sram.surf.nl",
                     "display": "Jane Doe",
                     "value": "B608F146-73F4-4613-A2E8-05A40C77F3F3"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/8297d8a5-a2a4-4208-9fb6-100a5865f022@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/8297d8a5-a2a4-4208-9fb6-100a5865f022@test.sram.surf.nl",
                     "display": "Sarah Cross",
                     "value": "CC7352C1-D752-4588-9FF3-014800EA094B"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6@test.sram.surf.nl",
                     "display": "betty",
                     "value": "BA0DF4D5-E57E-46CA-A997-BEF2D0D0A174"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/43b26575-b243-42ef-a7ac-6033d51372fe@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/43b26575-b243-42ef-a7ac-6033d51372fe@test.sram.surf.nl",
                     "display": "Ebbe Doe",
                     "value": "D1D64FD9-7A8F-41E5-A6F1-78BF54BD7954"
                 }
@@ -52,16 +52,16 @@
         },
         {
             "displayName": "AI researchers",
-            "externalId": "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e@sram.surf.nl",
+            "externalId": "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e@test.sram.surf.nl",
             "id": "204DD260-D297-41E2-97AF-CDEF68EFB35B",
             "members": [
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@test.sram.surf.nl",
                     "display": "John Doe",
                     "value": "3DC907C5-58D1-425A-A1D4-36D4A119B0FA"
                 },
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/502e861e-f548-4335-89d8-f1764f803964@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/502e861e-f548-4335-89d8-f1764f803964@test.sram.surf.nl",
                     "display": "Jane Doe",
                     "value": "B608F146-73F4-4613-A2E8-05A40C77F3F3"
                 }
@@ -77,11 +77,11 @@
         },
         {
             "displayName": "AI developers",
-            "externalId": "4c270cff-de30-49e8-a3bc-df032536b37c@sram.surf.nl",
+            "externalId": "4c270cff-de30-49e8-a3bc-df032536b37c@test.sram.surf.nl",
             "id": "0747BBDA-837A-479A-B55D-BB0C1B836747",
             "members": [
                 {
-                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@sram.surf.nl",
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/86eee601-770f-4df3-bd4c-181a2edcbb2f@test.sram.surf.nl",
                     "display": "John Doe",
                     "value": "3DC907C5-58D1-425A-A1D4-36D4A119B0FA"
                 }

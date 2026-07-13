@@ -3,7 +3,7 @@ import hashlib
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
-from server.scim import EXTERNAL_ID_POST_FIX
+from server.scim import external_id_postfix
 from server.scim.schema_template import SCIM_SCHEMA_CORE_USER, SCIM_API_MESSAGES
 from server.tools import dt_now, inactivity
 
@@ -30,7 +30,7 @@ def _meta_info(user: User):
             "created": date_time_format(user.created_at),
             "lastModified": date_time_format(user.updated_at),
             "version": version_value(user),
-            "location": f"/Users/{user.external_id}{EXTERNAL_ID_POST_FIX}"}
+            "location": f"/Users/{user.external_id}{external_id_postfix()}"}
 
 
 def inactive_days(date_at):
@@ -46,7 +46,7 @@ def create_user_template(user: User):
             SCIM_SCHEMA_CORE_USER,
             get_scim_schema_sram_user()
         ],
-        "externalId": f"{user.external_id}{EXTERNAL_ID_POST_FIX}",
+        "externalId": f"{user.external_id}{external_id_postfix()}",
         "userName": user.username,
         "name": {
             "givenName": user.given_name,
@@ -74,7 +74,7 @@ def update_user_template(user: User, scim_identifier: str):
 
 
 def find_user_by_id_template(user: User):
-    user_template = update_user_template(user, f"{user.external_id}{EXTERNAL_ID_POST_FIX}")
+    user_template = update_user_template(user, f"{user.external_id}{external_id_postfix()}")
     user_template["meta"] = _meta_info(user)
     return user_template
 

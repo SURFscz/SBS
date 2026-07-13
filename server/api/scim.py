@@ -17,7 +17,7 @@ from server.db.db import db
 from server.db.defaults import SERVICE_TOKEN_SCIM
 from server.db.domain import User, Collaboration, Group, Service
 from server.logger.context_logger import ctx_logger
-from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
+from server.scim import SCIM_URL_PREFIX, strip_external_id_postfix
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
 from server.scim.resource_type_template import resource_type_template, resource_type_user_template, \
@@ -114,7 +114,7 @@ def service_users():
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
     validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
-    stripped_external_id = user_external_id.replace(EXTERNAL_ID_POST_FIX, "")
+    stripped_external_id = strip_external_id_postfix(user_external_id)
     user = User.query.filter(User.external_id == stripped_external_id).one()
     return find_user_by_id_template(user), _add_etag_header(user)
 
@@ -133,7 +133,7 @@ def service_groups():
 @json_endpoint
 def service_group_by_identifier(group_external_id: str):
     validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
-    stripped_group_identifier = group_external_id.replace(EXTERNAL_ID_POST_FIX, "")
+    stripped_group_identifier = strip_external_id_postfix(group_external_id)
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:
         group = Group.query.filter(Group.identifier == stripped_group_identifier).one()
