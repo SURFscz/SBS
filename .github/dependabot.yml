@@ -13,6 +13,11 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      all-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   # Maintain dependencies for server
   - package-ecosystem: "pip"
@@ -20,3 +25,8 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      all-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
