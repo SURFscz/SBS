@@ -93,6 +93,7 @@ mail:
 First install all dependencies with:
 
 ```bash
+cd client
 nvm use
 yarn install
 ```
@@ -100,7 +101,6 @@ yarn install
 The GUI can be started with:
 
 ```bash
-cd client
 yarn dev
 ```
 
