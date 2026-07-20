@@ -104,6 +104,8 @@ The GUI can be started with:
 yarn dev
 ```
 
+Note that this only works when a server process is already running on localhost.
+
 To create a GUI production build:
 
 ```bash
