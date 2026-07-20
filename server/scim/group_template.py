@@ -2,7 +2,8 @@ from typing import Union, List
 
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
-from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
+from server.scim import SCIM_URL_PREFIX, external_id_postfix
+from server.scim.pagination import paginate_items
 from server.scim.schema_template import SCIM_SCHEMA_CORE_GROUP, SCIM_API_MESSAGES
 from server.scim.user_template import version_value, date_time_format, replace_none_values
 
@@ -12,7 +13,7 @@ def _meta_info(group: Union[Group, Collaboration]):
             "created": date_time_format(group.created_at),
             "lastModified": date_time_format(group.updated_at),
             "version": version_value(group),
-            "location": f"/Groups/{group.identifier}{EXTERNAL_ID_POST_FIX}"}
+            "location": f"/Groups/{group.identifier}{external_id_postfix()}"}
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
@@ -56,7 +57,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
             SCIM_SCHEMA_CORE_GROUP,
             get_scim_schema_sram_group()
         ],
-        "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
+        "externalId": f"{group.identifier}{external_id_postfix()}",
         "displayName": group.name,
         "members": sorted_members,
         get_scim_schema_sram_group(): scim_sram_extension
@@ -71,7 +72,7 @@ def update_group_template(group: Union[Group, Collaboration], membership_scim_ob
 
 # This is used for internal SRAM groups and external SCIM providers
 def scim_member_object(base_url, membership: CollaborationMembership, scim_object=None):
-    member_value = f"{membership.user.external_id}{EXTERNAL_ID_POST_FIX}"
+    member_value = f"{membership.user.external_id}{external_id_postfix()}"
     return {
         "value": scim_object["id"] if scim_object else member_value,
         "display": membership.user.name,
@@ -82,22 +83,20 @@ def scim_member_object(base_url, membership: CollaborationMembership, scim_objec
 def find_group_by_id_template(group: Union[Group, Collaboration]):
     base_url = application_base_url()
     members = [scim_member_object(base_url, m) for m in group.collaboration_memberships if m.is_active()]
-    group_template = update_group_template(group, members, f"{group.identifier}{EXTERNAL_ID_POST_FIX}")
+    group_template = update_group_template(group, members, f"{group.identifier}{external_id_postfix()}")
     group_template["meta"] = _meta_info(group)
     return group_template
 
 
-def find_groups_template(groups: List[Union[Group, Collaboration]]):
-    base = {
+def find_groups_template(groups: List[Union[Group, Collaboration]], start_index: int = 1, count: int = None):
+    page_groups, total, items_per_page = paginate_items(groups, start_index, count)
+    resources = [find_group_by_id_template(group) for group in page_groups]
+    return {
         "schemas": [
             f"{SCIM_API_MESSAGES}:ListResponse"
         ],
-        "totalResults": len(groups),
-        "startIndex": 0,
-        "itemsPerPage": len(groups),
+        "totalResults": total,
+        "startIndex": start_index,
+        "itemsPerPage": items_per_page,
+        "Resources": resources,
     }
-    resources = []
-    for group in groups:
-        resources.append(find_group_by_id_template(group))
-    base["Resources"] = resources
-    return base

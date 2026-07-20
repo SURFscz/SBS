@@ -307,6 +307,38 @@ def schema_sram_group_template():
             "returned": "default",
             "uniqueness": "none"
         },
+        {
+            "name": "links",
+            "type": "complex",
+            "multiValued": True,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none",
+            "subAttributes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+            ]
+        },
     ])
 
 

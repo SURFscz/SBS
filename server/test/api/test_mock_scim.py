@@ -9,7 +9,6 @@ from flask import current_app
 from server.api.base import application_base_url
 from server.api.mock_scim import HTTP_CALLS_KEY, DATABASE_KEY
 from server.db.domain import User, Collaboration, Group, Service
-from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
 from server.scim.schema_template import get_scim_schema_sram_group
@@ -64,7 +63,7 @@ class TestMockScim(AbstractTest):  # type: ignore[misc]
         # Find by externalId
         sarah = self.find_entity_by_name(User, user_sarah_name)
         res = self.get("/api/scim_mock/Users",
-                       query_data={"filter": f"externalId eq \"{sarah.external_id}{EXTERNAL_ID_POST_FIX}\""},
+                       query_data={"filter": f"externalId eq \"{sarah.external_id}{self.scim_external_id_postfix()}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_user, res["Resources"][0]["id"])
@@ -98,7 +97,7 @@ class TestMockScim(AbstractTest):  # type: ignore[misc]
 
         # Find the group by externalId
         res = self.get("/api/scim_mock/Groups",
-                       query_data={"filter": f"externalId eq \"{collaboration.identifier}{EXTERNAL_ID_POST_FIX}\""},
+                       query_data={"filter": f"externalId eq \"{collaboration.identifier}{self.scim_external_id_postfix()}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_group, res["Resources"][0]["id"])

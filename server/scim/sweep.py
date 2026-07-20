@@ -6,7 +6,7 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
-from server.scim import EXTERNAL_ID_POST_FIX, SCIM_GROUPS, SCIM_USERS
+from server.scim import strip_external_id_postfix, SCIM_GROUPS, SCIM_USERS
 from server.scim.group_template import create_group_template, update_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.scim import scim_headers, validate_response
@@ -92,7 +92,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     for remote_member in remote_group.get("members", []):
         remote_user = remote_users_by_id.get(remote_member["value"])
         if remote_user:
-            remote_members.append(remote_user["externalId"].replace(EXTERNAL_ID_POST_FIX, ""))
+            remote_members.append(strip_external_id_postfix(remote_user["externalId"]))
     if sram_members != sorted(remote_members):
         return True
     if get_scim_schema_sram_group() in remote_group:
@@ -171,7 +171,7 @@ def perform_sweep(service: Service):
 
     # First delete all remote users and groups that are incorrectly in the remote SCIM database
     for remote_group in remote_scim_groups:
-        if f"{remote_group.get('externalId', '').replace(EXTERNAL_ID_POST_FIX, '')}" not in groups_by_identifier:
+        if strip_external_id_postfix(remote_group.get('externalId', '')) not in groups_by_identifier:
             if "meta" in remote_group and "location" in remote_group['meta']:
                 url = f"{service.scim_url}{remote_group['meta']['location']}"
                 response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=TIMEOUT)
@@ -179,16 +179,16 @@ def perform_sweep(service: Service):
                     sync_results["groups"]["deleted"].append(url)
 
     for remote_user in remote_scim_users:
-        if f"{remote_user.get('externalId', '').replace(EXTERNAL_ID_POST_FIX, '')}" not in users_by_external_id:
+        if strip_external_id_postfix(remote_user.get('externalId', '')) not in users_by_external_id:
             if "meta" in remote_user and "location" in remote_user['meta']:
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
                 response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=TIMEOUT)
                 if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user delete"):
                     sync_results["users"]["deleted"].append(url)
 
-    remote_groups_by_external_id = {g.get("externalId", "").replace(EXTERNAL_ID_POST_FIX, ""): g for g in
+    remote_groups_by_external_id = {strip_external_id_postfix(g.get("externalId", "")): g for g in
                                     remote_scim_groups}
-    remote_users_by_external_id = {u.get("externalId", "").replace(EXTERNAL_ID_POST_FIX, ""): u for u in
+    remote_users_by_external_id = {strip_external_id_postfix(u.get("externalId", "")): u for u in
                                    remote_scim_users}
 
     for user in all_users:

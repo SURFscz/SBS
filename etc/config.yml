@@ -142,6 +142,9 @@ metadata:
   scope_override:
     test.nl: "Koninklijke Nederlandse Test"
 
+# Run scheduled jobs and startup locks (migrations) in this process.
+cron_job_responsible: True
+
 service_bus:
   enabled: False
   host: "localhost"

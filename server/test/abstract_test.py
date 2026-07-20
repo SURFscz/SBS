@@ -69,6 +69,10 @@ class AbstractTest(TestCase):
 
         AbstractTest.app = app
 
+    def scim_external_id_postfix(self):
+        from server.scim import external_id_postfix
+        return external_id_postfix(self.app.app_config)
+
     @staticmethod
     def find_by_name(coll, name):
         res = list(filter(lambda item: item["name"] == name, coll))
