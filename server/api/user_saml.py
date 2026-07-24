@@ -32,8 +32,13 @@ def proxy_authz_edu_teams():
     interrupt_url = f"{client_base_url}/interrupt"
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
-    # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
-    if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
+
+    # user who log in to SBS itself or Engineblock can continue here;
+    # their attributes are checked in user.py/resume_session()
+    if service_entity_id == (
+        current_app.app_config.oidc.sram_service_entity_id.lower() or
+        current_app.app_config.engine_block.entity_id.lower()
+    ):
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
 
