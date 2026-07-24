@@ -274,3 +274,4 @@ stress_test:
 
 engine_block:
   api_token: secret
+  entity_id: "engineblock"
