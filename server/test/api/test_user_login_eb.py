@@ -174,8 +174,8 @@ class TestUserLoginEB(AbstractTest):
 
     def test_authz_eb_authorized_with_user_id(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-        body = {"user_id": "urn:collab:person:example.com:sarah",
-                "eppn": "sarah@woods.io",
+        body = {"user_id": "urn:sarah",
+                "eppn": "nonexisting:eppn",
                 "continue_url": "https://engine.surf.nl",
                 "service_id": service_mail_entity_id,
                 "issuer_id": "https://idp.test"}
