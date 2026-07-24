@@ -56,6 +56,8 @@ def proxy_authz_eb():
     json_dict = current_request.get_json()
     collab_person_id = json_dict["user_id"]
     eppn = json_dict.get("eppn")
+    external_subject_id = json_dict.get("external_subject_id")
+    emails = json_dict.get("email")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
@@ -76,6 +78,11 @@ def proxy_authz_eb():
     ]
     if eppn:
         conditions.append(User.eduperson_principal_name == eppn)
+    if external_subject_id:
+        conditions.append(User.uid == external_subject_id)
+    if emails:
+        for email in emails:
+            conditions.append(User.email == email)
     user = User.query.filter(or_(*conditions)).first()
     # Logic for unknown users is after the service check, but we want to add the collab_person_id if it is missing
     if user and not user.collab_person_id:
