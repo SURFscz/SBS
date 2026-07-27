@@ -41,7 +41,7 @@ def proxy_authz_edu_teams():
 
     user = User.query.filter(User.uid == uid).first()
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
-        logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
+        logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
         return {
             "status": {
                 "result": "authorized",
