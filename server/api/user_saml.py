@@ -35,12 +35,22 @@ def proxy_authz_edu_teams():
 
     # user who log in to SBS itself or Engineblock can continue here;
     # their attributes are checked in user.py/resume_session()
-    if service_entity_id == (
-        current_app.app_config.oidc.sram_service_entity_id.lower()
-        or current_app.app_config.engine_block.entity_id.lower()
-    ):
+    if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
+
+    user = User.query.filter(User.uid == uid).first()
+    if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
+        logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
+        return {
+            "status": {
+                "result": "authorized",
+            },
+            "attributes": {
+                "eduPersonPrincipalName": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
+                "uid": [user.username],
+            }
+        }, 200
 
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
                   "user_id": uid}
@@ -64,7 +74,6 @@ def proxy_authz_edu_teams():
     parameters["service_id"] = service.uuid4
     parameters["service_name"] = service.name
 
-    user = User.query.filter(User.uid == uid).first()
     if not user:
         free_rider = service.non_member_users_access_allowed
         user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
