@@ -214,6 +214,48 @@ def schema_sram_user_template():
             "mutability": "readOnly",
             "returned": "default",
             "uniqueness": "none"
+        },
+        {
+            "name": "voPersonPolicyAgreement",
+            "type": "complex",
+            "multiValued": True,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none",
+            "subAttributes": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "service_id",
+                    "type": "integer",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "agreed_at",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+            ]
         }
     ])
 

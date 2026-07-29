@@ -88,7 +88,7 @@ def _has_user_service_access(user: User, service: Service, collaboration_to_excl
 
 # If the user is known in the remote SCIM then update the user else provision the user in the remote SCIM
 def _provision_user(scim_object, service: Service, user: User):
-    scim_dict = update_user_template(user, scim_object["id"]) if scim_object else create_user_template(user)
+    scim_dict = update_user_template(user, scim_object["id"], service) if scim_object else create_user_template(user, service)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
     url = f"{service.scim_url}{postfix}"

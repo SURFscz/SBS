@@ -13,7 +13,7 @@ from server.scim.resource_type_template import resource_type_template
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, user_jane_name, co_ai_computing_name, group_ai_researchers, \
-    service_network_name, service_wiki_token, service_wiki_name
+    service_network_name, service_wiki_token, service_wiki_name, user_boss_name
 from server.tools import read_file
 from server.scim.schema_template import schemas_template, get_scim_schema_sram_user
 
@@ -42,6 +42,18 @@ class TestScim(AbstractTest):
                        expected_headers={"Etag": version_value(jane)})
         self.assertEqual(f"{jane_external_id}{EXTERNAL_ID_POST_FIX}", res["externalId"])
         self.assertEqual("User", res["meta"]["resourceType"])
+
+    def test_user_policy_agreements(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        boss = self.find_entity_by_name(User, user_boss_name)
+        res = self.get(f"/api/scim/v2/Users/{boss.external_id}{EXTERNAL_ID_POST_FIX}",
+                       headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
+        agreements = res[get_scim_schema_sram_user()]["voPersonPolicyAgreement"]
+        self.assertEqual(1, len(agreements))
+        self.assertEqual(service.id, agreements[0]["service_id"])
+        self.assertEqual(service.accepted_user_policy, agreements[0]["url"])
+        self.assertTrue(agreements[0]["agreed_at"])
 
     def test_user_by_external_id_404(self):
         self.get("/api/scim/v2/Users/nope",
