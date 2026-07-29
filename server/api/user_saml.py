@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
-
+from sqlalchemy import or_
 from server import tools
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
@@ -23,15 +23,17 @@ user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 @json_endpoint
 def proxy_authz_edu_teams():
     json_dict = current_request.get_json()
+    logger = ctx_logger("user_api")
+    logger.debug(f"proxy_authz called with {json_dict}")
     uid = json_dict["user_id"]
+    eduperson_principal_name = json_dict.get("eduperson_principal_name")
+    email = json_dict.get("user_email")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
     # Client URL for direct error message in case of unauthorized and interrupt endpoint to decide what to do
     client_base_url = current_app.app_config.base_url
     # Redirect from eduTeams needs to land on GUI
     interrupt_url = f"{client_base_url}/interrupt"
-    logger = ctx_logger("user_api")
-    logger.debug(f"proxy_authz called with {json_dict}")
 
     # user who log in to SBS itself or Engineblock can continue here;
     # their attributes are checked in user.py/resume_session()
@@ -39,7 +41,15 @@ def proxy_authz_edu_teams():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
 
-    user = User.query.filter(User.uid == uid).first()
+    conditions = [
+        User.uid == uid,
+    ]
+    if eduperson_principal_name:
+        conditions.append(User.eduperson_principal_name == eduperson_principal_name)
+    if email:
+        conditions.append(User.email == email)
+    user = User.query.filter(or_(*conditions)).first()
+
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
         logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
         return {

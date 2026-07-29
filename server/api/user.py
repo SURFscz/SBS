@@ -335,7 +335,19 @@ def resume_session():
     logger.debug(f"Userinfo endpoint results {user_info_json}")
 
     uid = user_info_json["sub"]
-    user = User.query.filter(User.uid == uid).first()
+    eduperson_principal_name = user_info_json["eduperson_principal_name"]
+    email = user_info_json.get("email")
+    email_verified = user_info_json.get("email_verified", False)
+
+    conditions = [
+        User.uid == uid,
+        User.eduperson_principal_name == eduperson_principal_name
+    ]
+
+    if email and email_verified:
+        conditions.append(User.email == email)
+
+    user = User.query.filter(or_(*conditions)).first()
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
