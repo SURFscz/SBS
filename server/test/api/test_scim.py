@@ -45,6 +45,7 @@ class TestScim(AbstractTest):
 
     def test_user_policy_agreements(self):
         service = self.find_entity_by_name(Service, service_network_name)
+        accepted_user_policy = service.accepted_user_policy
         boss = self.find_entity_by_name(User, user_boss_name)
         res = self.get(f"/api/scim/v2/Users/{boss.external_id}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
@@ -52,7 +53,7 @@ class TestScim(AbstractTest):
         agreements = res[get_scim_schema_sram_user()]["voPersonPolicyAgreement"]
         self.assertEqual(1, len(agreements))
         self.assertEqual({"url", "agreed_at"}, set(agreements[0].keys()))
-        self.assertEqual(service.accepted_user_policy, agreements[0]["url"])
+        self.assertEqual(accepted_user_policy, agreements[0]["url"])
         self.assertTrue(agreements[0]["agreed_at"])
 
     def test_user_by_external_id_404(self):
