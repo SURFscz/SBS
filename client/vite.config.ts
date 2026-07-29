@@ -32,8 +32,9 @@ export default defineConfig({
         chunkSizeWarningLimit: 1000
     },
     server: {
-      port: 3000,
-      open: true,
+      port: Number(process.env.PORT) || 3000,
+      host: true,
+      open: false,
       allowedHosts: true,
       proxy: {
         '/api': {

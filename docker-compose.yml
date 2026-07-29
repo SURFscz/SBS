@@ -34,6 +34,43 @@ services:
     build: "server"
     container_name: "sbs-server"
     restart: "no"
+    # Migrate once, then start workers without re-running Alembic (avoids multi-worker races).
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -euo pipefail
+        envsubst <"$${CONFIG_TEMPLATE:-server/config/test_config.yml}" >"server/$${CONFIG}"
+        python - <<'PY'
+        import os
+        import time
+
+        from sqlalchemy import create_engine, text
+        from sqlalchemy.exc import OperationalError
+
+        from server.db.db import db_migrations
+
+        uri = os.environ["DATABASE_URI"]
+        while True:
+            try:
+                with create_engine(uri).connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                break
+            except OperationalError:
+                print("Waiting for the database...")
+                time.sleep(1)
+
+        db_migrations(uri)
+        print("Database migrations applied (alembic upgrade head)")
+        PY
+        export SKIP_APP_MIGRATIONS=1
+        exec /usr/local/bin/gunicorn \
+          --worker-class eventlet \
+          --workers "$${GUNICORN_WORKERS:-8}" \
+          --bind 0.0.0.0:8080 \
+          --timeout 300 \
+          --reload \
+          server.__main__:app
     depends_on:
       db:
         condition: service_healthy
@@ -52,6 +89,7 @@ services:
       TESTING: 1
       PROFILE: "local"
       ALLOW_MOCK_USER_API: 1
+      GUNICORN_WORKERS: "${GUNICORN_WORKERS:-8}"
       DATABASE_URI: "mysql+mysqldb://sbs:sbs@db/sbs?charset=utf8mb4"
       REDIS_URI: "redis://redis:6379/"
       BASE_URL: "http://localhost:8080"

@@ -15,6 +15,8 @@ redis:
 
 socket_url: "${SOCKET_URL}"
 
+cron_job_responsible: True
+
 logging:
   log_to_stdout: True
 

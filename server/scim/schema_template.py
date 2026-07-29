@@ -236,16 +236,6 @@ def schema_sram_user_template():
                     "uniqueness": "none"
                 },
                 {
-                    "name": "service_id",
-                    "type": "integer",
-                    "multiValued": False,
-                    "required": False,
-                    "caseExact": False,
-                    "mutability": "readOnly",
-                    "returned": "default",
-                    "uniqueness": "none"
-                },
-                {
                     "name": "agreed_at",
                     "type": "string",
                     "multiValued": False,

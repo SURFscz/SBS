@@ -14,4 +14,4 @@ class TestSchemaTemplate(TestCase):
         self.assertEqual("complex", policy_agreement["type"])
         self.assertTrue(policy_agreement["multiValued"])
         sub_attribute_names = {sub_attribute["name"] for sub_attribute in policy_agreement["subAttributes"]}
-        self.assertEqual({"url", "service_id", "agreed_at"}, sub_attribute_names)
+        self.assertEqual({"url", "agreed_at"}, sub_attribute_names)

@@ -3,6 +3,7 @@ from flask import Blueprint, request as current_request, session
 from server.api.base import json_endpoint
 from server.auth.security import confirm_service_admin, current_user_id
 from server.db.domain import db, ServiceAup, Service, User
+from server.scim.events import broadcast_user_changed
 
 service_aups_api = Blueprint("service_aups_api", __name__, url_prefix="/api/service_aups")
 
@@ -25,6 +26,8 @@ def do_create_service_aup(service_id):
     user = db.session.get(User, user_id)
     if not has_agreed_with(user, service):
         db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service_id))
+        return True
+    return False
 
 
 @service_aups_api.route("/", methods=["POST"], strict_slashes=False)
@@ -32,7 +35,8 @@ def do_create_service_aup(service_id):
 def create_service_aup():
     data = current_request.get_json()
     service_id = data["service_id"]
-    do_create_service_aup(service_id)
+    if do_create_service_aup(service_id):
+        broadcast_user_changed(current_user_id())
     return {}, 201
 
 
@@ -41,8 +45,11 @@ def create_service_aup():
 def create_bulk_service_aup():
     data = current_request.get_json()
     service_identifiers = data["service_identifiers"]
+    created = False
     for service_id in service_identifiers:
-        do_create_service_aup(service_id)
+        created = do_create_service_aup(service_id) or created
+    if created:
+        broadcast_user_changed(current_user_id())
     location = session.get("original_destination", None)
     return {"location": location}, 201
 

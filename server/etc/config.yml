@@ -13,6 +13,10 @@ permanent_session_lifetime: 1440
 redis:
   uri: redis://localhost:6379/
 
+logging:
+  log_to_stdout: True
+  log_level: INFO
+
 socket_url: "127.0.0.1:8080/"
 
 api_users:
@@ -68,6 +72,8 @@ eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 environment_disclaimer: "local"
+
+cron_job_responsible: True
 
 mail:
   host: localhost

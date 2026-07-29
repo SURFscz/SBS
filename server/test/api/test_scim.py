@@ -51,7 +51,7 @@ class TestScim(AbstractTest):
                        with_basic_auth=False)
         agreements = res[get_scim_schema_sram_user()]["voPersonPolicyAgreement"]
         self.assertEqual(1, len(agreements))
-        self.assertEqual(service.id, agreements[0]["service_id"])
+        self.assertEqual({"url", "agreed_at"}, set(agreements[0].keys()))
         self.assertEqual(service.accepted_user_policy, agreements[0]["url"])
         self.assertTrue(agreements[0]["agreed_at"])
 

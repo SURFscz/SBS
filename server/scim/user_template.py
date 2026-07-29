@@ -45,7 +45,6 @@ def vo_person_policy_agreements(user: User, service: Optional[Service] = None):
             continue
         agreements.append({
             "url": service_aup.aup_url,
-            "service_id": service_aup.service_id,
             "agreed_at": str(service_aup.agreed_at),
         })
     return agreements
