@@ -325,17 +325,18 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8",
         "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
+    response: requests.Response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
     logger = ctx_logger("resume-session/user")
-    user_info_json = response.json()
+    user_info_json: dict = response.json()
 
     logger.debug(f"Userinfo endpoint results {user_info_json}")
 
     uid = user_info_json["sub"]
-    eduperson_principal_name = user_info_json["eduperson_principal_name"]
+
+    eduperson_principal_name = user_info_json.get("eduperson_principal_name")
     email = user_info_json.get("email")
     email_verified = user_info_json.get("email_verified", False)
 
