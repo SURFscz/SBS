@@ -66,7 +66,6 @@ def proxy_authz_eb():
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
 
-
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
