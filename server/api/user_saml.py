@@ -50,6 +50,19 @@ def proxy_authz_edu_teams():
         conditions.append(User.email == email)
     user = User.query.filter(or_(*conditions)).first()
 
+    if not user:
+        free_rider = service.non_member_users_access_allowed
+        user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
+        parameters["error_status"] = user_code.value
+        return {
+            "status": {
+                "result": "interrupt",
+                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
+                "error_status": user_code.value,
+                "info": user_code.name
+            }
+        }, 200
+
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
         logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
         return {
@@ -83,19 +96,6 @@ def proxy_authz_edu_teams():
     # Add the uuid4 and name of the service, which is used in some interrupt flows
     parameters["service_id"] = service.uuid4
     parameters["service_name"] = service.name
-
-    if not user:
-        free_rider = service.non_member_users_access_allowed
-        user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
-        parameters["error_status"] = user_code.value
-        return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
-                "error_status": user_code.value,
-                "info": user_code.name
-            }
-        }, 200
 
     if user.suspended:
         parameters["error_status"] = UserCode.USER_IS_SUSPENDED.value
