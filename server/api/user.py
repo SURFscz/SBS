@@ -342,8 +342,12 @@ def resume_session():
 
     conditions = [
         User.uid == uid,
-        User.eduperson_principal_name == eduperson_principal_name
     ]
+
+    if eduperson_principal_name:
+        conditions = [
+            User.eduperson_principal_name == eduperson_principal_name
+        ]
 
     if email and email_verified:
         conditions.append(User.email == email)
