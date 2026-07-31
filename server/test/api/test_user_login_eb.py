@@ -187,8 +187,10 @@ class TestUserLoginEB(AbstractTest):
                         body=body)
         self.assertEqual("authorized", res["msg"])
         self.assertEqual(res["attributes"]['urn:mace:surf.nl:attribute-def:ssh-key'], [ssh_key_from_seed])
-        self.assertIn('urn:example:sbs:group:uniharderwijk', res["attributes"]['urn:mace:dir:attribute-def:eduPersonEntitlement'])
-
+        self.assertIn(
+            'urn:example:sbs:group:uniharderwijk',
+            res["attributes"]['urn:mace:dir:attribute-def:eduPersonEntitlement']
+        )
 
     def test_authz_eb_authorized_with_eppn(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
