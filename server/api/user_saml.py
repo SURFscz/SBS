@@ -50,6 +50,10 @@ def proxy_authz_edu_teams():
         conditions.append(User.email == email)
     user = User.query.filter(or_(*conditions)).first()
 
+    service = Service.query.filter(Service.entity_id == service_entity_id).first()
+    parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
+                  "user_id": uid}
+
     if not user:
         free_rider = service.non_member_users_access_allowed
         user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
@@ -63,6 +67,15 @@ def proxy_authz_edu_teams():
             }
         }, 200
 
+    if not (eppn := eduperson_principal_name):
+        eppn = f"{user.username}@{current_app.app_config.eppn_scope.strip()}"
+
+    # Logic for enriching eppn for (international) users
+    if user and not user.eduperson_principal_name:
+        user.eduperson_principal_name = eduperson_principal_name
+        db.session.merge(user)
+        db.session.commit()
+
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
         logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
         return {
@@ -70,14 +83,11 @@ def proxy_authz_edu_teams():
                 "result": "authorized",
             },
             "attributes": {
-                "eduPersonPrincipalName": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
+                "eduPersonPrincipalName": [eppn],
                 "uid": [user.username],
             }
         }, 200
 
-    parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
-                  "user_id": uid}
-    service = Service.query.filter(Service.entity_id == service_entity_id).first()
     # Unknown service returns unauthorized
     if not service:
         msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
