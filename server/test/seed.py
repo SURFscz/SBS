@@ -140,6 +140,8 @@ sarah_nonce = str(uuid.uuid4())
 
 image_cache = {}
 
+ssh_nonsense_key = "some-lame-key"
+
 
 def read_image(file_name, directory="images", transform=True):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
@@ -303,7 +305,7 @@ def seed(db, app_config, skip_seed=False):
                                                  "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
                                                  "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                                                  "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
-    ssh_key_sarah = SshKey(user=sarah, ssh_value="some-lame-key")
+    ssh_key_sarah = SshKey(user=sarah, ssh_value=ssh_nonsense_key)
     persist_instance(db, ssh_key_john, ssh_key_james, ssh_key_sarah)
 
     uuc = Organisation(name=unihard_name, short_name=unihard_short_name,
