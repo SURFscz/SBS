@@ -54,6 +54,11 @@ def proxy_authz_edu_teams():
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
                   "user_id": uid}
 
+    # Add the uuid4 and name of the service, which is used in some interrupt flows
+    if service:
+        parameters["service_id"] = service.uuid4
+        parameters["service_name"] = service.name
+
     if not user:
         free_rider = service.non_member_users_access_allowed
         user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
@@ -103,9 +108,6 @@ def proxy_authz_edu_teams():
                 "info": UserCode.SERVICE_UNKNOWN.name
             }
         }, 200
-    # Add the uuid4 and name of the service, which is used in some interrupt flows
-    parameters["service_id"] = service.uuid4
-    parameters["service_name"] = service.name
 
     if user.suspended:
         parameters["error_status"] = UserCode.USER_IS_SUSPENDED.value
