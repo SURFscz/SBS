@@ -67,14 +67,14 @@ def proxy_authz_edu_teams():
             }
         }, 200
 
-    if not (eppn := eduperson_principal_name):
-        eppn = f"{user.username}@{current_app.app_config.eppn_scope.strip()}"
-
     # Logic for enriching eppn for (international) users
     if user and not user.eduperson_principal_name:
         user.eduperson_principal_name = eduperson_principal_name
         db.session.merge(user)
         db.session.commit()
+
+    if not (eppn := eduperson_principal_name):
+        eppn = f"{user.username}@{current_app.app_config.eppn_scope.strip()}"
 
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
         logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
