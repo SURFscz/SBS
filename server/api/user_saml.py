@@ -48,7 +48,7 @@ def proxy_authz_edu_teams():
         conditions.append(User.eduperson_principal_name == eduperson_principal_name)
     if email:
         conditions.append(User.email == email)
-    user = User.query.filter(or_(*conditions)).first()
+    user: User = User.query.filter(or_(*conditions)).first()
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
@@ -82,8 +82,7 @@ def proxy_authz_edu_teams():
         eppn = f"{user.username}@{current_app.app_config.eppn_scope.strip()}"
 
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
-        logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id}")
-        return {
+        result = {
             "status": {
                 "result": "authorized",
             },
@@ -92,6 +91,8 @@ def proxy_authz_edu_teams():
                 "uid": [user.username],
             }
         }, 200
+        logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id} with response={result}")
+        return result
 
     # Unknown service returns unauthorized
     if not service:
