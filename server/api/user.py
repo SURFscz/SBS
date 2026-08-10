@@ -376,7 +376,7 @@ def resume_session():
         user.last_accessed_date = dt_now()
         logger.info(f"Provisioning new user {user.uid}")
     else:
-        logger.info(f"Updating user {user.uid} with new claims / updated at")
+        logger.info(f"Updating user {user.uid} with new claims {user_info_json}")
         add_user_claims(user_info_json, uid, user)
 
     # Check if we need a second factor for the user
