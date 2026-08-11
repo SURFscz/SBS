@@ -3,6 +3,7 @@ import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
+import { CollaborationDTO } from "./apiTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -16,13 +17,13 @@ function validateResponse(showErrorDialog) {
     return res => {
         if (!res.ok) {
             if (res.type === "opaqueredirect") {
-                setTimeout(() => window.location.reload(true), 100);
+                setTimeout(() => window.location.reload(), 100);
                 return res;
             }
             const error = new Error(res.statusText);
-            error.response = res;
+            error.message = res;
             if (showErrorDialog && res.status === 401) {
-                window.location.reload(true);
+                window.location.reload();
                 return;
             }
             if (showErrorDialog) {
@@ -35,7 +36,7 @@ function validateResponse(showErrorDialog) {
         const sessionAlive = res.headers.get("x-session-alive");
 
         if (sessionAlive !== "true") {
-            window.location.reload(true);
+            window.location.reload();
         }
         return res;
 
@@ -418,8 +419,8 @@ export function collaborationById(id) {
     return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
 }
 
-export function collaborationLiteById(id) {
-    return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
+export function collaborationLiteById(id: string | number): Promise<CollaborationDTO> {
+    return fetchJson<CollaborationDTO>(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
 export function myCollaborationsOptimized() {

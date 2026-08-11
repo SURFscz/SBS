@@ -1,12 +1,13 @@
+// @ts-check
 /* eslint-disable react/no-unknown-property */
 import React from "react";
 import {
     activateCollaboration,
     collaborationAccessAllowed,
     collaborationById,
+    collaborationLiteById,
     collaborationByIdentifier,
     collaborationIdByIdentifier,
-    collaborationLiteById,
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
     deleteInvitationByHash,
