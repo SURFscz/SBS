@@ -167,6 +167,7 @@ def proxy_authz_eb():
         }
     else:
         attributes = user_attributes(service, user)
+        logger.debug(f"Returning attributes {jsonify(attributes).json}")
         return attributes, 200
 
     # Once we got here, we need to store the UserNonce
