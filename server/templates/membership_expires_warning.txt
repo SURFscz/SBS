@@ -11,8 +11,8 @@ Click the link below to view this membership
 {{ base_url }}/collaborations/{{ membership.collaboration.id }}
 
 {{ salutation }},
-Please login and change the suspension date of {{ membership.collaboration.name }} to avoid that
+Please log in and change the suspension date of {{ membership.collaboration.name }} to avoid that
 the user {{ membership.user.name }} of this collaboration
-can not login anymore to the applications of this collaboration.
+can not log in anymore to the applications of this collaboration.
 
 {% endblock %}
