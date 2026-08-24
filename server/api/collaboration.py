@@ -35,9 +35,10 @@ from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 from server.tools import dt_now
-from pydantic import BaseModel
 
 from typing import Any
+
+from server.api.collaboration_dtos import *
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -467,15 +468,6 @@ def members():
         .all()
     return users, 200
 
-class UserDTO(BaseModel):
-    name: str
-
-class CollaborationMembershipDTO(BaseModel):
-    user: UserDTO
-
-class CollaborationDTO(BaseModel, Collaboration):
-    collaboration_memberships: list[CollaborationMembershipDTO]
-
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
@@ -498,12 +490,9 @@ def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
         _del_non_disclosure_info(collaboration, json_collaboration)
         return json_collaboration, 200
 
-    memberships: list[CollaborationMembershipDTO] = [CollaborationMembershipDTO(user=UserDTO(name=membership.user.name)) for membership in collaboration.collaboration_memberships]
+    result: CollaborationDTO = CollaborationDTO.model_validate(collaboration)
 
-    result: CollaborationDTO = CollaborationDTO(collaboration_memberships=memberships)
-
-    # return result.model_dump(mode='python', exclude_none=True), 200
-    return collaboration, 200
+    return result.model_dump(mode='python', exclude_none=True), 200
 
 
 
