@@ -69,6 +69,7 @@ test = [
     "pytest-xdist==3.8.0",
     "responses==0.26.1",
     "mypy>=1.11",
+    "pydantic2-to-typescript>=0.0.1"
 ]
 
 [tool.setuptools]
