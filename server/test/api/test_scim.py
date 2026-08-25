@@ -98,21 +98,36 @@ class TestScim(AbstractTest):
         expected_groups = len(all_scim_groups_by_service(service))
         res = self.get("/api/scim/v2/Groups", headers={"Authorization": f"bearer {service_network_token}"},
                        with_basic_auth=False)
-        self.assertEqual(3, len(res["Resources"]))
-        self.assertEqual(3, res["totalResults"])
+        self.assertEqual(expected_groups, len(res["Resources"]))
+        self.assertEqual(expected_groups, res["totalResults"])
         self.assertEqual(1, res["startIndex"])
-        self.assertEqual(3, res["itemsPerPage"])
+        self.assertEqual(expected_groups, res["itemsPerPage"])
 
     def test_groups_pagination(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        expected_groups = len(all_scim_groups_by_service(service))
+        self.assertGreaterEqual(expected_groups, 3)
+        start_index = 2
+        count = 2
         headers = {"Authorization": f"bearer {service_network_token}"}
         res = self.get("/api/scim/v2/Groups",
-                       query_data={"startIndex": 2, "count": 1},
+                       query_data={"startIndex": start_index, "count": count},
                        headers=headers,
                        with_basic_auth=False)
-        self.assertEqual(3, res["totalResults"])
-        self.assertEqual(2, res["startIndex"])
-        self.assertEqual(1, res["itemsPerPage"])
-        self.assertEqual(1, len(res["Resources"]))
+        self.assertEqual(expected_groups, res["totalResults"])
+        self.assertEqual(start_index, res["startIndex"])
+        self.assertEqual(count, res["itemsPerPage"])
+        self.assertEqual(count, len(res["Resources"]))
+
+        beyond_total = expected_groups + 1
+        res = self.get("/api/scim/v2/Groups",
+                       query_data={"startIndex": beyond_total},
+                       headers=headers,
+                       with_basic_auth=False)
+        self.assertEqual(expected_groups, res["totalResults"])
+        self.assertEqual(beyond_total, res["startIndex"])
+        self.assertEqual(0, res["itemsPerPage"])
+        self.assertEqual(0, len(res["Resources"]))
 
     def test_collaboration_by_identifier(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
