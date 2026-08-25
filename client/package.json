@@ -61,7 +61,7 @@
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-risxss": "^2.1.0",
         "globals": "^17.6.0",
-        "http-proxy-middleware": "^3.0.7",
+        "http-proxy-middleware": "^4.2.0",
         "raw-loader": "^4.0.2",
         "sass": "^1.99.0",
         "typescript": "^6.0.3",
