@@ -468,6 +468,7 @@ def members():
         .all()
     return users, 200
 
+
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
@@ -493,7 +494,6 @@ def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
     result: CollaborationDTO = CollaborationDTO.model_validate(collaboration)
 
     return result.model_dump(mode='python', exclude_none=True), 200
-
 
 
 @collaboration_api.route("/access_allowed/<collaboration_id>", strict_slashes=False)

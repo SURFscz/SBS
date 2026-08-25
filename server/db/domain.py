@@ -356,8 +356,9 @@ class Collaboration(Base, db.Model, LogoMixin):
                            back_populates="collaborations")
     units = db.relationship("Unit", secondary=collaboration_units_association, lazy="selectin",
                             back_populates="collaborations")
-    collaboration_memberships: Mapped[List[CollaborationMembership]] = db.relationship("CollaborationMembership", back_populates="collaboration",
-                                                cascade="all, delete-orphan", passive_deletes=True)
+    collaboration_memberships: Mapped[List[CollaborationMembership]] = db.relationship(
+        "CollaborationMembership", back_populates="collaboration",
+        cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="collaboration",
                              cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",

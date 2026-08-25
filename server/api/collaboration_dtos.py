@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
+
 class UserDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -10,6 +11,7 @@ class UserDTO(BaseModel):
     email: str | None
     username: str | None
     schac_home_organisation: str | None
+
 
 class CollaborationMembershipDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -21,6 +23,7 @@ class CollaborationMembershipDTO(BaseModel):
     expiry_date: datetime | None
     created_at: datetime
     user: UserDTO
+
 
 class GroupDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -36,10 +39,12 @@ class GroupDTO(BaseModel):
     service_group_id: int | None
     collaboration_memberships: list[CollaborationMembershipDTO]
 
+
 class ServiceMembershipDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     user: UserDTO
+
 
 class ServiceDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -59,10 +64,12 @@ class ServiceDTO(BaseModel):
     organisation_name: str | None
     service_memberships: list[ServiceMembershipDTO]
 
+
 class SchacHomeOrganisationDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
+
 
 class OrganisationDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -73,6 +80,7 @@ class OrganisationDTO(BaseModel):
     logo: str
     accepted_user_policy: str
     schac_home_organisations: list[SchacHomeOrganisationDTO]
+
 
 class CollaborationDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -95,4 +103,3 @@ class CollaborationDTO(BaseModel):
     collaboration_memberships: list[CollaborationMembershipDTO]
     groups: list[GroupDTO]
     services: list[ServiceDTO]
-
