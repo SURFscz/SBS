@@ -30,10 +30,10 @@ class GroupDTO(BaseModel):
 
     id: int
     name: str
-    description: str
-    short_name: str | None
+    description: str | None
+    short_name: str
     identifier: str
-    global_urn: str | None
+    global_urn: str
     auto_provision_members: bool | None
     created_at: datetime
     service_group_id: int | None
@@ -77,8 +77,8 @@ class OrganisationDTO(BaseModel):
     id: int
     name: str
     short_name: str
-    logo: str
-    accepted_user_policy: str
+    logo: str | None
+    accepted_user_policy: str | None
     schac_home_organisations: list[SchacHomeOrganisationDTO]
 
 
@@ -89,15 +89,15 @@ class CollaborationDTO(BaseModel):
     name: str
     description: str
     short_name: str
-    logo: str
+    logo: str | None
     website_url: str | None
     support_email: str | None
     organisation_id: int
     status: str
-    expiry_date: str | None
+    expiry_date: datetime | None
     last_activity_date: datetime
-    disclose_member_information: bool
-    disclose_email_information: bool
+    disclose_member_information: bool | None
+    disclose_email_information: bool | None
     collaboration_memberships_count: int
     organisation: OrganisationDTO
     collaboration_memberships: list[CollaborationMembershipDTO]
