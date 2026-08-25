@@ -1,3 +1,6 @@
+from typing import Any
+
+
 SCIM_API_MESSAGES = "urn:ietf:params:scim:api:messages:2.0"
 
 SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
@@ -8,25 +11,25 @@ SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 SCIM_SCHEMA_SRAM = "urn:example:sram:scim:schemas:1.0"  # Default
 
 
-def init_scim_schemas(urn):
+def init_scim_schemas(urn: str) -> None:
     """Initialize SCIM SRAM schemas with urn"""
     global SCIM_SCHEMA_SRAM
     SCIM_SCHEMA_SRAM = urn
 
 
-def get_scim_schema_sram():
+def get_scim_schema_sram() -> str:
     return SCIM_SCHEMA_SRAM
 
 
-def get_scim_schema_sram_user():
+def get_scim_schema_sram_user() -> str:
     return f"{get_scim_schema_sram()}:User"
 
 
-def get_scim_schema_sram_group():
+def get_scim_schema_sram_group() -> str:
     return f"{get_scim_schema_sram()}:Group"
 
 
-def _schema(id, attributes):
+def _schema(id: str, attributes: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "schemas": [
             f"{SCIM_SCHEMA_CORE}:Schema"
@@ -42,7 +45,7 @@ def _schema(id, attributes):
     }
 
 
-def schema_core_user_template():
+def schema_core_user_template() -> dict[str, Any]:
     return _schema(SCIM_SCHEMA_CORE_USER, [
         {
             "name": "userName",
@@ -163,7 +166,7 @@ def schema_core_user_template():
     ])
 
 
-def schema_sram_user_template():
+def schema_sram_user_template() -> dict[str, Any]:
     return _schema(get_scim_schema_sram_user(), [
         {
             "name": "eduPersonScopedAffiliation",
@@ -218,7 +221,7 @@ def schema_sram_user_template():
     ])
 
 
-def schema_core_group_template():
+def schema_core_group_template() -> dict[str, Any]:
     return _schema(SCIM_SCHEMA_CORE_GROUP, [
         {
             "name": "displayName",
@@ -275,7 +278,7 @@ def schema_core_group_template():
     ])
 
 
-def schema_sram_group_template():
+def schema_sram_group_template() -> dict[str, Any]:
     return _schema(get_scim_schema_sram_group(), [
         {
             "name": "description",
@@ -307,10 +310,42 @@ def schema_sram_group_template():
             "returned": "default",
             "uniqueness": "none"
         },
+        {
+            "name": "links",
+            "type": "complex",
+            "multiValued": True,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none",
+            "subAttributes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "multiValued": False,
+                    "required": False,
+                    "caseExact": False,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+            ]
+        },
     ])
 
 
-def schemas_template():
+def schemas_template() -> dict[str, Any]:
     resources = [
         schema_core_user_template(),
         schema_core_group_template(),

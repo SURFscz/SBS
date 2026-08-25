@@ -26,7 +26,7 @@ class TestUserSaml(AbstractTest):
             f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc",
             f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc_2"
         ]), sorted(entitlements))
-        self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
+        self.assertListEqual([f"sarah@{self.app.app_config.id_scope.strip()}"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
 
@@ -50,7 +50,7 @@ class TestUserSaml(AbstractTest):
             f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc",
             f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc_2"
         ]), sorted(entitlements))
-        self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
+        self.assertListEqual([f"jane@{self.app.app_config.id_scope.strip()}"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
         self.assertEqual(0, len(attrs["sshkey"]))
 

@@ -1,4 +1,3 @@
-import json
 from time import sleep
 
 import responses
@@ -7,7 +6,6 @@ from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.domain import Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_name
-from server.tools import read_file
 
 
 class TestScimSweepServices(AbstractTest):
@@ -22,8 +20,8 @@ class TestScimSweepServices(AbstractTest):
         # otherwise time checks in scim run check will fail
         sleep(5)
 
-        remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
-        remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
+        remote_groups = self.load_scim_fixture("test/scim/sweep/remote_groups_unchanged.json")
+        remote_users = self.load_scim_fixture("test/scim/sweep/remote_users_unchanged.json")
         with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)

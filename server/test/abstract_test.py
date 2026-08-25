@@ -69,6 +69,15 @@ class AbstractTest(TestCase):
 
         AbstractTest.app = app
 
+    def scim_external_id_postfix(self):
+        from server.scim import external_id_postfix
+        return external_id_postfix(self.app.app_config)
+
+    def load_scim_fixture(self, relative_path):
+        """Load a SCIM test JSON fixture, substituting the configured externalId postfix."""
+        content = read_file(relative_path).replace("{{EXTERNAL_ID_POSTFIX}}", self.scim_external_id_postfix())
+        return json.loads(content)
+
     @staticmethod
     def find_by_name(coll, name):
         res = list(filter(lambda item: item["name"] == name, coll))
