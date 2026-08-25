@@ -118,19 +118,6 @@ To analyze the bundle:
 yarn analyze
 ```
 
-### [Types](#Types)
-
-Types are defined in the backend, for example `server/api/collaboration_dtos.py`. Types in the frontend are generated from these types.
-Requirements:
-- `json-schema-to-typescript` globally installed (`npm install json-schema-to-typescript --global`)
-- `pydantic2-to-typescript` (installed via test profile)
-
-Command to generate types:
-```shell
-pydantic2ts --module server.api.collaboration_dtos --output client/src/api/apiTypes.ts
-```
-Currently there is only one object in the backend to generate types from
-
 ### [API](#api)
 
 See the [Swagger](https://test.sram.surf.nl/apidocs/) for the API documentation and data model.

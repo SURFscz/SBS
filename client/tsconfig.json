@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -21,9 +21,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vite/client", "vitest/globals"],
-    "noImplicitAny": false,
-    "noImplicitThis": false,
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": ["src"],
   "exclude": ["dist", "build", "coverage", "node_modules"]
