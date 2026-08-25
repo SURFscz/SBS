@@ -95,8 +95,6 @@ export function me(config) {
     if (config.local && 1 == 1) {
         // eslint-disable-next-line no-useless-assignment
         let sub = "urn:service_admin";
-        // Todo: Do not merge to main -- should be "urn:john"
-        // sub = "urn:collab:person:mujina.com:ebbe";
         sub = "urn:john";
         // sub = "urn:sarah";
         // sub = "urn:hannibal ";
