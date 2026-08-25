@@ -11,12 +11,12 @@ yarn install
 ```
 
 ### Run
-First run the frontend.
+First run the frontend and backend (seeded test DB, `ALLOW_MOCK_USER_API=1`).
 ```bash
 cd ../client
 yarn dev
 ```
-Than run the tests.
+Then run the tests.
 ```bash
 yarn test
 ```
