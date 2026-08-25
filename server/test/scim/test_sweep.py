@@ -11,12 +11,13 @@ from server.scim import SCIM_GROUPS
 from server.scim.group_template import create_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service
 from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
-from server.scim.schema_template import get_scim_schema_sram_group
+from server.scim.schema_template import get_scim_schema_sram_group, get_scim_schema_sram_user
 from server.scim.user_template import create_user_template, find_user_by_id_template
 
 from server.test.scim import TEST_SCIM_SERVER, TEST_SCIM_USERS_ENDPOINT, TEST_SCIM_GROUPS_ENDPOINT
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name, group_ai_researchers, user_john_name, co_ai_computing_name
+from server.test.seed import service_network_name, group_ai_researchers, user_john_name, co_ai_computing_name, \
+    user_boss_name
 from server.tools import read_file
 
 
@@ -211,20 +212,29 @@ class TestSweep(AbstractTest):
 
     def test_user_changed(self):
         user = self.find_entity_by_name(User, user_john_name)
-        remote_user = create_user_template(user)
-        self.assertFalse(_user_changed(user, remote_user))
+        service = self.find_entity_by_name(Service, service_network_name)
+        remote_user = create_user_template(user, service)
+        self.assertFalse(_user_changed(user, remote_user, service))
         for attr in ["username", "given_name", "family_name", "name", "email", "affiliation", "uid",
                      "scoped_affiliation", "eduperson_principal_name"]:
             stored_attr = getattr(user, attr)
             setattr(user, attr, "changed")
-            self.assertTrue(_user_changed(user, remote_user))
+            self.assertTrue(_user_changed(user, remote_user, service))
             setattr(user, attr, stored_attr)
 
         user.last_login_date -= timedelta(days=24)
-        self.assertTrue(_user_changed(user, remote_user))
+        self.assertTrue(_user_changed(user, remote_user, service))
         user.last_login_date += timedelta(days=24)
         user.suspended = True
-        self.assertTrue(_user_changed(user, remote_user))
+        self.assertTrue(_user_changed(user, remote_user, service))
         user.suspended = False
         user.ssh_keys = []
-        self.assertTrue(_user_changed(user, remote_user))
+        self.assertTrue(_user_changed(user, remote_user, service))
+
+    def test_user_changed_policy_agreements(self):
+        user = self.find_entity_by_name(User, user_boss_name)
+        service = self.find_entity_by_name(Service, service_network_name)
+        remote_user = create_user_template(user, service)
+        self.assertFalse(_user_changed(user, remote_user, service))
+        remote_user[get_scim_schema_sram_user()]["voPersonPolicyAgreement"] = []
+        self.assertTrue(_user_changed(user, remote_user, service))

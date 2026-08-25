@@ -106,17 +106,17 @@ def service_users():
         users = User.query.filter(func.lower(User.uid) == func.lower(uid)).all()
     else:
         users = all_scim_users_by_service(service)
-    return find_users_template(users), 200
+    return find_users_template(users, service), 200
 
 
 @scim_api.route("/Users/<user_external_id>", methods=["GET"], strict_slashes=False)
 @swag_from("../swagger/public/paths/get_user_by_external_id.yml")
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
-    validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
+    service = validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     stripped_external_id = user_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     user = User.query.filter(User.external_id == stripped_external_id).one()
-    return find_user_by_id_template(user), _add_etag_header(user)
+    return find_user_by_id_template(user, service), _add_etag_header(user)
 
 
 @scim_api.route("/Groups", methods=["GET"], strict_slashes=False)

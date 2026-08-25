@@ -1,8 +1,8 @@
 import base64
 import hashlib
-from typing import List, Union
+from typing import List, Optional, Union
 
-from server.db.domain import User, Group, Collaboration
+from server.db.domain import User, Group, Collaboration, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import SCIM_SCHEMA_CORE_USER, SCIM_API_MESSAGES
 from server.tools import dt_now, inactivity
@@ -38,7 +38,19 @@ def inactive_days(date_at):
     return inactivity(delta.days)
 
 
-def create_user_template(user: User):
+def vo_person_policy_agreements(user: User, service: Optional[Service] = None):
+    agreements = []
+    for service_aup in sorted(user.service_aups, key=lambda a: (a.service_id, a.aup_url)):
+        if service is not None and service_aup.service_id != service.id:
+            continue
+        agreements.append({
+            "url": service_aup.aup_url,
+            "agreed_at": str(service_aup.agreed_at),
+        })
+    return agreements
+
+
+def create_user_template(user: User, service: Optional[Service] = None):
     from server.scim.schema_template import get_scim_schema_sram_user
 
     return replace_none_values({
@@ -62,24 +74,25 @@ def create_user_template(user: User):
             "eduPersonUniqueId": user.uid,
             "voPersonExternalAffiliation": user.scoped_affiliation,
             "voPersonExternalId": user.eduperson_principal_name,
-            "sramInactiveDays": inactive_days(user.last_login_date)
+            "sramInactiveDays": inactive_days(user.last_login_date),
+            "voPersonPolicyAgreement": vo_person_policy_agreements(user, service),
         }
     })
 
 
-def update_user_template(user: User, scim_identifier: str):
-    result = create_user_template(user)
+def update_user_template(user: User, scim_identifier: str, service: Optional[Service] = None):
+    result = create_user_template(user, service)
     result["id"] = scim_identifier
     return result
 
 
-def find_user_by_id_template(user: User):
-    user_template = update_user_template(user, f"{user.external_id}{EXTERNAL_ID_POST_FIX}")
+def find_user_by_id_template(user: User, service: Optional[Service] = None):
+    user_template = update_user_template(user, f"{user.external_id}{EXTERNAL_ID_POST_FIX}", service)
     user_template["meta"] = _meta_info(user)
     return user_template
 
 
-def find_users_template(users: List[User]):
+def find_users_template(users: List[User], service: Optional[Service] = None):
     base = {
         "schemas": [
             f"{SCIM_API_MESSAGES}:ListResponse"
@@ -90,6 +103,6 @@ def find_users_template(users: List[User]):
     }
     resources = []
     for user in users:
-        resources.append(find_user_by_id_template(user))
+        resources.append(find_user_by_id_template(user, service))
     base["Resources"] = resources
     return base

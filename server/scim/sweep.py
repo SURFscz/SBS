@@ -11,7 +11,7 @@ from server.scim.group_template import create_group_template, update_group_templ
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template, \
-    inactive_days
+    inactive_days, vo_person_policy_agreements
 
 CONNECTION_TIMEOUT = 3.05  # seconds
 READ_TIMEOUT = 10  # seconds
@@ -33,7 +33,7 @@ def _compare_with_none_equals_empty(attr_remote, attr_sram):
     return attr_sram != attr_remote
 
 
-def _user_changed(user: User, remote_user: dict):
+def _user_changed(user: User, remote_user: dict, service: Service):
     from server.scim.schema_template import get_scim_schema_sram_user
 
     remote_user = _replace_empty_string_values(remote_user)
@@ -67,6 +67,9 @@ def _user_changed(user: User, remote_user: dict):
             return True
         sramInactiveDays = remote_user[get_scim_schema_sram_user()].get("sramInactiveDays")
         if _compare_with_none_equals_empty(sramInactiveDays, inactive_days(user.last_login_date)):
+            return True
+        if remote_user[get_scim_schema_sram_user()].get("voPersonPolicyAgreement", []) != vo_person_policy_agreements(
+                user, service):
             return True
     return False
 
@@ -194,7 +197,7 @@ def perform_sweep(service: Service):
     for user in all_users:
         # Add all SRAM users that are not present in the remote SCIM database
         if user.external_id not in remote_users_by_external_id:
-            scim_dict = create_user_template(user)
+            scim_dict = create_user_template(user, service)
             url = f"{service.scim_url}/{SCIM_USERS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
             response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=TIMEOUT)
@@ -206,8 +209,8 @@ def perform_sweep(service: Service):
         else:
             remote_user = remote_users_by_external_id.get(user.external_id)
             # Update SRAM users that are not equal to their counterpart in the remote SCIM database
-            if _user_changed(user, remote_user):
-                scim_dict = update_user_template(user, remote_user["id"])
+            if _user_changed(user, remote_user, service):
+                scim_dict = update_user_template(user, remote_user["id"], service)
                 if "meta" in remote_user and "location" in remote_user['meta']:
                     url = f"{service.scim_url}{remote_user['meta']['location']}"
                     scim_dict_cleansed = replace_none_values(scim_dict)
