@@ -1,5 +1,6 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
-import datetime
 
 class UserDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -17,8 +18,8 @@ class CollaborationMembershipDTO(BaseModel):
     user_id: int
     role: str
     status: str
-    expiry_date: datetime.datetime | None
-    created_at: datetime.datetime
+    expiry_date: datetime | None
+    created_at: datetime
     user: UserDTO
 
 class GroupDTO(BaseModel):
@@ -31,7 +32,7 @@ class GroupDTO(BaseModel):
     identifier: str
     global_urn: str | None
     auto_provision_members: bool | None
-    created_at: datetime.datetime
+    created_at: datetime
     service_group_id: int | None
     collaboration_memberships: list[CollaborationMembershipDTO]
 
@@ -86,7 +87,7 @@ class CollaborationDTO(BaseModel):
     organisation_id: int
     status: str
     expiry_date: str | None
-    last_activity_date: datetime.datetime
+    last_activity_date: datetime
     disclose_member_information: bool
     disclose_email_information: bool
     collaboration_memberships_count: int

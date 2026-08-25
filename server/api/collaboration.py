@@ -38,7 +38,7 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import *
+from server.api.collaboration_dtos import CollaborationDTO
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
