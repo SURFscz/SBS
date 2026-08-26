@@ -33,6 +33,7 @@ dependencies = [
     "passlib==1.7.4",
     "Pillow==12.2.0",
     "puremagic==1.30",
+    "pydantic==2.13.4",
     "PyJWT==2.13.0",
     "pyotp==2.9.0",
     "python-socketio==5.16.2",
