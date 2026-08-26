@@ -90,11 +90,13 @@ test.describe('Collaboration detail (collab member)', () => {
     });
 
     test('Application tokens tab opens create-token screen', async ({page}) => {
+        // Given
         await openCollaborationDetail(page);
         await openTab(page, 'tokens');
 
         await expect(page.locator('.entities-search h2')).toHaveText(/Application tokens|Applicatietokens/);
 
+        // When
         const [generateResponse] = await Promise.all([
             page.waitForResponse(response =>
                 response.url().includes('/api/user_tokens/generate_token') && response.ok()
@@ -104,13 +106,19 @@ test.describe('Collaboration detail (collab member)', () => {
             }).click(),
         ]);
         expect(generateResponse.status()).toBe(200);
+        const {value: token} = await generateResponse.json();
+        expect(token).toBeTruthy();
 
+        // Then
         const form = page.locator('.user-token-form');
         await expect(form.getByRole('heading', {
             level: 2,
             name: /Create application token|Maak applicatietoken aan/,
         })).toBeVisible();
         await expect(form.locator('.disclaimer')).toContainText(/Copy the application token|Kopieer de applicatietoken/);
+        await expect(form.locator('.input-field').filter({
+            hasText: /Application token|Applicatietoken/,
+        }).locator('input')).toHaveValue(token);
         await expect(page.getByRole('button', {name: /Save|Opslaan/})).toBeVisible();
         await expect(page.getByRole('link', {
             name: /Back to all application tokens|Terug naar alle applicatietokens/,
