@@ -547,26 +547,6 @@ class CollaborationDetail extends React.Component {
 
     }
 
-
-    getAdminHeader = (collaboration) => {
-        const admins = collaboration.collaboration_memberships
-            .filter(m => m.role === "admin")
-            .map(m => m.user);
-
-        if (admins.length === 0) {
-            return I18n.t("models.collaboration.noAdminsHeader");
-        }
-        const mails = admins.map(u => u.email).join(",");
-        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
-        if (admins.length === 1) {
-            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails, bcc: bcc});
-        }
-        const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
-        return I18n.t(`models.collaboration.${twoOrMore}`, {
-            name: admins[0].name, mails: mails, bcc: bcc, nbr: admins.length - 1
-        });
-    }
-
     collaborationJoinRequestAction = (collaboration, alreadyMember) => {
         return (
             <div className="join-request-action">
@@ -655,25 +635,6 @@ class CollaborationDetail extends React.Component {
                 this.componentDidMount(() => {
                     this.setState({loading: false});
                     setFlash(I18n.t("activate.flash", {name: this.state.collaboration.name}));
-                })
-            });
-        }
-    }
-
-    resetLastActivityDate = showConfirmation => () => {
-        if (showConfirmation) {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: I18n.t("resetActivity.confirmation"),
-                confirmationDialogAction: this.resetLastActivityDate(false),
-                isWarning: false
-            });
-        } else {
-            this.setState({loading: true});
-            unsuspendCollaboration(this.state.collaboration.id).then(() => {
-                this.componentDidMount(() => {
-                    this.setState({loading: false});
-                    setFlash(I18n.t("resetActivity.flash", {name: this.state.collaboration.name}));
                 })
             });
         }
