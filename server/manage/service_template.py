@@ -43,7 +43,7 @@ def _oidc_grants(service):
     return [translate_grant(g) for g in service.grants.split(",")] if service.grants else []
 
 
-allowed_bool_false_fields = ["version"]
+allowed_bool_false_fields = ["enabled", "version"]
 
 
 def _replace_none_values(d: dict):
@@ -65,8 +65,8 @@ def create_service_template(service: Service, sbs_rp_json: dict):
             "allowedall": sbs_rp_data["allowedall"],
             "allowedEntities": sbs_rp_data["allowedEntities"],
             "arp": {
-                "enabled": True,
-                "attributes": arp_attributes()
+                "enabled": False,
+                "attributes": {}
             },
             "entityid": service.entity_id,
             "state": "prodaccepted",
