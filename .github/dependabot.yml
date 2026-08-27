@@ -18,6 +18,10 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      - dependency-name: "react-router-dom"
+      - dependency-name: "react-datepicker"
+      - dependency-name: "react-image-crop"
 
   # Maintain dependencies for server
   - package-ecosystem: "pip"
