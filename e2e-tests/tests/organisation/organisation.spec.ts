@@ -1,11 +1,19 @@
 import {expect, test} from '@playwright/test';
 import path from 'path';
-import {gotoWithRedirectHandler} from "../../utils/gotoWithRedirectHandler";
+import {gotoWithRedirectHandler} from '../../utils/gotoWithRedirectHandler';
+import {reseedDatabase} from '../../utils/reseedDatabase';
+import {DEFAULT_MOCK_USER} from "../../fixtures/mockUser";
 
 const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 const logoPath = path.resolve(__dirname, '../../../../SBS/client/src/images/surflogo.png');
 
 test.describe('Local organisation happy flow', () => {
+    test.use({mockUser: DEFAULT_MOCK_USER});
+
+    test.beforeAll(async ({request}) => {
+        await reseedDatabase(request);
+    });
+
     test('platform admin can add an organisation and see it in the list', async ({page}) => {
         await gotoWithRedirectHandler(page, `${baseURL}/home/organisations`);
 

@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from flask import current_app
 from sqlalchemy import select, func, and_
-from sqlalchemy.orm import column_property
+from sqlalchemy.orm import column_property, Mapped
 
 from server import tools
 from server.db.audit_mixin import Base, metadata
@@ -12,6 +12,8 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_OPEN, STATUS_SUSPENDED
 from server.db.logo_mixin import LogoMixin
 from server.db.secret_mixin import SecretMixin
 from server.tools import dt_now
+
+from typing import List
 
 
 def gen_uuid4():
@@ -216,7 +218,7 @@ class CollaborationMembership(Base, db.Model):
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
     expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    user = db.relationship("User", back_populates="collaboration_memberships")
+    user: Mapped[User] = db.relationship("User", back_populates="collaboration_memberships")
     invitation_id = db.Column(db.Integer(), db.ForeignKey("invitations.id"))
     invitation = db.relationship("Invitation")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
@@ -354,8 +356,9 @@ class Collaboration(Base, db.Model, LogoMixin):
                            back_populates="collaborations")
     units = db.relationship("Unit", secondary=collaboration_units_association, lazy="selectin",
                             back_populates="collaborations")
-    collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
-                                                cascade="all, delete-orphan", passive_deletes=True)
+    collaboration_memberships: Mapped[List[CollaborationMembership]] = db.relationship(
+        "CollaborationMembership", back_populates="collaboration",
+        cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="collaboration",
                              cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",

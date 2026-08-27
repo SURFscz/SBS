@@ -29,8 +29,8 @@ class TestSweep(AbstractTest):
     @responses.activate
     def test_sweep_no_changes(self):
         service = self.find_entity_by_name(Service, service_network_name)
-        remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
-        remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
+        remote_groups = self.load_scim_fixture("test/scim/sweep/remote_groups_unchanged.json")
+        remote_users = self.load_scim_fixture("test/scim/sweep/remote_users_unchanged.json")
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=remote_users, status=200)
             rsps.add(responses.GET, TEST_SCIM_GROUPS_ENDPOINT, json=remote_groups, status=200)
@@ -46,8 +46,8 @@ class TestSweep(AbstractTest):
     @responses.activate
     def test_sweep_changes(self):
         service = self.find_entity_by_name(Service, service_network_name)
-        remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_changes.json"))
-        remote_users = json.loads(read_file("test/scim/sweep/remote_users_changes.json"))
+        remote_groups = self.load_scim_fixture("test/scim/sweep/remote_groups_changes.json")
+        remote_users = self.load_scim_fixture("test/scim/sweep/remote_users_changes.json")
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, TEST_SCIM_USERS_ENDPOINT, json=remote_users, status=200)
             rsps.add(responses.GET, TEST_SCIM_GROUPS_ENDPOINT, json=remote_groups, status=200)
@@ -82,8 +82,8 @@ class TestSweep(AbstractTest):
     @responses.activate
     def test_sweep_orphaned_users_groups(self):
         service = self.find_entity_by_name(Service, service_network_name)
-        remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
-        remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
+        remote_groups = self.load_scim_fixture("test/scim/sweep/remote_groups_unchanged.json")
+        remote_users = self.load_scim_fixture("test/scim/sweep/remote_users_unchanged.json")
 
         all_groups = all_scim_groups_by_service(service)
         for group in all_groups:

@@ -11,7 +11,7 @@ from server.db.db import db
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten, unique_model_objects
 from server.logger.context_logger import ctx_logger
-from server.scim import EXTERNAL_ID_POST_FIX, SCIM_USERS, SCIM_GROUPS
+from server.scim import external_id_postfix, SCIM_USERS, SCIM_GROUPS
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
 from server.scim.user_template import create_user_template, update_user_template, replace_none_values
 
@@ -130,7 +130,7 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
 
 # Do a lookup of the user or group in the external SCIM DB belonging to this service
 def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
-    query_filter = f"externalId eq \"{external_id}{EXTERNAL_ID_POST_FIX}\""
+    query_filter = f"externalId eq \"{external_id}{external_id_postfix()}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers=scim_headers(service), timeout=SCIM_TIMEOUT)
     if not validate_response(response, service, extra_logging=f"lookup {scim_type} {external_id}"):
