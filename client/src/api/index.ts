@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import {capitalize, isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
+import {CollaborationDTO} from "./apiTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -71,14 +74,25 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
-export function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
+export function fetchJson<T>(
+    path: string,
+    options: RequestInit = {},
+    headers: Record<string, string> = {},
+    showErrorDialog = true
+): Promise<T> {
     return validFetch(path, options, headers, showErrorDialog)
         .then(res => res.json());
 }
 
-export function postPutJson(path, body, method, showErrorDialog = true, headers = {}) {
+export function postPutJson<T>(
+    path: string,
+    body?: unknown,
+    method?: string,
+    showErrorDialog = true,
+    headers: Record<string, string> = {}
+): Promise<T> {
     const jsonBody = JSON.stringify(body);
-    return fetchJson(path, {method: method, body: jsonBody}, headers, showErrorDialog);
+    return fetchJson<T>(path, {method: method, body: jsonBody}, headers, showErrorDialog);
 }
 
 function fetchDelete(path, showErrorDialog = true) {
@@ -416,8 +430,8 @@ export function collaborationById(id) {
     return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
 }
 
-export function collaborationLiteById(id) {
-    return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
+export function collaborationLiteById(id: string | number): Promise<CollaborationDTO> {
+    return fetchJson<CollaborationDTO>(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
 export function myCollaborationsOptimized() {

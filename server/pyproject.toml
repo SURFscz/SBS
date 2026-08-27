@@ -68,6 +68,7 @@ test = [
     "pytest-cov==7.1.0",
     "pytest-xdist==3.8.0",
     "responses==0.26.1",
+    "pydantic2-to-typescript>=0.0.1",
 ]
 
 [tool.setuptools]
