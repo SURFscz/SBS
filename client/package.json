@@ -17,7 +17,7 @@
         "events": "^3.3.0",
         "i18n-js": "^4.5.3",
         "immer": "^11.1.18",
-        "isomorphic-dompurify": "^2.36.0",
+        "isomorphic-dompurify": "^3.22.0",
         "js-cookie": "^3.0.7",
         "jsondiffpatch": "^0.7.6",
         "lodash.clonedeep": "^4.5.0",
