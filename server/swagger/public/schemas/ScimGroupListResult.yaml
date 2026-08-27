@@ -7,8 +7,8 @@ properties:
     example: 15
   startIndex:
     type: number
-    description: "Zero-based start index of the page"
-    example: 0
+    description: "1-based index of the first result in the current page (RFC 7644)"
+    example: 1
   totalResults:
     type: number
     description: "Total number of results"

@@ -1,11 +1,30 @@
-import {expect, Page, test} from '@playwright/test';
+import {DEFAULT_MOCK_USER, expect, test} from '../../fixtures/mockUser';
+import {reseedDatabase} from '../../utils/reseedDatabase';
 
 const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 
 test.describe.configure({mode: 'serial'});
+test.use({mockUser: DEFAULT_MOCK_USER});
+
+test.beforeAll(async ({request}) => {
+    await reseedDatabase(request);
+});
 
 test.describe('AUP', () => {
+
+    // This test is frontend only, it uses a mock
     test('user can accept the acceptable use policy', async ({page}) => {
+        let forcedOnce = false;
+        await page.route('**/api/users/me', async route => {
+            const response = await route.fetch();
+            const body = await response.json();
+            await route.fulfill({
+                response,
+                json: forcedOnce ? body : {...body, user_accepted_aup: false},
+            });
+            forcedOnce = true;
+        });
+
         await page.goto(`${baseURL}/aup`);
 
         await expect(page.getByRole('heading', {name: /^Hi Doe/})).toBeVisible();

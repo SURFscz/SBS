@@ -36,6 +36,11 @@ from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 from server.tools import dt_now
 
+from typing import Any
+
+from server.api.collaboration_dtos import CollaborationDTO
+
+
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 base_collaboration_query = """
@@ -74,7 +79,7 @@ def _result_set_to_collaborations(result_set):
              "organisation": {"name": row[11]}} for row in result_set]
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration):
+def _del_non_disclosure_info(collaboration, json_collaboration) -> None:
     for cm in json_collaboration["collaboration_memberships"]:
         if not collaboration.disclose_email_information and not cm["role"] == "admin":
             del cm["user"]["email"]
@@ -466,10 +471,10 @@ def members():
 
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
 @json_endpoint
-def collaboration_lite_by_id(collaboration_id):
+def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
     confirm_collaboration_member(collaboration_id)
 
-    collaboration = Collaboration.query \
+    collaboration: Collaboration = Collaboration.query \
         .options(selectinload(Collaboration.organisation)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
@@ -486,7 +491,9 @@ def collaboration_lite_by_id(collaboration_id):
         _del_non_disclosure_info(collaboration, json_collaboration)
         return json_collaboration, 200
 
-    return collaboration, 200
+    result: CollaborationDTO = CollaborationDTO.model_validate(collaboration)
+
+    return result.model_dump(mode='python', exclude_none=True), 200
 
 
 @collaboration_api.route("/access_allowed/<collaboration_id>", strict_slashes=False)

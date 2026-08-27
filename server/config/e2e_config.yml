@@ -68,6 +68,7 @@ oidc:
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
 eppn_scope: "test.sram.surf.nl"
+id_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 environment_disclaimer: "local"
@@ -143,6 +144,9 @@ metadata:
   parse_at_startup: False
   scope_override:
     test.nl: "Koninklijke Nederlandse Test"
+
+cron_job_responsible: True
+
 # note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
