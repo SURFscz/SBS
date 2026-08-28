@@ -19,12 +19,9 @@ import {
 import "./CollaborationDetail.scss";
 import I18n from "../../locale/I18n";
 import {AppStore} from "../../stores/AppStore";
-import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import Tabs from "../../components/tabs/Tabs";
-import MemberIcon from "../../icons/groups.svg?react";
-import TimerIcon from "../../icons/streamline/timer2.svg?react";
-import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
 import CollaborationAdmins from "../../components/redesign/collaboration-admins/CollaborationAdmins";
+import {CollaborationPageHeader} from "./CollaborationPageHeader";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import UsedServices from "../../components/redesign/used-services/UsedServices";
 import Groups from "../../components/redesign/groups/Groups";
@@ -35,11 +32,9 @@ import CollaborationWelcomeDialog from "../../components/collaboration-welcome-d
 import JoinRequests from "../../components/redesign/join-requests/JoinRequests";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
-import Button from "../../components/button/Button";
 import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestDialog";
 import LastAdminWarning from "../../components/redesign/last-admin-warning/LastAdminWarning";
 import moment from "moment";
-import {ButtonType, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, isEmpty, stopEvent} from "../../utils/Utils";
 import UserTokens from "../../components/redesign/user-tokens/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
@@ -547,61 +542,6 @@ class CollaborationDetail extends React.Component {
 
     }
 
-    collaborationJoinRequestAction = (collaboration, alreadyMember) => {
-        return (
-            <div className="join-request-action">
-                <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
-                        disabled={alreadyMember}
-                        onClick={() => this.setState({joinRequestDialogOpen: true})}/>
-            </div>
-        );
-    }
-
-    getIconListItems = iconListItems => {
-        return (<div className={"icon-list-items"}>
-            {iconListItems.map((item, index) => <div className={"icon-list-item"} key={index}>
-                {item.Icon}
-                {item.value}
-            </div>)}
-        </div>);
-    }
-
-    getMemberIconListItem = collaboration => {
-        const memberCount = collaboration.collaboration_memberships_count;
-        const groupCount = collaboration.groups.length;
-        return (
-            {
-                Icon: <MemberIcon/>, value: <span>{I18n.t("coPageHeaders.membersGroups", {
-                    memberCount: memberCount === 0 ? I18n.t("coPageHeaders.no") : memberCount,
-                    members: memberCount === 1 ? I18n.t("coPageHeaders.singleMember") : I18n.t("coPageHeaders.multipleMembers"),
-                    groupCount: groupCount === 0 ? I18n.t("coPageHeaders.no").toLowerCase() : groupCount,
-                    groups: groupCount === 1 ? I18n.t("coPageHeaders.singleGroup") : I18n.t("coPageHeaders.multipleGroups"),
-                })}
-                </span>
-            }
-        );
-    }
-
-    getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
-        const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
-        const iconListItems = [
-            this.getMemberIconListItem(collaboration)
-        ];
-        const membershipStatus = this.getMembershipStatus(collaboration, user);
-        if (!collaborationJoinRequest && membershipStatus) {
-            iconListItems.push({
-                Icon: <MemberStatusIcon/>, value: membershipStatus
-            })
-        }
-        return <UnitHeader obj={collaboration}
-                           actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
-                           name={collaboration.name}
-                           displayDescription={false}
-                           customAction={customAction}>
-            {this.getIconListItems(iconListItems)}
-        </UnitHeader>;
-    }
-
     unsuspend = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
@@ -640,50 +580,6 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    getActions = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
-        const historyIsShownInChevron = this.showHistory(user, collaboration);
-        const actions = [];
-        if (allowedToEdit && showMemberView) {
-            actions.push({
-                buttonType: ButtonType.Primary, name: I18n.t("home.edit"), perform: () => {
-                    clearFlash();
-                    this.props.history.push("/edit-collaboration/" + collaboration.id)
-                }
-            });
-        }
-        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
-        if (isMember) {
-            actions.push({
-                buttonType: ButtonType.DestructiveSecondary,
-                name: I18n.t("models.collaboration.leave"),
-                perform: this.deleteMe
-            });
-        }
-
-        if (adminOfCollaboration) {
-            actions.push({
-                buttonType: ButtonType.Secondary,
-                name: I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`),
-                perform: () => this.toggleAdminMemberView()
-            });
-        }
-        if (adminOfCollaboration && !user.admin && showMemberView && !historyIsShownInChevron) {
-            const queryParam = `name=${encodeURIComponent(collaboration.name)}&back=${encodeURIComponent(window.location.pathname)}`;
-            actions.push({
-                buttonType: ButtonType.Secondary,
-                name: I18n.t("home.history"),
-                perform: () => this.props.history.push(`/audit-logs/collaborations/${collaboration.id}?${queryParam}`)
-            });
-        }
-        if (!isMember && adminOfCollaboration && showMemberView) {
-            actions.push({
-                buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"),
-                perform: this.addMe
-            })
-        }
-        return actions;
-    }
-
     addMe = e => {
         stopEvent(e);
         const {collaboration} = this.state;
@@ -695,17 +591,6 @@ class CollaborationDetail extends React.Component {
                     setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: collaboration.name}));
                 }));
         })
-    }
-
-    getCollaborationStatus = collaboration => {
-        if (!collaboration.expiry_date) {
-            return null;
-        }
-        const expiryDate = moment(collaboration.expiry_date * 1000).format("LL");
-        const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
-        return (<span>
-                    {I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}
-                </span>);
     }
 
     alreadyMemberConfirmation = invitation => {
@@ -743,62 +628,6 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    getMembershipStatus = (collaboration, user) => {
-        if (!user || !collaboration || isEmpty(collaboration.collaboration_memberships)) {
-            return null;
-        }
-        const membership = collaboration.collaboration_memberships.find(cm => cm.user_id === user.id);
-        if (!membership) {
-            return null;
-        }
-        //expiryDate is only used for translation if actually set
-        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : null;
-        if (membership.status === "active") {
-            return (<span>
-                {I18n.t("coPageHeaders.membership", {date: moment(membership.created_at * 1000).format("LL")})}
-                {expiryDate && <Tooltip tip={I18n.t("coPageHeaders.expiresTooltip", {date: expiryDate})}/>}
-            </span>)
-        }
-        return <span>{I18n.t("collaboration.status.expired")}</span>
-    }
-
-    showHistory = (user, collaboration) => {
-        /**
-         * If the user is an organisation admin / manager and not a member of the collaboration, then the option
-         * "Add me to this collaboration" is added. To show this in the drop-down we add this to the chevron, but we need
-         * to hide the normal 'show history' button. We have a max of three buttons, but we don't want an "Other options"
-         * dropdown with only one option.
-         */
-        return user.organisation_memberships.some(om => om.organisation_id === collaboration.organisation_id) &&
-            !user.collaboration_memberships.some(cm => cm.collaboration_id === collaboration.id);
-
-    }
-
-    getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
-        const iconListItems = [
-            this.getMemberIconListItem(collaboration)
-        ];
-        const collaborationStatus = this.getCollaborationStatus(collaboration);
-        if (collaborationStatus) {
-            iconListItems.push({
-                Icon: <TimerIcon/>, value: collaborationStatus
-            })
-        }
-
-        return (
-            <UnitHeader obj={collaboration}
-                        firstTime={user.admin ? this.onBoarding : undefined}
-                        history={((user.admin || this.showHistory(user, collaboration)) && allowedToEdit) && this.props.history}
-                        auditLogPath={`collaborations/${collaboration.id}`}
-                        breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                        name={collaboration.name}
-                        displayDescription={false}
-                        actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-                {this.getIconListItems(iconListItems)}
-            </UnitHeader>
-        );
-    }
-
     render() {
         const {
             collaboration,
@@ -826,7 +655,7 @@ class CollaborationDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user, refreshUser, config} = this.props;
+        const {user, refreshUser} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         let role;
         if (isInvitation) {
@@ -836,10 +665,21 @@ class CollaborationDetail extends React.Component {
         }
 
         return (<>
-            {(adminOfCollaboration && showMemberView) &&
-                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
-            {(!showMemberView || !adminOfCollaboration) &&
-                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
+            <CollaborationPageHeader
+                collaboration={collaboration}
+                user={user}
+                history={this.props.history}
+                allowedToEdit={allowedToEdit}
+                adminOfCollaboration={adminOfCollaboration}
+                showMemberView={showMemberView}
+                collaborationJoinRequest={collaborationJoinRequest}
+                alreadyMember={alreadyMember}
+                onLeave={this.deleteMe}
+                onAddMe={this.addMe}
+                onToggleView={this.toggleAdminMemberView}
+                onBoarding={this.onBoarding}
+                onOpenJoinRequest={() => this.setState({joinRequestDialogOpen: true})}
+            />
 
             {(!collaborationJoinRequest && !alreadyCollaborationMembership) &&
                 <CollaborationWelcomeDialog name={collaboration.name}
