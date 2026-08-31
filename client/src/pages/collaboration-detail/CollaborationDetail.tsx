@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
+import React, {ReactElement, forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {RouteComponentProps} from "react-router-dom";
 
 import {
@@ -43,16 +43,13 @@ import {isUuid4} from "../../validations/regExps";
 import {isInvitationExpired} from "../../utils/Date";
 import {AppConfig} from "@/api/config";
 import {
-    CollaborationAccessResponse,
     CollaborationDetailModel,
     CollaborationHeaderUser,
-    CollaborationIdResponse,
     CollaborationInvitation,
     CollaborationInvitationSummary,
     CollaborationRouteParams,
     CollaborationTabPaneProps,
-    CollaborationUserToken,
-    InvitationByHashResponse
+    CollaborationUserToken
 } from "./CollaborationTypes";
 
 export type CollaborationDetailProps = RouteComponentProps<CollaborationRouteParams> & {
@@ -68,28 +65,6 @@ type SocketMessage = {
 
 const CollaborationTabPane = ({children, ...tabProps}: CollaborationTabPaneProps) =>
     React.createElement("div", tabProps as React.HTMLAttributes<HTMLDivElement>, children);
-
-type UserTokensOfUser = (serviceId?: number) => Promise<CollaborationUserToken[]>;
-const loadUserTokens = userTokensOfUser as UserTokensOfUser;
-
-type ConfirmationDialogProps = {
-    isOpen?: boolean;
-    cancel?: () => void;
-    confirm: () => void;
-    isWarning?: boolean;
-    question?: string;
-    children?: React.ReactNode;
-    confirmationTxt?: unknown;
-    confirmationHeader?: unknown;
-};
-
-const TypedConfirmationDialog = ConfirmationDialog as FC<ConfirmationDialogProps>;
-
-const fetchInvitationByHash = invitationByHash as (hash: string, expand?: boolean) => Promise<InvitationByHashResponse>;
-const fetchCollaborationIdByIdentifier = collaborationIdByIdentifier as (identifier: string) => Promise<CollaborationIdResponse>;
-const fetchCollaborationAccessAllowed = collaborationAccessAllowed as (id: number) => Promise<CollaborationAccessResponse>;
-const fetchCollaborationById = collaborationById as (id: number) => Promise<CollaborationDetailModel>;
-const fetchCollaborationByIdentifier = collaborationByIdentifier as (identifier: string) => Promise<CollaborationDetailModel>;
 
 const isExpiryDateWarning = (expiry_date: number): boolean => {
     const today = new Date().getTime();
@@ -307,7 +282,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         const currentProps = latestRef.current.props;
         const params = currentProps.match.params;
         if (params.hash) {
-            fetchInvitationByHash(params.hash, true).then(res => {
+            invitationByHash(params.hash, true).then(res => {
                 const currentUser = currentProps.user;
                 const nextInvitation = res["invitation"];
                 const membership = (currentUser.collaboration_memberships || []).find(m => m.collaboration_id === nextInvitation.collaboration_id);
@@ -330,19 +305,19 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
             }).catch(() => currentProps.history.push(`/404?eo=${ErrorOrigins.invitationNotFound}`));
         } else if (params.id) {
             if (isUuid4(params.id)) {
-                fetchCollaborationIdByIdentifier(params.id).then(res => {
+                collaborationIdByIdentifier(params.id).then(res => {
                     const path = encodeURIComponent(`/collaborations/${res.id}`);
                     currentProps.history.push(`/refresh-route/${path}`);
                 });
                 return;
             }
             const collaboration_id = parseInt(params.id, 10);
-            fetchCollaborationAccessAllowed(collaboration_id)
+            collaborationAccessAllowed(collaboration_id)
                 .then(json => {
                     const nextAdminOfCollaboration = json.access === "full";
                     const promises = nextAdminOfCollaboration
-                        ? [fetchCollaborationById(collaboration_id), loadUserTokens()]
-                        : [collaborationLiteById(collaboration_id), loadUserTokens()];
+                        ? [collaborationById(collaboration_id), userTokensOfUser()]
+                        : [collaborationLiteById(collaboration_id), userTokensOfUser()];
                     Promise.all(promises)
                         .then(res => {
                             const {user: currentUser, config: currentConfig} = latestRef.current.props;
@@ -381,7 +356,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
             if (!identifier) {
                 currentProps.history.push("/404");
             } else {
-                fetchCollaborationByIdentifier(identifier)
+                collaborationByIdentifier(identifier)
                     .then(res => {
                         const nextCollaboration = res;
                         if (nextCollaboration.disable_join_requests) {
@@ -844,7 +819,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
                                         close={doAcceptInvitation}
                                         {...{isAdmin: user.admin, isInvitation}}/>}
         {alreadyCollaborationMembership && invitation &&
-            <TypedConfirmationDialog isOpen={true}
+            <ConfirmationDialog isOpen={true}
                                      confirm={() => alreadyMemberConfirmation(invitation)}
                                      confirmationHeader={I18n.t("organisationMembership.alreadyMemberHeader")}
                                      confirmationTxt={I18n.t("confirmationDialog.ok")}
@@ -859,13 +834,13 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
                            history={history}
                            close={() => setJoinRequestDialogOpen(false)}/>
 
-        <TypedConfirmationDialog isOpen={confirmationDialogOpen}
+        <ConfirmationDialog isOpen={confirmationDialogOpen}
                                  cancel={cancelDialogAction}
                                  confirm={confirmationDialogAction}
                                  isWarning={isWarning}
                                  question={confirmationQuestion}>
             {lastAdminWarning ? <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}/> : null}
-        </TypedConfirmationDialog>
+        </ConfirmationDialog>
         <Tabs activeTab={tab} tabChanged={tabChanged}>
             {tabs}
         </Tabs>
