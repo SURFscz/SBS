@@ -6,6 +6,13 @@ import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
 import {CollaborationDTO} from "./apiTypes";
+import {
+    CollaborationAccessResponse,
+    CollaborationDetailModel,
+    CollaborationIdResponse,
+    CollaborationUserToken,
+    InvitationByHashResponse
+} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -414,20 +421,20 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
-export function collaborationByIdentifier(identifier) {
-    return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationByIdentifier(identifier: string): Promise<CollaborationDetailModel> {
+    return fetchJson<CollaborationDetailModel>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationIdByIdentifier(identifier) {
-    return fetchJson(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {
+    return fetchJson<CollaborationIdResponse>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationAccessAllowed(id) {
-    return fetchJson(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
+export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessResponse> {
+    return fetchJson<CollaborationAccessResponse>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
-export function collaborationById(id) {
-    return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
+export function collaborationById(id: number): Promise<CollaborationDetailModel> {
+    return fetchJson<CollaborationDetailModel>(`/api/collaborations/${id}`, {}, {}, false);
 }
 
 export function collaborationLiteById(id: string | number): Promise<CollaborationDTO> {
@@ -659,8 +666,8 @@ export function organisationInvitationExists(emails, organisationId) {
 }
 
 //Invitations
-export function invitationByHash(hash, expand = false) {
-    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
+export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashResponse> {
+    return fetchJson<InvitationByHashResponse>(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
 export function deleteInvitationByHash(hash) {
@@ -1092,9 +1099,9 @@ export function serviceAupDelete(service) {
 }
 
 //User Tokens
-export function userTokensOfUser(serviceId) {
+export function userTokensOfUser(serviceId?: number): Promise<CollaborationUserToken[]> {
     const queryPart = serviceId ? `?service_id=${serviceId}` : "";
-    return fetchJson(`/api/user_tokens${queryPart}`);
+    return fetchJson<CollaborationUserToken[]>(`/api/user_tokens${queryPart}`);
 }
 
 export function userTokenGenerateValue() {
