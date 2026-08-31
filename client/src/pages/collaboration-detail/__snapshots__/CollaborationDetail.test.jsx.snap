@@ -1,0 +1,1426 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CollaborationDetail > accepts an invitation from the welcome dialog 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/refresh-route/%2Fcollaborations%2F10",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > adds the current user as a member 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Added you as member of Research CO",
+      "type": null,
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Organisation manager",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > asks a regular member to confirm before leaving 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="confirmation-dialog" data-warning="true"><p>Are you sure you want to leave this collaboration? You will have to be re-invited by an admin to rejoin.</p><button type="button">cancel-dialog</button><button type="button">confirm-dialog</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > changes tabs and keeps a groups path with a group id 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/collaborations/10/members",
+      {
+        "groupId": "31",
+      },
+    ],
+    [
+      "/collaborations/10/groups/31",
+      {
+        "groupId": "31",
+      },
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="members"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > changes to the groups tab without a group id 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/collaborations/10/groups",
+      {
+        "groupId": undefined,
+      },
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > clears store state and socket listeners on unmount 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > closes a first-time welcome dialog when the user is not accepting an invitation 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > confirms an already-member invitation and redirects 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/refresh-route/%2Fcollaborations%2F10",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > does not add a token tab when there are no token-enabled services 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not offer a membership-expired action to a collaboration admin 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Your membership has expired on June 5, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not offer activate to a member of an expired collaboration 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "This collaboration has reached its expiration date of June 10, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not offer collaboration expiry actions to a member 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "This collaboration will expire at June 30, 2025. This collaboration will be suspended due to inactivity in 10 days.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not offer unsuspend to a member of a suspended collaboration 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "This collaboration was suspended due to inactivity. It was last used on March 27, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not treat an inactive collaboration as almost suspended 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Revert expiration",
+      "hasAction": true,
+      "message": "This collaboration has reached its expiration date of June 10, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not unsubscribe sockets on unmount when there is no collaboration id route 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > does not unsubscribe sockets on unmount while still loading 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > does not warn when a membership expiry date is 60 or more days away 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > hides flash actions after toggling away from the member view 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Revert expiration",
+      "hasAction": true,
+      "message": "This collaboration has reached its expiration date of June 10, 2025.",
+      "type": "warning",
+    },
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "This collaboration has reached its expiration date of June 10, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [
+    [
+      "/collaborations/10/about",
+      {
+        "groupId": undefined,
+      },
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="false" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > hides the join-requests tab when join requests are disabled 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > ignores invitation accept errors that do not mention existing membership 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > invokes the componentDidMount completion callback 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > lets an admin activate an expired collaboration 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Revert expiration",
+      "hasAction": true,
+      "message": "This collaboration has reached its expiration date of June 10, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > lets an admin avoid an almost-suspended collaboration 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Avoid suspension",
+      "hasAction": true,
+      "message": "This collaboration will be suspended due to inactivity in 10 days.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > lets an admin edit a collaboration that expires within 60 days 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Collaboration settings",
+      "hasAction": true,
+      "message": "This collaboration will expire at June 30, 2025. ",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > lets an admin unsuspend a suspended collaboration 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Revert suspension",
+      "hasAction": true,
+      "message": "This collaboration was suspended due to inactivity. It was last used on March 27, 2025.",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > lets an org manager who is not the last admin leave immediately 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Membership of Omar Manager was deleted.",
+      "type": null,
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Organisation manager",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads a full-access admin collaboration with every optional tab 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="services"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="true" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="true" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="1" data-tab-readonly="false"><div name="services" label="Applications" notifier="1"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="1" data-tab-readonly="false"><div name="joinrequests" label="Join requests" notifier="1"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="1" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads a join-request collaboration for a non-member 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/home?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Join request for 'Research CO'",
+      },
+    ],
+    "objectRole": "User",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="true" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads a join-request collaboration when member information is hidden 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/home?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Join request for 'Research CO'",
+      },
+    ],
+    "objectRole": "User",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="true" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads a join-request collaboration when the user is already a member 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "You are already a member of Research CO",
+      "type": "error",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/home?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Join request for 'Research CO'",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="true" data-already-member="true"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads an invitation for a new intended admin 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads an invitation for an intended member 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coMember" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > loads the lite member view with disclosed member information 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > omits the token tab for a join-request even when tokens exist 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/home?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Join request for 'Research CO'",
+      },
+    ],
+    "objectRole": "User",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="true" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > opens and closes the join-request dialog 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/home?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Join request for 'Research CO'",
+      },
+    ],
+    "objectRole": "User",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="true" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="join-request-dialog"><button type="button">close-join</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > opens the welcome dialog from onboarding 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="false"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > opens the welcome dialog when first=true 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="false"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects a uuid collaboration id to refresh-route 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/refresh-route/%2Fcollaborations%2F10",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when a join-request collaboration disables join requests 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when access lookup fails 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when collaboration fetch fails 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when no identifier is available 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when the invitation hash is unknown 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404?eo=invitationNotFound",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > redirects to 404 when the join-request identifier is unknown 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/404",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > refreshes through a child callback 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > renders no tabs when the user is not allowed to view the collaboration 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "User",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"></div>",
+}
+`;
+
+exports[`CollaborationDetail > rethrows invitation accept errors that have a response without json 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > rethrows invitation accept errors without a json body 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="welcome-dialog" data-role="coAdmin" data-invitation="true"><span>Research CO</span><button type="button">close-welcome</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > sends a last-admin member home after they confirm leaving 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Membership of Mia Member was deleted.",
+      "type": null,
+    },
+  ],
+  "history": [
+    [
+      "/home",
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Admin",
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > shows a last-admin warning when the only admin leaves 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="confirmation-dialog" data-warning="true"><p>Are you sure you want to leave this collaboration? You will have to be re-invited by an admin to rejoin.</p><div data-testid="last-admin-warning" data-organisation="Org Alpha" data-current-user-deleted="true"></div><button type="button">cancel-dialog</button><button type="button">confirm-dialog</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > shows a spinner while the collaboration is loading 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="spinner">loading</div>",
+}
+`;
+
+exports[`CollaborationDetail > shows an error when accepting an invitation finds an existing membership 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "The invitation could not be accepted because you are already a member of this collaboration.",
+      "type": "error",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > shows the already-member confirmation for an invitation 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [],
+    "objectRole": null,
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="confirmation-dialog" data-warning="false"><p>Already member</p><p>You are already a member of this CO and do not need to accept a new invitation.</p><button type="button">confirm-dialog</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > skips inactivity warnings when last_activity_date is missing 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > still shows admin tabs when member information is hidden 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > subscribes to socket topics and refreshes on a foreign subscription 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > toggles from admin tabs to the member tab set 1`] = `
+{
+  "flash": [],
+  "history": [
+    [
+      "/collaborations/10/about",
+      {
+        "groupId": undefined,
+      },
+    ],
+  ],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Platform admin",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="false" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > uses org-manager breadcrumbs after a full-access load 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/",
+        "value": "Home",
+      },
+      {
+        "path": "/organisations/3",
+        "value": "Org Alpha",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Organisation manager",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="true" data-admin="true" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-admins" data-tab-label="Admins" data-tab-notifier="false" data-tab-readonly="false"><div name="admins" label="Admins"><div data-testid="collaboration-admins"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-services" data-tab-label="Applications" data-tab-notifier="" data-tab-readonly="false"><div name="services" label="Applications"><div data-testid="used-services"></div></div></div><div data-testid="tab-joinrequests" data-tab-label="Join requests" data-tab-notifier="" data-tab-readonly="false"><div name="joinrequests" label="Join requests"><div data-testid="join-requests"></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > uses the minimal tab set when member information is not disclosed 1`] = `
+{
+  "flash": [],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="1" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > warns a member whose membership expires within 60 days when admins exist 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Request membership extension",
+      "hasAction": true,
+      "message": "Your membership is active, but it will expire at July 15, 2025. ",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > warns a member whose membership expires within 60 days when no admins exist 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Your membership is active, but it will expire at July 15, 2025. ",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > warns a member whose membership has expired when admins exist 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": "Request membership reactivation",
+      "hasAction": true,
+      "message": "Your membership has expired on June 5, 2025. Please contact the admins of this collaboration for help. ",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
+
+exports[`CollaborationDetail > warns a member whose membership has expired when no admins exist 1`] = `
+{
+  "flash": [
+    {
+      "actionLabel": null,
+      "hasAction": false,
+      "message": "Your membership has expired on June 5, 2025. Please contact the admins of this collaboration for help. ",
+      "type": "warning",
+    },
+  ],
+  "history": [],
+  "store": {
+    "breadcrumbs": [
+      {
+        "path": "/?redirect=false",
+        "value": "Home",
+      },
+      {
+        "value": "Research CO",
+      },
+    ],
+    "objectRole": "Member",
+  },
+  "view": "<div data-testid="page-header" data-allowed-to-edit="false" data-admin="false" data-member-view="true" data-join-request="false" data-already-member="false"><span>Research CO</span><button type="button">leave</button><button type="button">add-me</button><button type="button">toggle-view</button><button type="button">onboarding</button><button type="button">open-join-request</button></div><div data-testid="tabs" data-active-tab="about"><div data-testid="tab-about" data-tab-label="About" data-tab-notifier="" data-tab-readonly="false"><div name="about" label="About"><div data-testid="about-collaboration"><button type="button">change-tab</button></div></div></div><div data-testid="tab-members" data-tab-label="Members" data-tab-notifier="false" data-tab-readonly="false"><div name="members" label="Members"><div data-testid="collaboration-members"><button type="button">refresh-admins</button></div></div></div><div data-testid="tab-groups" data-tab-label="Groups" data-tab-notifier="" data-tab-readonly="false"><div name="groups" label="Groups"><div data-testid="groups" data-group-id=""></div></div></div><div data-testid="tab-tokens" data-tab-label="Application tokens" data-tab-notifier="" data-tab-readonly="false"><div name="tokens" label="Application tokens"><div data-testid="user-tokens" data-token-count="0" data-service-count="1"></div></div></div></div>",
+}
+`;
