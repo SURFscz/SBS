@@ -15,7 +15,7 @@ import Footer from "../components/footer/Footer";
 import Flash from "../components/flash/Flash";
 import {setCsrfToken} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
-import CollaborationDetail from "./collaboration-detail/CollaborationDetail";
+import {CollaborationDetail} from "./collaboration-detail/CollaborationDetail";
 import OrganisationDetail from "./organisation-detail/OrganisationDetail";
 import Home from "./home/Home";
 import OrganisationForm from "./organisation-form/OrganisationForm";
