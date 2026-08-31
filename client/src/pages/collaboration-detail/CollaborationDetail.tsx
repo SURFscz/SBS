@@ -72,16 +72,6 @@ const CollaborationTabPane = ({children, ...tabProps}: CollaborationTabPaneProps
 type UserTokensOfUser = (serviceId?: number) => Promise<CollaborationUserToken[]>;
 const loadUserTokens = userTokensOfUser as UserTokensOfUser;
 
-type AppStoreState = {
-    breadcrumb: { paths: { path?: string; value: string }[] };
-    objectRole: string | null;
-    actions: unknown[];
-};
-
-const updateStore = (updater: (state: AppStoreState) => void) => {
-    AppStore.update(updater as Parameters<typeof AppStore.update>[0]);
-};
-
 type ConfirmationDialogProps = {
     isOpen?: boolean;
     cancel?: () => void;
@@ -148,7 +138,7 @@ const updateAppStore = (
     _adminOfCollaboration: boolean,
     orgManager: boolean
 ): void => {
-    updateStore(s => {
+    AppStore.update(s => {
         s.breadcrumb.paths = orgManager ? [{path: "/", value: I18n.t("breadcrumb.home")}, {
                 path: `/organisations/${collaboration.organisation_id}`,
                 value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
@@ -410,7 +400,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
                             setLoading(false);
                             setConfirmationDialogOpen(false);
                             setTab("about");
-                            updateStore(s => {
+                            AppStore.update(s => {
                                 s.breadcrumb.paths = [{
                                     path: "/home?redirect=false",
                                     value: I18n.t("breadcrumb.home")
@@ -443,7 +433,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         loadCollaborationRef.current();
         return () => {
             clearFlash();
-            updateStore(s => {
+            AppStore.update(s => {
                 s.objectRole = null;
                 s.actions = [];
             });
