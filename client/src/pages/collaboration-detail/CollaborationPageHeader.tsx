@@ -1,4 +1,4 @@
-import React, {FC, ReactNode} from "react";
+import React, {FC} from "react";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
 
@@ -10,48 +10,7 @@ import {isEmpty} from "../../utils/Utils";
 import MemberIcon from "../../icons/groups.svg?react";
 import TimerIcon from "../../icons/streamline/timer2.svg?react";
 import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
-
-type CollaborationMembership = {
-    user_id: number;
-    role: string;
-    status: string;
-    expiry_date?: number | null;
-    created_at: number;
-};
-
-type CollaborationHeaderUser = {
-    id: number;
-    admin: boolean;
-    organisation_memberships: { organisation_id: number }[];
-    collaboration_memberships: { collaboration_id: number }[];
-};
-
-type CollaborationHeaderModel = {
-    id: number;
-    name: string;
-    organisation_id: number;
-    organisation: { name: string };
-    groups: unknown[];
-    collaboration_memberships_count: number;
-    collaboration_memberships: CollaborationMembership[];
-    expiry_date?: number | null;
-    status: string;
-};
-
-type HistoryLike = {
-    push: (path: string) => void;
-};
-
-type HeaderAction = {
-    buttonType: string;
-    name: string;
-    perform: (e?: unknown) => void;
-};
-
-type IconListItem = {
-    Icon: ReactNode;
-    value: ReactNode;
-};
+import {CollaborationHeaderModel, CollaborationHeaderUser, HeaderAction, IconListItem, HistoryLike} from "./CollaborationTypes";
 
 export type CollaborationPageHeaderProps = {
     collaboration: CollaborationHeaderModel;
