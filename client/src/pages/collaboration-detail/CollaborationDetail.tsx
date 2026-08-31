@@ -69,24 +69,6 @@ type SocketMessage = {
 const CollaborationTabPane = ({children, ...tabProps}: CollaborationTabPaneProps) =>
     React.createElement("div", tabProps as React.HTMLAttributes<HTMLDivElement>, children);
 
-type IsUserAllowed = (
-    minimalRole: string,
-    currentUser: CollaborationHeaderUser,
-    organisationId?: number | null,
-    collaborationId?: number | null
-) => boolean;
-
-const userIsAllowed = isUserAllowed as IsUserAllowed;
-
-type SetFlash = (
-    message: string,
-    type?: string,
-    action?: (() => void) | null,
-    actionLabel?: string | null
-) => void;
-
-const showFlash = setFlash as SetFlash;
-
 type UserTokensOfUser = (serviceId?: number) => Promise<CollaborationUserToken[]>;
 const loadUserTokens = userTokensOfUser as UserTokensOfUser;
 
@@ -256,7 +238,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         let action: (() => void) | null = null;
         let actionLabel: string | null = null;
         const membership = currentCollaboration.collaboration_memberships.find(m => m.user_id === currentUser.id);
-        const isMember = !userIsAllowed(ROLES.COLL_ADMIN, currentUser, currentCollaboration.organisation_id, currentCollaboration.id);
+        const isMember = !isUserAllowed(ROLES.COLL_ADMIN, currentUser, currentCollaboration.organisation_id, currentCollaboration.id);
         if (membership && membership.expiry_date) {
             const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");
             if (membership.status === "expired") {
@@ -311,7 +293,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
             }
         }
         if (!isEmpty(msg)) {
-            showFlash(msg, "warning", action, actionLabel);
+            setFlash(msg, "warning", action, actionLabel);
         }
     };
 
@@ -378,7 +360,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
                             const nextCollaboration = res[0] as CollaborationDetailModel;
                             const nextUserTokens = res[1] as CollaborationUserToken[];
                             const nextSchacHomeOrganisations = nextAdminOfCollaboration ? null : currentUser.organisations_from_user_schac_home;
-                            const nextOrgManager = userIsAllowed(ROLES.ORG_MANAGER, currentUser, nextCollaboration.organisation_id, null);
+                            const nextOrgManager = isUserAllowed(ROLES.ORG_MANAGER, currentUser, nextCollaboration.organisation_id, null);
                             const nextFirstTime = getParameterByName("first", window.location.search) === "true";
                             showExpiryDateFlash(currentUser, nextCollaboration, currentConfig, true);
 
@@ -569,7 +551,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         deleteCollaborationMembership(currentCollaboration.id, currentUser.id)
             .then(() => {
                 currentRefreshUser(() => {
-                    const canStay = userIsAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
+                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
                     setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: currentUser.name}));
                     if (canStay) {
                         loadCollaborationRef.current();
@@ -589,7 +571,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         }
         const admins = currentCollaboration.collaboration_memberships.filter(m => m.role === "admin");
         const nextLastAdminWarning = admins.length === 1 && admins[0].user_id === currentUser.id;
-        const canStay = userIsAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
         if (!canStay || nextLastAdminWarning) {
             setConfirmationDialogOpen(true);
             setConfirmationQuestion(I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"));
@@ -650,6 +632,8 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         }
     };
 
+    //<editor-fold desc="TABS">
+    // ---- TABS ----
     const addUserTokenTab = (
         currentUserTokens: CollaborationUserToken[] | null,
         services: CollaborationDetailModel["services"],
@@ -782,7 +766,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         currentShowMemberView: boolean,
         isJoinRequest = false
     ): ReactElement[] => {
-        if (!isJoinRequest && !userIsAllowed(ROLES.COLL_MEMBER, user, currentCollaboration.organisation_id, currentCollaboration.id)) {
+        if (!isJoinRequest && !isUserAllowed(ROLES.COLL_MEMBER, user, currentCollaboration.organisation_id, currentCollaboration.id)) {
             return [];
         }
         const services = isJoinRequest ? [] : currentCollaboration.services
@@ -806,6 +790,8 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
 
         return tabs.filter((currentTab): currentTab is ReactElement => currentTab !== null);
     };
+    // --- End of TABS ---
+    //</editor-fold>
 
     useImperativeHandle(ref, () => ({
         componentDidMount: loadCollaboration,
@@ -818,7 +804,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         return <SpinnerField/>;
     }
 
-    const allowedToEdit = userIsAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
+    const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
     let role;
     if (isInvitation && invitation) {
         role = invitation.intended_role === "admin" ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
