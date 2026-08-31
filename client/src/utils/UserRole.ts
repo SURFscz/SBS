@@ -8,7 +8,6 @@ import {
     SERVICE_REQUEST_TYPE
 } from "./SocketIO";
 
-
 export const ROLES = {
     PLATFORM_ADMIN: "platformAdmin",
     ORG_ADMIN: "orgAdmin",
@@ -18,18 +17,70 @@ export const ROLES = {
     SERVICE_ADMIN: "serviceAdmin",
     SERVICE_MANAGER: "serviceManager",
     USER: "user"
-}
+} as const;
 
-const ROLES_HIERARCHY = {
+export type RoleName = typeof ROLES[keyof typeof ROLES];
+
+const ROLES_HIERARCHY: Record<string, number> = {
     [ROLES.PLATFORM_ADMIN]: 1,
     [ROLES.ORG_ADMIN]: 2,
     [ROLES.ORG_MANAGER]: 3,
     [ROLES.COLL_ADMIN]: 4,
     [ROLES.COLL_MEMBER]: 5,
     [ROLES.USER]: 6
-}
+};
 
-export function isUserAllowed(minimalRole, user, organisation_id = null, collaboration_id = null) {
+export type RoleOrganisationMembership = {
+    organisation_id: number;
+    role?: string;
+};
+
+export type RoleCollaborationMembership = {
+    collaboration_id: number;
+    role?: string;
+};
+
+export type RoleServiceMembership = {
+    service_id: number;
+    role?: string;
+};
+
+export type RoleEntityRef = {
+    id?: number;
+};
+
+export type RoleUser = {
+    admin?: boolean;
+    guest?: boolean;
+    organisation_memberships?: RoleOrganisationMembership[];
+    collaboration_memberships?: RoleCollaborationMembership[];
+    service_memberships?: RoleServiceMembership[];
+    join_requests?: UserRequest[];
+    collaboration_requests?: UserRequest[];
+    service_requests?: UserRequest[];
+    service_connection_requests?: UserRequest[];
+};
+
+export type UserRequest = {
+    requestType?: string;
+};
+
+export type ChipRoleEntity = {
+    invite?: boolean;
+    intended_role?: string;
+    role?: string;
+};
+
+export type ChipStatusEntity = {
+    status?: string;
+};
+
+export function isUserAllowed(
+    minimalRole: string,
+    user: RoleUser,
+    organisation_id: number | null = null,
+    collaboration_id: number | null = null
+): boolean {
     if (user.admin) {
         return true;
     }
@@ -66,7 +117,13 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     return false;
 }
 
-export function rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired = false) {
+export function rawGlobalUserRole(
+    user: RoleUser,
+    organisation?: RoleEntityRef | null,
+    collaboration?: RoleEntityRef | null,
+    service?: RoleEntityRef | null,
+    membershipRequired = false
+): RoleName {
     if (user.admin) {
         return ROLES.PLATFORM_ADMIN;
     }
@@ -97,51 +154,63 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
     return ROLES.USER;
 }
 
-export function isUserServiceAdmin(user, service) {
+export function isUserServiceAdmin(
+    user: RoleUser & { service_memberships: RoleServiceMembership[] },
+    service?: RoleEntityRef | null
+): boolean {
     return user.service_memberships
-        .some(m => !service || (m.service_id === service.id && m.role === "admin"))
+        .some(m => !service || (m.service_id === service.id && m.role === "admin"));
 }
 
-export function isUserServiceManager(user, service) {
+export function isUserServiceManager(
+    user: RoleUser & { service_memberships: RoleServiceMembership[] },
+    service?: RoleEntityRef | null
+): boolean {
     return user.service_memberships
-        .some(m => !service || m.service_id === service.id)
+        .some(m => !service || m.service_id === service.id);
 }
 
-export function globalUserRole(user) {
+export function globalUserRole(user: RoleUser): string {
     return I18n.t(`access.${rawGlobalUserRole(user)}`);
 }
 
-export function actionMenuUserRole(user, organisation, collaboration, service, membershipRequired) {
+export function actionMenuUserRole(
+    user: RoleUser,
+    organisation?: RoleEntityRef | null,
+    collaboration?: RoleEntityRef | null,
+    service?: RoleEntityRef | null,
+    membershipRequired?: boolean
+): string {
     const userRole = rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired);
     return I18n.t(`actionRoles.${userRole}`);
 }
 
-export function chipType(entity) {
+export function chipType(entity: ChipRoleEntity) {
     const role = entity.invite ? entity.intended_role : entity.role;
     return role === "admin" ? ChipType.Main_400 : role === "manager" ? ChipType.Main_300 : ChipType.Main_100;
 }
 
-export function chipTypeForStatus(entity) {
+export function chipTypeForStatus(entity: ChipStatusEntity) {
     const status = entity.status;
     return status === "approved" ? ChipType.Status_success : status === "open" ? ChipType.Status_info : ChipType.Status_error;
     // "suspended", "expired", "active"
 }
 
-export function getUserRequests(user) {
-    const requests = [];
-    if (!isEmpty(user.join_requests)) {
+export function getUserRequests(user: RoleUser): UserRequest[] {
+    const requests: UserRequest[] = [];
+    if (!isEmpty(user.join_requests) && user.join_requests) {
         user.join_requests.forEach(joinRequest => joinRequest.requestType = JOIN_REQUEST_TYPE);
         requests.push(...user.join_requests);
     }
-    if (!isEmpty(user.collaboration_requests)) {
+    if (!isEmpty(user.collaboration_requests) && user.collaboration_requests) {
         user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.requestType = COLLABORATION_REQUEST_TYPE);
         requests.push(...user.collaboration_requests);
     }
-    if (!isEmpty(user.service_requests)) {
+    if (!isEmpty(user.service_requests) && user.service_requests) {
         user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_REQUEST_TYPE);
         requests.push(...user.service_requests);
     }
-    if (!isEmpty(user.service_connection_requests)) {
+    if (!isEmpty(user.service_connection_requests) && user.service_connection_requests) {
         user.service_connection_requests.forEach(serviceConnectionRequest => serviceConnectionRequest.requestType = SERVICE_CONNECTION_REQUEST_TYPE);
         requests.push(...user.service_connection_requests);
     }
