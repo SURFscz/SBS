@@ -32,10 +32,10 @@ import {getParameterByName} from "../../utils/QueryParameters";
 import CollaborationWelcomeDialog from "../../components/collaboration-welcome-dialog/CollaborationWelcomeDialog";
 import JoinRequests from "../../components/redesign/join-requests/JoinRequests";
 import {clearFlash, setFlash} from "../../utils/Flash";
+import {createShowExpiryDateFlash} from "./createShowExpiryDateFlash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestDialog";
 import LastAdminWarning from "../../components/redesign/last-admin-warning/LastAdminWarning";
-import moment from "moment";
 import {ErrorOrigins, isEmpty, stopEvent} from "../../utils/Utils";
 import UserTokens from "../../components/redesign/user-tokens/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
@@ -65,46 +65,6 @@ type SocketMessage = {
 
 const CollaborationTabPane = ({children, ...tabProps}: CollaborationTabPaneProps) =>
     React.createElement("div", tabProps as React.HTMLAttributes<HTMLDivElement>, children);
-
-const isExpiryDateWarning = (expiry_date: number): boolean => {
-    const today = new Date().getTime();
-    const expiryDate = expiry_date * 1000;
-    const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
-    return days < 60;
-};
-
-const mailToAdmins = (collaboration: CollaborationDetailModel, title: string): void => {
-    const a = document.createElement("a");
-    const mails = collaboration.collaboration_memberships
-        .filter(membership => membership.role === "admin")
-        .map(membership => membership.user?.email)
-        .join(",");
-    a.href = `mailto:${mails}?subject=${encodeURIComponent(title)}`;
-    a.click();
-};
-
-const hasCollaborationAdmin = (collaboration: CollaborationDetailModel): boolean => {
-    return collaboration.collaboration_memberships
-        .some(membership => membership.role === "admin");
-};
-
-const isCollaborationAlmostSuspended = (
-    _user: CollaborationHeaderUser,
-    collaboration: CollaborationDetailModel,
-    config: AppConfig
-): number | false => {
-    const threshold = config.threshold_for_collaboration_inactivity_warning;
-    if (!collaboration.last_activity_date) {
-        return false;
-    }
-    const lastActivityDate = new Date(collaboration.last_activity_date * 1000);
-    const now = new Date();
-    now.setDate(now.getDate() - threshold);
-    if (lastActivityDate <= now && collaboration.status === "active") {
-        return Math.round((now.getTime() - lastActivityDate.getTime()) / (1000 * 3600 * 24));
-    }
-    return false;
-};
 
 const updateAppStore = (
     user: CollaborationHeaderUser,
@@ -191,76 +151,108 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     const socketSubscribedRef = useRef(false);
     const loadCollaborationRef = useRef<(callback?: () => void) => void>(() => undefined);
 
+    const doUnsuspend = () => {
+        const currentCollaboration = latestRef.current.collaboration;
+        if (!currentCollaboration) {
+            return;
+        }
+        setLoading(true);
+        unsuspendCollaboration(currentCollaboration.id).then(() => {
+            loadCollaborationRef.current(() => {
+                setLoading(false);
+                setFlash(I18n.t("unsuspend.flash", {name: latestRef.current.collaboration?.name}));
+            });
+        });
+    };
+
+    const doActivate = () => {
+        const currentCollaboration = latestRef.current.collaboration;
+        if (!currentCollaboration) {
+            return;
+        }
+        setLoading(true);
+        activateCollaboration(currentCollaboration.id).then(() => {
+            loadCollaborationRef.current(() => {
+                setLoading(false);
+                setFlash(I18n.t("activate.flash", {name: latestRef.current.collaboration?.name}));
+            });
+        });
+    };
+
+    const doDeleteMe = () => {
+        const {user: currentUser, refreshUser: currentRefreshUser, history: currentHistory} = latestRef.current.props;
+        const currentCollaboration = latestRef.current.collaboration;
+        if (!currentCollaboration) {
+            return;
+        }
+        setConfirmationDialogOpen(false);
+        setLoading(true);
+        deleteCollaborationMembership(currentCollaboration.id, currentUser.id)
+            .then(() => {
+                currentRefreshUser(() => {
+                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
+                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: currentUser.name}));
+                    if (canStay) {
+                        loadCollaborationRef.current();
+                    } else {
+                        currentHistory.push("/home");
+                    }
+                });
+            });
+    };
+
     const cancelDialogAction = () => setConfirmationDialogOpen(false);
 
-    const showExpiryDateFlash = (
-        currentUser: CollaborationHeaderUser,
-        currentCollaboration: CollaborationDetailModel,
-        currentConfig: AppConfig,
-        currentShowMemberView: boolean
-    ) => {
-        let msg = "";
-        let action: (() => void) | null = null;
-        let actionLabel: string | null = null;
-        const membership = currentCollaboration.collaboration_memberships.find(m => m.user_id === currentUser.id);
-        const isMember = !isUserAllowed(ROLES.COLL_ADMIN, currentUser, currentCollaboration.organisation_id, currentCollaboration.id);
-        if (membership && membership.expiry_date) {
-            const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");
-            if (membership.status === "expired") {
-                msg += I18n.t(`organisationMembership.status.expiredTooltip${isMember ? "Member" : ""}`, {date: formattedMembershipExpiryDate});
-                if (isMember && currentShowMemberView && hasCollaborationAdmin(currentCollaboration)) {
-                    action = () => mailToAdmins(currentCollaboration, I18n.t("collaboration.status.askForReactivationSubject", {email: membership.user?.email}));
-                    actionLabel = I18n.t("collaboration.status.askForReactivation");
-                }
-            } else if (isExpiryDateWarning(membership.expiry_date)) {
-                msg += I18n.t("organisationMembership.status.activeWithExpiryDateTooltip", {date: formattedMembershipExpiryDate});
-                if (isMember && currentShowMemberView && hasCollaborationAdmin(currentCollaboration)) {
-                    action = () => mailToAdmins(currentCollaboration, I18n.t("collaboration.status.askForExtensionSubject", {email: membership.user?.email}));
-                    actionLabel = I18n.t("collaboration.status.askForExtension");
-                }
-            }
-        }
-        if (currentCollaboration && currentCollaboration.expiry_date) {
-            const formattedCollaborationExpiryDate = moment(currentCollaboration.expiry_date * 1000).format("LL");
-            if (currentCollaboration.status === "expired") {
-                msg += I18n.t("collaboration.status.expiredTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                if (!isMember && currentShowMemberView) {
-                    action = activate(true);
-                    actionLabel = I18n.t("collaboration.status.activate");
-                }
-            } else if (isExpiryDateWarning(currentCollaboration.expiry_date)) {
-                msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                if (!isMember && currentShowMemberView) {
-                    action = () => latestRef.current.props.history.push(`/edit-collaboration/${currentCollaboration.id}`);
-                    actionLabel = I18n.t("collaboration.status.activeWithExpiryDateAction");
-                }
-            }
-        }
-        if (currentCollaboration && currentCollaboration.status === "suspended") {
-            msg += I18n.t("collaboration.status.suspendedTooltip", {
-                lastActivityDate: moment((currentCollaboration.last_activity_date || 0) * 1000).format("LL")
-            });
-            if (!isMember && currentShowMemberView) {
-                action = unsuspend(true);
-                actionLabel = I18n.t("home.unsuspend");
-            }
-        }
-        if (currentCollaboration && currentCollaboration.last_activity_date) {
-            const almostSuspended = isCollaborationAlmostSuspended(currentUser, currentCollaboration, currentConfig);
-            if (almostSuspended) {
-                msg += I18n.t("collaboration.status.almostSuspended", {
-                    days: almostSuspended
-                });
-                if (!isMember && currentShowMemberView) {
-                    action = unsuspend(true);
-                    actionLabel = I18n.t("home.avoidSuspending");
-                }
-            }
-        }
-        if (!isEmpty(msg)) {
-            setFlash(msg, "warning", action, actionLabel);
+    const unsuspend = (showConfirmation: boolean) => () => {
+        if (showConfirmation) {
+            setConfirmationDialogOpen(true);
+            setConfirmationQuestion(I18n.t("unsuspend.confirmation"));
+            setConfirmationDialogAction(() => unsuspend(false));
+            setIsWarning(false);
+        } else {
+            doUnsuspend();
         }
     };
+
+    const activate = (showConfirmation: boolean) => () => {
+        if (showConfirmation) {
+            setConfirmationDialogOpen(true);
+            setConfirmationQuestion(I18n.t("activate.confirmation"));
+            setConfirmationDialogAction(() => activate(false));
+            setIsWarning(false);
+        } else {
+            doActivate();
+        }
+    };
+
+    const deleteMe = (e?: unknown) => {
+        stopEvent(e);
+        const currentUser = latestRef.current.props.user;
+        const currentCollaboration = latestRef.current.collaboration;
+        if (!currentCollaboration) {
+            return;
+        }
+        const admins = currentCollaboration.collaboration_memberships.filter(m => m.role === "admin");
+        const nextLastAdminWarning = admins.length === 1 && admins[0].user_id === currentUser.id;
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
+        if (!canStay || nextLastAdminWarning) {
+            setConfirmationDialogOpen(true);
+            setConfirmationQuestion(I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"));
+            setConfirmationDialogAction(() => doDeleteMe);
+            setLastAdminWarning(nextLastAdminWarning);
+            setIsWarning(true);
+        } else {
+            doDeleteMe();
+        }
+    };
+
+    const showExpiryDateFlash = createShowExpiryDateFlash({
+        onActivate: activate(true),
+        onUnsuspend: unsuspend(true),
+        onEditCollaboration: (collaborationId: number) => {
+            latestRef.current.props.history.push(`/edit-collaboration/${collaborationId}`);
+        }
+    });
 
     const subscribeToCollaborationSocket = (currentCollaboration: CollaborationDetailModel) => {
         if (socketSubscribedRef.current) {
@@ -461,91 +453,6 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         currentHistory.push(`/collaborations/${collId}/${name}${groupIdPart}`, {groupId: nextGroupId});
         // Otherwise the changed history.location.state is not picked up in Groups.jsx
         setTimeout(() => setTab(name), isEmpty(groupIdPart) ? 0 : 175);
-    };
-
-    const unsuspend = (showConfirmation: boolean) => () => {
-        if (showConfirmation) {
-            setConfirmationDialogOpen(true);
-            setConfirmationQuestion(I18n.t("unsuspend.confirmation"));
-            setConfirmationDialogAction(() => unsuspend(false));
-            setIsWarning(false);
-        } else {
-            const currentCollaboration = latestRef.current.collaboration;
-            if (!currentCollaboration) {
-                return;
-            }
-            setLoading(true);
-            unsuspendCollaboration(currentCollaboration.id).then(() => {
-                loadCollaborationRef.current(() => {
-                    setLoading(false);
-                    setFlash(I18n.t("unsuspend.flash", {name: latestRef.current.collaboration?.name}));
-                });
-            });
-        }
-    };
-
-    const activate = (showConfirmation: boolean) => () => {
-        if (showConfirmation) {
-            setConfirmationDialogOpen(true);
-            setConfirmationQuestion(I18n.t("activate.confirmation"));
-            setConfirmationDialogAction(() => activate(false));
-            setIsWarning(false);
-        } else {
-            const currentCollaboration = latestRef.current.collaboration;
-            if (!currentCollaboration) {
-                return;
-            }
-            setLoading(true);
-            activateCollaboration(currentCollaboration.id).then(() => {
-                loadCollaborationRef.current(() => {
-                    setLoading(false);
-                    setFlash(I18n.t("activate.flash", {name: latestRef.current.collaboration?.name}));
-                });
-            });
-        }
-    };
-
-    const doDeleteMe = () => {
-        const {user: currentUser, refreshUser: currentRefreshUser, history: currentHistory} = latestRef.current.props;
-        const currentCollaboration = latestRef.current.collaboration;
-        if (!currentCollaboration) {
-            return;
-        }
-        setConfirmationDialogOpen(false);
-        setLoading(true);
-        deleteCollaborationMembership(currentCollaboration.id, currentUser.id)
-            .then(() => {
-                currentRefreshUser(() => {
-                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
-                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: currentUser.name}));
-                    if (canStay) {
-                        loadCollaborationRef.current();
-                    } else {
-                        currentHistory.push("/home");
-                    }
-                });
-            });
-    };
-
-    const deleteMe = (e?: unknown) => {
-        stopEvent(e);
-        const currentUser = latestRef.current.props.user;
-        const currentCollaboration = latestRef.current.collaboration;
-        if (!currentCollaboration) {
-            return;
-        }
-        const admins = currentCollaboration.collaboration_memberships.filter(m => m.role === "admin");
-        const nextLastAdminWarning = admins.length === 1 && admins[0].user_id === currentUser.id;
-        const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
-        if (!canStay || nextLastAdminWarning) {
-            setConfirmationDialogOpen(true);
-            setConfirmationQuestion(I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"));
-            setConfirmationDialogAction(() => doDeleteMe);
-            setLastAdminWarning(nextLastAdminWarning);
-            setIsWarning(true);
-        } else {
-            doDeleteMe();
-        }
     };
 
     const addMe = (e?: unknown) => {
