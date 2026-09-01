@@ -211,6 +211,11 @@ class TestUserLoginEB(AbstractTest):
         body = {"user_id": "nonexisting:userid",
                 "eppn": "nonexisting:eppn",
                 "external_subject_id": "urn:sarah",
+                "attributes": {
+                    "urn:oasis:names:tc:SAML:attribute:subject-id": [
+                        "urn:sarah"
+                    ],
+                },
                 "continue_url": "https://engine.surf.nl",
                 "service_id": service_mail_entity_id,
                 "issuer_id": "https://idp.test"}
