@@ -61,7 +61,11 @@ def proxy_authz_eb():
 
     collab_person_id = json_dict["user_id"]
     eppn = json_dict.get("eppn")
-    external_subject_id = json_dict.get("external_subject_id")
+    upstream_saml_attributes = json_dict.get("attributes")
+    if upstream_saml_attributes and upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id"):
+        upstream_subject_id = upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id")[0]
+    else:
+        upstream_subject_id = None
     emails = json_dict.get("email")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
@@ -80,8 +84,8 @@ def proxy_authz_eb():
     ]
     if eppn:
         conditions.append(User.eduperson_principal_name == eppn)
-    if external_subject_id:
-        conditions.append(User.uid == external_subject_id)
+    if upstream_subject_id:
+        conditions.append(User.uid == upstream_subject_id)
     if emails:
         for email in emails:
             conditions.append(User.email == email)

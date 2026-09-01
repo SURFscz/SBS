@@ -1,5 +1,4 @@
 from server.db.domain import Service
-from server.manage.arp import arp_attributes
 
 BINDINGS_HTTP_POST = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 OIDC_ACS_LOCATION = "https://trusted.proxy.acs.location.rules"
