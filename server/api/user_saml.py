@@ -78,17 +78,10 @@ def proxy_authz_edu_teams():
         db.session.merge(user)
         db.session.commit()
 
-    if not (eppn := eduperson_principal_name):
-        eppn = f"{user.username}@{current_app.app_config.eppn_scope.strip()}"
-
     if service_entity_id == current_app.app_config.engine_block.entity_id.lower():
         result = {
             "status": {
                 "result": "authorized",
-            },
-            "attributes": {
-                "eduPersonPrincipalName": [eppn],
-                "uid": [user.username],
             }
         }, 200
         logger.debug(f"Return authorized EB flow, service_entity_id={service_entity_id} with response={result}")
