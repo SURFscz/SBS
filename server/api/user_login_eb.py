@@ -40,8 +40,10 @@ def user_attributes(service: Service, user: User):
         "msg": "authorized",
         "attributes": {
             "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
-            "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-            "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
+            # If we add them here, we get multi-valued EB uid and eppn because of EB Sram AttributeMerger
+            # "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
+            # "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
+            "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid], # voPersonID
             "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
         }
     }
@@ -54,16 +56,20 @@ def proxy_authz_eb():
     confirm_authorization()
 
     json_dict = current_request.get_json()
+    logger = logging.getLogger("user_login_eb")
+    logger.debug(f"authz_eb called with {json_dict}")
+
     collab_person_id = json_dict["user_id"]
     eppn = json_dict.get("eppn")
-    external_subject_id = json_dict.get("external_subject_id")
+    upstream_saml_attributes = json_dict.get("attributes")
+    if upstream_saml_attributes and upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id"):
+        upstream_subject_id = upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id")[0]
+    else:
+        upstream_subject_id = None
     emails = json_dict.get("email")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
-
-    logger = logging.getLogger("user_login_eb")
-    logger.debug(f"authz_eb called with {json_dict}")
 
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
@@ -78,8 +84,8 @@ def proxy_authz_eb():
     ]
     if eppn:
         conditions.append(User.eduperson_principal_name == eppn)
-    if external_subject_id:
-        conditions.append(User.uid == external_subject_id)
+    if upstream_subject_id:
+        conditions.append(User.uid == upstream_subject_id)
     if emails:
         for email in emails:
             conditions.append(User.email == email)
@@ -166,6 +172,7 @@ def proxy_authz_eb():
         }
     else:
         attributes = user_attributes(service, user)
+        logger.debug(f"Returning attributes {jsonify(attributes).json}")
         return attributes, 200
 
     # Once we got here, we need to store the UserNonce

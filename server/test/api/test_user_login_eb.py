@@ -10,6 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import (service_mail_entity_id,
                               service_wireless_entity_id, service_cloud_entity_id, sarah_nonce, user_sarah_name,
                               service_mail_name)
+from server.test.seed import ssh_nonsense_key as ssh_key_from_seed
 
 
 class TestUserLoginEB(AbstractTest):
@@ -185,7 +186,11 @@ class TestUserLoginEB(AbstractTest):
                                  "Content-Type": "application/json"},
                         body=body)
         self.assertEqual("authorized", res["msg"])
-        self.assertEqual(4, len(res["attributes"]))
+        self.assertEqual(res["attributes"]['urn:mace:surf.nl:attribute-def:ssh-key'], [ssh_key_from_seed])
+        self.assertIn(
+            'urn:example:sbs:group:uniharderwijk',
+            res["attributes"]['urn:mace:dir:attribute-def:eduPersonEntitlement']
+        )
 
     def test_authz_eb_authorized_with_eppn(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
@@ -206,6 +211,11 @@ class TestUserLoginEB(AbstractTest):
         body = {"user_id": "nonexisting:userid",
                 "eppn": "nonexisting:eppn",
                 "external_subject_id": "urn:sarah",
+                "attributes": {
+                    "urn:oasis:names:tc:SAML:attribute:subject-id": [
+                        "urn:sarah"
+                    ],
+                },
                 "continue_url": "https://engine.surf.nl",
                 "service_id": service_mail_entity_id,
                 "issuer_id": "https://idp.test"}

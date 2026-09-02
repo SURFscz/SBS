@@ -325,17 +325,34 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8",
         "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
+    response: requests.Response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
     logger = ctx_logger("resume-session/user")
-    user_info_json = response.json()
+    user_info_json: dict = response.json()
 
     logger.debug(f"Userinfo endpoint results {user_info_json}")
 
     uid = user_info_json["sub"]
-    user = User.query.filter(User.uid == uid).first()
+
+    eduperson_principal_name = user_info_json.get("eduperson_principal_name")
+    email = user_info_json.get("email")
+    email_verified = user_info_json.get("email_verified", False)
+
+    conditions = [
+        User.uid == uid,
+    ]
+
+    if eduperson_principal_name:
+        conditions = [
+            User.eduperson_principal_name == eduperson_principal_name
+        ]
+
+    if email and email_verified:
+        conditions.append(User.email == email)
+
+    user = User.query.filter(or_(*conditions)).first()
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
@@ -359,7 +376,7 @@ def resume_session():
         user.last_accessed_date = dt_now()
         logger.info(f"Provisioning new user {user.uid}")
     else:
-        logger.info(f"Updating user {user.uid} with new claims / updated at")
+        logger.info(f"Updating user {user.uid} with new claims {user_info_json}")
         add_user_claims(user_info_json, uid, user)
 
     # Check if we need a second factor for the user
