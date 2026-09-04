@@ -46,7 +46,7 @@ MEMBERSHIP_EXPIRES_WARNING_MAIL_MEMBER = "membership_expires_warning_mail_member
 
 MEMBERSHIP_EXPIRES_WARNING_MAIL_ADMIN = "membership_expires_warning_mail_admin"
 
-MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL_MEMBER = "membership_expired_notification_mail_admin"
+MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL_MEMBER = "membership_expired_notification_mail_member"
 
 MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL_ADMIN = "membership_expired_notification_mail_admin"
 
