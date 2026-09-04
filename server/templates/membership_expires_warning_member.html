@@ -1,0 +1,18 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURF Membership expiration notification{% endblock %}
+{% block content %}
+
+<div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        Your membership of collaboration {{ membership.collaboration.name }} will expire on {{ expiry_date }}.</p>
+    <a class="button" href="{{ base_url }}/collaborations/{{ membership.collaboration.id }}"
+       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
+        View collaboration</a>
+</div>
+<div class="mail-end" style="padding: 30px 0 0 60px;">
+    <p>{{ salutation }} {{ membership.user.name }},</p>
+    <p>Your membership of collaboration {{ membership.collaboration.name }} will expire on {{ expiry_date }}. After that date, you will be unable to log in to the application connected to that collaboration (unless you are authorised another way).</p>
+    <p>If you want to keep access to those applications, please log in to the collaboration contact its admins.</p>
+</div>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF Membership expiration notification{% endblock %}
+{% block content %}
+
+Membership expiration notification
+
+{{ salutation }} {{ membership.user.name }},
+
+You are a member of {{ membership.collaboration.name }}, a collaboration with description
+  {{ membership.collaboration.description }}
+
+As scheduled, your membership of this collaboration has ended on {{ expiry_date }}. This
+means you cannot use the applications it provides any more. If you think
+this is a mistake, please contact the collaboration's admins.
+
+{% endblock %}

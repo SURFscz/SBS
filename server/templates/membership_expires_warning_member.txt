@@ -1,0 +1,17 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF membership expiration notification{% endblock %}
+{% block content %}
+
+Membership expiration notification
+
+Your membership of collaboration {{ membership.collaboration.name }} will expire on {{ expiry_date }}.
+
+View the collaboration: 
+{{ base_url }}/collaborations/{{ membership.collaboration.id }}
+
+{{ salutation }} {{ membership.user.name }},
+Your membership of collaboration {{ membership.collaboration.name }} will expire on {{ expiry_date }}. After that date, you will be unable to log in to the application connected to that collaboration (unless you are authorised another way).
+
+If you want to keep access to those applications, please log in to the collaboration contact its admins.
+
+{% endblock %}
