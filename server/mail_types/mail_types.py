@@ -42,8 +42,12 @@ COLLABORATION_SUSPENSION_WARNING_MAIL = "collaboration_suspension_warning_mail"
 
 COLLABORATION_SUSPENDED_NOTIFICATION_MAIL = "collaboration_suspended_notification_mail"
 
-MEMBERSHIP_EXPIRES_WARNING_MAIL = "membership_expires_warning_mail"
+MEMBERSHIP_EXPIRES_WARNING_MAIL_MEMBER = "membership_expires_warning_mail_member"
 
-MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL = "membership_expired_notification_mail"
+MEMBERSHIP_EXPIRES_WARNING_MAIL_ADMIN = "membership_expires_warning_mail_admin"
+
+MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL_MEMBER = "membership_expired_notification_mail_admin"
+
+MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL_ADMIN = "membership_expired_notification_mail_admin"
 
 ORPHAN_USER_DELETED_MAIL = "orphan_user_deleted_mail"
