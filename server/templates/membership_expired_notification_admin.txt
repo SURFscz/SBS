@@ -1,0 +1,28 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF Membership expiration notification{% endblock %}
+{% block content %}
+
+Membership expiration notification
+
+Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} expired on {{ expiry_date }}.
+
+
+{{ salutation }} {{ membership.user.name }},
+
+You are a member of {{ membership.collaboration.name }}, a collaboration with description
+  {{ membership.collaboration.description }}
+
+As scheduled, your membership of this collaboration has ended. This
+means you cannot use the applications it provides any more. If you think
+this is a mistake, please contact one of the collaboration's admin, who
+have also received this email.
+
+
+{{ salutation }},
+We are notifying you as an administrator of collaboration {{ membership.collaboration.name }}. The membership of user {{ membership.user.name }} has expired.
+If you want {{ membership.user.name }} to keep access to the applications connected to {{ membership.collaboration.name }}, please log in to the collaboration and change the membership expiration date for that user.
+
+
+{{ base_url }}/collaborations/{{ membership.collaboration.id }}
+
+{% endblock %}
