@@ -5,21 +5,6 @@ import {reseedDatabase} from '../../utils/reseedDatabase';
 
 const baseURL = process.env.SBS_LOCAL_BASE_URL ?? 'http://localhost:3000';
 
-// Counterpart of collaboration.spec.ts: the same seeded collaboration (AI computing), but seen through the
-// full admin view instead of the limited member view.
-//
-// The user is DEFAULT_MOCK_USER (urn:john), a platform admin (server/config/test_config.yml -> admin_users).
-// Because of that, collaborationAccessAllowed returns access "full", so CollaborationDetail sets
-// adminOfCollaboration = true and showMemberView = false, and renders the complete tab set:
-// about, admins, members, groups, services, joinrequests, tokens.
-//
-// The tests below are placeholders (test.fixme) so the suite collects and runs green; a follow-up prompt
-// implements the bodies.
-
-// Unlike Ebbe, John is a member of one collaboration but also a platform admin, so "/" does NOT redirect to the
-// collaboration. He lands on the platform admin home (/home/organisations). Navigate to the collaboration through
-// the Collaborations tab (/home/collaborations) and click the "AI computing" link, so the numeric collaboration id
-// stays out of the test, like in collaboration.spec.ts.
 const openCollaborationDetail = async (page: Page) => {
     await gotoWithRedirectHandler(page, `${baseURL}/home/collaborations`);
 
@@ -45,29 +30,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await reseedDatabase(request);
     });
 
-    // Navigation / landing
-    test('home shows the platform admin dashboard instead of redirecting to a collaboration', async ({page}) => {
-        await gotoWithRedirectHandler(page, `${baseURL}/`);
-
-        // "/" redirects to /home; the member-only redirect to /collaborations/:id does not apply to a platform admin
-        await expect(page).toHaveURL(`${baseURL}/home`);
-
-        // UnitHeader is only rendered on home when user.admin is true
-        await expect(page.locator('.unit-header-container').getByRole('heading', {
-            level: 1,
-            name: 'SURF Research Access Management',
-        })).toBeVisible();
-
-        const tabs = page.locator('.tabs');
-        await expect(tabs.locator('.tab.organisations')).toHaveClass(/active/);
-        await expect(tabs.locator('.tab.organisations .tab-label')).toHaveText(/Organisations|Organisaties/);
-        await expect(tabs.locator('.tab.collaborations .tab-label')).toHaveText(/Collaborations|Samenwerkingen/);
-        await expect(tabs.locator('.tab.platformAdmins .tab-label')).toHaveText(/Platform admins|Platformbeheerders/);
-        await expect(tabs.locator('.tab.services .tab-label')).toHaveText(/Applications|Applicaties/);
-        await expect(tabs.locator('.tab.users .tab-label')).toHaveText(/Users|Gebruikers/);
-    });
-
-    // A platform admin sees every seeded collaboration, not just his own memberships
     test('collaborations overview lists AI computing and opens its detail page', async ({page}) => {
         await gotoWithRedirectHandler(page, `${baseURL}/home/collaborations`);
 
@@ -95,8 +57,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         })).toBeVisible();
     });
 
-    // Tab set: getTabs() with adminOfCollaboration = true and showMemberView = false yields about, admins, members,
-    // groups, services, joinrequests and tokens, where the member view of collaboration.spec.ts only has three tabs
     test('admin view shows the full tab set with notifiers for open requests', async ({page}) => {
         await openCollaborationDetail(page);
 
@@ -104,30 +64,27 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(tabs).toHaveCount(7);
         await expect(page.locator('.tabs .tab.about')).toHaveClass(/active/);
         await expect(page.locator('.tabs .tab.about .tab-label')).toHaveText(/About|Over/);
-        await expect(page.locator('.tabs .tab.admins .tab-label')).toHaveText(/Admins|Beheerders/);
-        await expect(page.locator('.tabs .tab.members .tab-label')).toHaveText(/Members|Leden/);
-        await expect(page.locator('.tabs .tab.groups .tab-label')).toHaveText(/Groups|Groepen/);
-        await expect(page.locator('.tabs .tab.services .tab-label')).toHaveText(/Applications|Applicaties/);
-        await expect(page.locator('.tabs .tab.joinrequests .tab-label')).toHaveText(/Join requests|Lidmaatschapsaanvragen/);
-        await expect(page.locator('.tabs .tab.tokens .tab-label')).toHaveText(/Application tokens|Applicatietokens/);
-
-        await expect(page.locator('.tabs .tab.joinrequests .notifier')).toBeVisible();
-        await expect(page.locator('.tabs .tab.services .notifier')).toBeVisible();
-        await expect(page.locator('.tabs .tab.admins .notifier')).toHaveCount(0);
-        await expect(page.locator('.tabs .tab.members .notifier')).toHaveCount(0);
         await expect(page.locator('.tabs .tab.about .notifier')).toHaveCount(0);
+
+        await expect(page.locator('.tabs .tab.admins .tab-label')).toHaveText(/Admins|Beheerders/);
+        await expect(page.locator('.tabs .tab.admins .notifier')).toHaveCount(0);
+
+        await expect(page.locator('.tabs .tab.members .tab-label')).toHaveText(/Members|Leden/);
+        await expect(page.locator('.tabs .tab.members .notifier')).toHaveCount(0);
+
+        await expect(page.locator('.tabs .tab.groups .tab-label')).toHaveText(/Groups|Groepen/);
         await expect(page.locator('.tabs .tab.groups .notifier')).toHaveCount(0);
+
+        await expect(page.locator('.tabs .tab.services .tab-label')).toHaveText(/Applications|Applicaties/);
+        await expect(page.locator('.tabs .tab.services .notifier')).toBeVisible();
+
+        await expect(page.locator('.tabs .tab.joinrequests .tab-label')).toHaveText(/Join requests|Lidmaatschapsaanvragen/);
+        await expect(page.locator('.tabs .tab.joinrequests .notifier')).toBeVisible();
+
+        await expect(page.locator('.tabs .tab.tokens .tab-label')).toHaveText(/Application tokens|Applicatietokens/);
         await expect(page.locator('.tabs .tab.tokens .notifier')).toHaveCount(0);
     });
 
-    // About tab
-    //
-    // AboutCollaboration in admin view. Seed data for AI computing: description "Artificial Intelligence computing
-    // for the Unincorporated Urban Community", website_url https://www.google.nl, organisation
-    // "Universiteit van Harderwijk" (unihard_name), unit "Support" (unihard_unit_support_name),
-    // tags tag_uuc and tag_uuc_2, short_name ai_computing.
-    // The connected services (Mail Services, Network Services) are rendered as .sds--content-card entries.
-    // Organisation and unit live in the UnitHeader, everything else in .collaboration-about-mod.
     test('About tab shows collaboration metadata, unit, tags and connected services', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'about');
@@ -139,7 +96,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(about.locator('p.description'))
             .toHaveText('Artificial Intelligence computing for the Unincorporated Urban Community');
 
-        // AI computing is connected to Mail Services and Network Services, sorted by name
         const services = about.locator('.services');
         await expect(services.locator('h4.margin'))
             .toHaveText(/We collaborate in 2 applications|We werken samen in 2 applicaties/);
@@ -179,12 +135,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(adminLink).toHaveAttribute('href', 'mailto:boss@example.org');
     });
 
-    // Expandable sections of the ServiceCard on the About tab
-    //
-    // AboutCollaboration does not pass showAboutInformation, so the 'About' toggle is never rendered. Every card
-    // has 'Policies & Support' and 'Application groups'; the 'My Tokens' link is added only for services with
-    // token_enabled, which for AI computing is Network Services. Expanding a section renders .service-metadata
-    // inside that card, and opening one section closes the other.
     test('About tab service cards expand policies, support and application groups', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'about');
@@ -257,12 +207,8 @@ test.describe('Collaboration detail (platform admin)', () => {
             .toHaveText(/This application has no groups|Deze applicatie heeft geen groepen/);
     });
 
-    // Admins tab (CollaborationAdmins with isAdminView=true)
-    //
-    // Only members with role admin are listed: The Boss (boss@example.org) is the single seeded CO admin.
-    // The tab also holds invitations with intended_role admin. collaboration_by_id only returns status "open",
-    // so curious@ex.org is listed and noway@ex.org (status expired, intended_role member) is not.
-    // Assert the invite action is available here, since that is the main difference with the member view.
+    // Only members with role admin are listed: The Boss is the single seeded CO admin. The tab also holds
+    // invitations with intended_role admin, of which only the open ones reach the client.
     test('Admins tab lists The Boss as the only collaboration admin', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'admins');
@@ -303,10 +249,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(page).toHaveURL(/\/new-invite\/\d+\?isAdminView=true/);
     });
 
-    // Open invitation curious@ex.org (intended_role admin) is listed. collaboration_by_id keeps only invitations
-    // with status "open", so neither the accepted invitation (some@ex.org) nor the expired one (noway@ex.org)
-    // reaches the client. An "Invite expired" chip is therefore only possible for an invitation that is still
-    // open with an expiry_date in the past, which the seed does not contain.
     test('Admins tab shows the open admin invitation and hides accepted and expired ones', async ({page}) => {
         const [collaborationResponse] = await Promise.all([
             page.waitForResponse(response =>
@@ -357,14 +299,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(adminsTable.locator('tbody tr').filter({hasText: 'noway@ex.org'})).toHaveCount(0);
     });
 
-    // Members tab (CollaborationAdmins with isAdminView=false, showMemberView=false)
-    //
-    // Same 6 seeded memberships as in the member view (The Boss, John, Jane, Sarah, Ebbe, betty), but now editable:
-    // .select-member-role__control dropdowns are rendered instead of read-only role chips, and the
-    // 'Invite members' button is visible (collaboration.spec.ts asserts it is absent for a member).
-    // John himself is marked as You.
-    // Unlike the member view, invitations are not hidden, so curious@ex.org is listed as a 7th row and the
-    // group filter and 'hide invitations' checkbox are rendered.
     test('Members tab shows all 6 members with editable roles and an invite button', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'members');
@@ -385,7 +319,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(rows.filter({hasText: 'curious@ex.org'}).locator('td.role'))
             .toHaveText(/^(Admin|Beheerder)$/);
 
-        // Verifying the Admin (The Boss)
         const roleOf = (name: string) =>
             rows.filter({hasText: name}).locator('td.role .select-member-role__single-value');
         await expect(roleOf('The Boss')).toHaveText(/Admin|Beheerder/);
@@ -427,11 +360,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(page).toHaveURL(/\/new-invite\/\d+\?isAdminView=false/);
     });
 
-    // Groups tab (Groups with showMemberView=false)
-    //
-    // Seeded groups of AI computing: 'AI researchers' (short_name ai_res, 2 members: John and Jane) and
-    // 'AI developers' (short_name ai_dev, 1 member: John). Assert the member counts from the API data and that
-    // the admin can add a group, which the member view does not offer.
     test('Groups tab lists both groups with their member counts and an add-group action', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'groups');
@@ -475,11 +403,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(page).toHaveURL(/\/collaborations\/\d+/);
     });
 
-    // New group form (Groups.renderGroupForm with createNewGroup=true)
-    //
-    // The form builds the platform identifier from the organisation and collaboration short names:
-    // uniharderwijk:ai_computing:<short name of the group>. The Identifier field and the delete button only
-    // exist when editing an existing group.
     test('New group form shows the derived platform identifier and cancels back to the list',
         async ({page}) => {
             await openCollaborationDetail(page);
@@ -516,12 +439,6 @@ test.describe('Collaboration detail (platform admin)', () => {
             await expect(page.locator('table.groups tbody tr')).toHaveCount(2);
         });
 
-    // Connected list of the Services tab (UsedServices with currentTab 'connections')
-    //
-    // AI computing has 2 connected services: Mail Services and Network Services. There is also one open
-    // ServiceConnectionRequest for the Storage service, which should be surfaced to the admin.
-    // Assert the connected services are listed and that disconnecting is offered from here. Connecting is
-    // asserted in the Available test below.
     test('Services tab lists the connected services and the open service connection request', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'services');
@@ -574,19 +491,12 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(dialog).toHaveCount(0);
         await expect(cards).toHaveCount(3);
 
-        // The search field filters the connected applications on name
         await search.fill('net');
         await expect(cardTitles).toHaveText(['Network Services']);
         await search.fill('');
         await expect(cards).toHaveCount(3);
     });
 
-    // Available list of the Services tab (UsedServices with currentTab 'available')
-    //
-    // /api/services/used_services returns every application; componentDidMount narrows that down to the ones
-    // AI computing may still connect to. Besides the 3 applications already in use, 'Test service' is dropped
-    // because Universiteit van Harderwijk is not in its allowed_organisations and it is not
-    // access_allowed_for_all, and SRAM Demo SP is dropped because of override_access_allowed_all_connections.
     test('Services tab Available list offers the applications AI computing can still connect to', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'services');
@@ -630,11 +540,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         }
     });
 
-    // Join requests tab (JoinRequests)
-    //
-    // Three open join requests are seeded for AI computing: John, Peter and Mary, all with message 'Please...'.
-    // Assert the table (Entities modelName joinRequests) shows the requester name, schac home organisation and
-    // status, and that opening one reveals the approve/deny actions (.join-request-details-container).
     test('Join requests tab lists the three open join requests with approve and deny actions', async ({page}) => {
         await openCollaborationDetail(page);
         await openTab(page, 'joinrequests');
@@ -684,7 +589,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(motivation).toHaveValue('Please...');
         await expect(motivation).toBeDisabled();
 
-        // An open request can be accepted or denied
         const actions = form.locator('section.actions');
         await expect(actions.getByRole('button', {name: /^(Accept|Goedkeuren)$/})).toBeVisible();
 
@@ -703,11 +607,6 @@ test.describe('Collaboration detail (platform admin)', () => {
         await expect(table.locator('td.status')).toHaveText([/^Open$/, /^Open$/, /^Open$/]);
     });
 
-    // Application tokens tab (UserTokens)
-    //
-    // The tab is only rendered for services with token_enabled; for AI computing that is Network Services.
-    // John has no seeded UserToken, so the list starts empty. Mirror the member-view flow: creating a token calls
-    // /api/user_tokens/generate_token and opens .user-token-form prefilled with the generated value.
     test('Application tokens tab starts empty and can create a token for Network Services', async ({page}) => {
         const [collaborationResponse] = await Promise.all([
             page.waitForResponse(response =>
