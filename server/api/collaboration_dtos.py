@@ -31,9 +31,9 @@ class GroupDTO(BaseModel):
     id: int
     name: str
     description: str | None
-    short_name: str
+    short_name: str | None
     identifier: str
-    global_urn: str
+    global_urn: str | None
     auto_provision_members: bool | None
     created_at: datetime
     service_group_id: int | None
@@ -76,7 +76,7 @@ class OrganisationDTO(BaseModel):
 
     id: int
     name: str
-    short_name: str
+    short_name: str | None
     logo: str | None
     accepted_user_policy: str | None
     schac_home_organisations: list[SchacHomeOrganisationDTO]
@@ -103,3 +103,121 @@ class CollaborationDTO(BaseModel):
     collaboration_memberships: list[CollaborationMembershipDTO]
     groups: list[GroupDTO]
     services: list[ServiceDTO]
+
+
+# The DTO's below are the additions the admin view of a collaboration needs on top of the lite / member view.
+
+class UnitDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class TagDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    tag_value: str
+
+
+class OrganisationDetailDTO(OrganisationDTO):
+    services_restricted: bool | None
+    service_connection_requires_approval: bool | None
+    invitation_message: str | None
+    invitation_sender_name: str | None
+    units: list[UnitDTO]
+
+
+class ServiceGroupServiceDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class ServiceGroupDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    service_id: int
+    service: ServiceGroupServiceDTO
+
+
+class GroupDetailDTO(GroupDTO):
+    service_group: ServiceGroupDTO | None
+
+
+class ServiceDetailDTO(ServiceDTO):
+    uuid4: str
+
+
+class InvitationDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invitee_email: str
+    intended_role: str | None
+    status: str
+    expiry_date: datetime | None
+    created_at: datetime
+    created_by: str
+    # Only set once the invitee is a known user, the frontend falls back on created_by
+    user: UserDTO | None
+
+
+class JoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    status: str
+    message: str | None
+    rejection_reason: str | None
+    created_at: datetime
+    user: UserDTO
+
+
+class RequesterDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str | None
+    uid: str
+
+
+class ServiceConnectionRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    status: str
+    created_at: datetime
+    service: ServiceDetailDTO
+    requester: RequesterDTO
+
+
+class CollaborationDetailDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    identifier: str
+    name: str
+    description: str | None
+    short_name: str | None
+    logo: str | None
+    website_url: str | None
+    support_email: str | None
+    organisation_id: int
+    status: str
+    expiry_date: datetime | None
+    last_activity_date: datetime
+    disable_join_requests: bool | None
+    disclose_member_information: bool | None
+    disclose_email_information: bool | None
+    collaboration_memberships_count: int
+    organisation: OrganisationDetailDTO
+    collaboration_memberships: list[CollaborationMembershipDTO]
+    groups: list[GroupDetailDTO]
+    services: list[ServiceDetailDTO]
+    invitations: list[InvitationDTO]
+    join_requests: list[JoinRequestDTO]
+    service_connection_requests: list[ServiceConnectionRequestDTO]
+    tags: list[TagDTO]
+    units: list[UnitDTO]
