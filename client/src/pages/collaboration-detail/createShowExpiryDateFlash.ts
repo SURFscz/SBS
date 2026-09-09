@@ -5,7 +5,8 @@ import {isEmpty} from "../../utils/Utils";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import moment from "moment";
 
-import {CollaborationDetailModel, CollaborationHeaderUser} from "./CollaborationTypes";
+import {CurrentUserView} from "@/api/apiFrontendTypes";
+import type {CollaborationView} from "./CollaborationDetail";
 
 export type UseCollaborationExpiryFlashArgs = {
     onActivate: () => void;
@@ -20,9 +21,9 @@ const isExpiryDateWarning = (expiry_date: number): boolean => {
     return days < 60;
 };
 
-const mailToAdmins = (collaboration: CollaborationDetailModel, title: string): void => {
+const mailToAdmins = (collaboration: CollaborationView, title: string): void => {
     const a = document.createElement("a");
-    const mails = collaboration.collaboration_memberships
+    const mails = (collaboration.collaboration_memberships ?? [])
         .filter(membership => membership.role === "admin")
         .map(membership => membership.user?.email)
         .join(",");
@@ -30,14 +31,14 @@ const mailToAdmins = (collaboration: CollaborationDetailModel, title: string): v
     a.click();
 };
 
-const hasCollaborationAdmin = (collaboration: CollaborationDetailModel): boolean => {
-    return collaboration.collaboration_memberships
+const hasCollaborationAdmin = (collaboration: CollaborationView): boolean => {
+    return (collaboration.collaboration_memberships ?? [])
         .some(membership => membership.role === "admin");
 };
 
 const isCollaborationAlmostSuspended = (
-    _user: CollaborationHeaderUser,
-    collaboration: CollaborationDetailModel,
+    _user: CurrentUserView,
+    collaboration: CollaborationView,
     config: AppConfig
 ): number | false => {
     const threshold = config.threshold_for_collaboration_inactivity_warning;
@@ -59,15 +60,15 @@ export const createShowExpiryDateFlash = ({
     onEditCollaboration
 }: UseCollaborationExpiryFlashArgs) =>
     (
-        currentUser: CollaborationHeaderUser,
-        currentCollaboration: CollaborationDetailModel,
+        currentUser: CurrentUserView,
+        currentCollaboration: CollaborationView,
         currentConfig: AppConfig,
         currentShowMemberView: boolean
     ) => {
         let msg = "";
         let action: (() => void) | null = null;
         let actionLabel: string | null = null;
-        const membership = currentCollaboration.collaboration_memberships.find(m => m.user_id === currentUser.id);
+        const membership = (currentCollaboration.collaboration_memberships ?? []).find(m => m.user_id === currentUser.id);
         const isMember = !isUserAllowed(ROLES.COLL_ADMIN, currentUser, currentCollaboration.organisation_id, currentCollaboration.id);
         if (membership && membership.expiry_date) {
             const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");

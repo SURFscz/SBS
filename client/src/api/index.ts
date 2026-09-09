@@ -5,11 +5,11 @@ import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
-import {CollaborationDTO} from "./apiTypes";
+import {CollaborationDTO, CollaborationDetailDTO} from "./apiTypes";
 import {
     CollaborationAccessResponse,
-    CollaborationDetailModel,
     CollaborationIdResponse,
+    CollaborationJoinRequestView,
     CollaborationUserToken,
     InvitationByHashResponse
 } from "./apiFrontendTypes";
@@ -421,8 +421,8 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
-export function collaborationByIdentifier(identifier: string): Promise<CollaborationDetailModel> {
-    return fetchJson<CollaborationDetailModel>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestView> {
+    return fetchJson<CollaborationJoinRequestView>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
 export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {
@@ -433,8 +433,8 @@ export function collaborationAccessAllowed(id: number): Promise<CollaborationAcc
     return fetchJson<CollaborationAccessResponse>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
-export function collaborationById(id: number): Promise<CollaborationDetailModel> {
-    return fetchJson<CollaborationDetailModel>(`/api/collaborations/${id}`, {}, {}, false);
+export function collaborationById(id: number): Promise<CollaborationDetailDTO> {
+    return fetchJson<CollaborationDetailDTO>(`/api/collaborations/${id}`, {}, {}, false);
 }
 
 export function collaborationLiteById(id: string | number): Promise<CollaborationDTO> {
