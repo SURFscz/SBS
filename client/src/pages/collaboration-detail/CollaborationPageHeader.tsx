@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, {FC, ReactNode} from "react";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
 
@@ -10,11 +10,28 @@ import {isEmpty} from "../../utils/Utils";
 import MemberIcon from "../../icons/groups.svg?react";
 import TimerIcon from "../../icons/streamline/timer2.svg?react";
 import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
-import {CollaborationHeaderModel, CollaborationHeaderUser, HeaderAction, IconListItem, HistoryLike} from "./CollaborationTypes";
+
+import {CurrentUserView} from "@/api/apiFrontendTypes";
+import type {CollaborationView} from "./CollaborationDetail";
+
+export type HistoryLike = {
+    push: (path: string, state?: unknown) => void;
+};
+
+export type HeaderAction = {
+    buttonType: string;
+    name: string;
+    perform: (e?: unknown) => void;
+};
+
+export type IconListItem = {
+    Icon: ReactNode;
+    value: ReactNode;
+};
 
 export type CollaborationPageHeaderProps = {
-    collaboration: CollaborationHeaderModel;
-    user: CollaborationHeaderUser;
+    collaboration: CollaborationView;
+    user: CurrentUserView;
     history: HistoryLike;
     allowedToEdit: boolean;
     adminOfCollaboration: boolean;
@@ -28,7 +45,7 @@ export type CollaborationPageHeaderProps = {
     onOpenJoinRequest: () => void;
 };
 
-const showHistory = (user: CollaborationHeaderUser, collaboration: CollaborationHeaderModel): boolean => {
+const showHistory = (user: CurrentUserView, collaboration: CollaborationView): boolean => {
     /**
      * If the user is an organisation admin / manager and not a member of the collaboration, then the option
      * "Add me to this collaboration" is added. To show this in the drop-down we add this to the chevron, but we need
@@ -39,11 +56,13 @@ const showHistory = (user: CollaborationHeaderUser, collaboration: Collaboration
         !user.collaboration_memberships.some(cm => cm.collaboration_id === collaboration.id);
 };
 
-const getMembershipStatus = (collaboration: CollaborationHeaderModel, user: CollaborationHeaderUser) => {
-    if (!user || !collaboration || isEmpty(collaboration.collaboration_memberships)) {
+const getMembershipStatus = (collaboration: CollaborationView, user: CurrentUserView) => {
+    // the join request view of a collaboration does not disclose its memberships
+    const memberships = collaboration?.collaboration_memberships ?? [];
+    if (!user || !collaboration || isEmpty(memberships)) {
         return null;
     }
-    const membership = collaboration.collaboration_memberships.find(cm => cm.user_id === user.id);
+    const membership = memberships.find(cm => cm.user_id === user.id);
     if (!membership) {
         return null;
     }
@@ -57,7 +76,7 @@ const getMembershipStatus = (collaboration: CollaborationHeaderModel, user: Coll
     return <span>{I18n.t("collaboration.status.expired")}</span>;
 };
 
-const getCollaborationStatus = (collaboration: CollaborationHeaderModel) => {
+const getCollaborationStatus = (collaboration: CollaborationView) => {
     if (!collaboration.expiry_date) {
         return null;
     }
@@ -68,7 +87,7 @@ const getCollaborationStatus = (collaboration: CollaborationHeaderModel) => {
     </span>);
 };
 
-const getMemberIconListItem = (collaboration: CollaborationHeaderModel): IconListItem => {
+const getMemberIconListItem = (collaboration: CollaborationView): IconListItem => {
     const memberCount = collaboration.collaboration_memberships_count;
     const groupCount = collaboration.groups.length;
     return {
@@ -115,7 +134,7 @@ const getActions = ({
             }
         });
     }
-    const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
+    const isMember = (collaboration.collaboration_memberships ?? []).some(m => m.user_id === user.id);
     if (isMember) {
         actions.push({
             buttonType: ButtonType.DestructiveSecondary,
@@ -163,7 +182,10 @@ export const CollaborationPageHeader: FC<CollaborationPageHeaderProps> = ({
     onBoarding,
     onOpenJoinRequest
 }) => {
-    const actions = getActions({
+    // The join request response has no collaboration_memberships, which getActions reads, so the
+    // actions are only computed for the views that do. The class component did the same by calling
+    // getActions inside the ternary that renders them.
+    const actions = collaborationJoinRequest ? [] : getActions({
         user,
         collaboration,
         history,
@@ -217,7 +239,7 @@ export const CollaborationPageHeader: FC<CollaborationPageHeaderProps> = ({
         });
     }
     return <UnitHeader obj={collaboration}
-                       actions={collaborationJoinRequest ? [] : actions}
+                       actions={actions}
                        name={collaboration.name}
                        displayDescription={false}
                        customAction={customAction}>

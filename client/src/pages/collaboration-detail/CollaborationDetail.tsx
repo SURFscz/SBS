@@ -1,4 +1,4 @@
-import React, {ReactElement, forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
+import React, {ReactElement, ReactNode, forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {RouteComponentProps} from "react-router-dom";
 
 import {
@@ -42,18 +42,60 @@ import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {isUuid4} from "../../validations/regExps";
 import {isInvitationExpired} from "../../utils/Date";
 import {AppConfig} from "@/api/config";
+import {InvitationDTO, JoinRequestDTO, ServiceConnectionRequestDTO} from "@/api/apiTypes";
 import {
-    CollaborationDetailModel,
-    CollaborationHeaderUser,
     CollaborationInvitation,
-    CollaborationInvitationSummary,
-    CollaborationRouteParams,
-    CollaborationTabPaneProps,
-    CollaborationUserToken
-} from "./CollaborationTypes";
+    CollaborationJoinRequestView,
+    CollaborationMembershipView,
+    CollaborationUserToken,
+    CurrentUserView
+} from "@/api/apiFrontendTypes";
+
+/**
+ * The page is served by four endpoints: the admin view (CollaborationDetailDTO), the member view
+ * (CollaborationDTO), the join request view and the invitation view. This is what all four have in
+ * common, so the page and its header can render a collaboration without knowing which endpoint
+ * provided it. Everything only some of the views provide is optional here, so reading it requires
+ * a check. The picked fields are the ones the page reads; identifier is deliberately absent,
+ * because the member view does not return one.
+ */
+export type CollaborationView = Pick<CollaborationJoinRequestView,
+    "id"
+    | "name"
+    | "description"
+    | "short_name"
+    | "logo"
+    | "website_url"
+    | "support_email"
+    | "organisation_id"
+    | "organisation"
+    | "status"
+    | "expiry_date"
+    | "last_activity_date"
+    | "disable_join_requests"
+    | "disclose_member_information"
+    | "disclose_email_information"
+    | "collaboration_memberships_count"
+    | "groups"
+    | "services"> & {
+    // the join request view does not disclose the members of a collaboration
+    collaboration_memberships?: CollaborationMembershipView[];
+    // only the admin view returns these
+    // Todo: decide if discriminative union pattern is needed?
+    invitations?: InvitationDTO[];
+    join_requests?: JoinRequestDTO[];
+    service_connection_requests?: ServiceConnectionRequestDTO[];
+};
+
+export type CollaborationRouteParams = {
+    id?: string;
+    hash?: string;
+    tab?: string;
+    groupId?: string;
+};
 
 export type CollaborationDetailProps = RouteComponentProps<CollaborationRouteParams> & {
-    user: CollaborationHeaderUser;
+    user: CurrentUserView;
     config: AppConfig;
     refreshUser: (callback?: () => void) => void;
     collaborationIdentifier?: string;
@@ -63,13 +105,21 @@ type SocketMessage = {
     subscription_id: string;
 };
 
+type CollaborationTabPaneProps = {
+    name: string;
+    label: string;
+    notifier?: boolean | number | null;
+    readOnly?: boolean;
+    children?: ReactNode;
+};
+
 const CollaborationTabPane = ({children, ...tabProps}: CollaborationTabPaneProps) =>
     React.createElement("div", tabProps as React.HTMLAttributes<HTMLDivElement>, children);
 
 const updateAppStore = (
-    user: CollaborationHeaderUser,
+    user: CurrentUserView,
     _config: AppConfig,
-    collaboration: CollaborationDetailModel,
+    collaboration: CollaborationView,
     _adminOfCollaboration: boolean,
     orgManager: boolean
 ): void => {
@@ -88,7 +138,7 @@ const updateAppStore = (
 
 type LatestCollaborationState = {
     props: CollaborationDetailProps;
-    collaboration: CollaborationDetailModel | null;
+    collaboration: CollaborationView | null;
     tab: string;
     invitation: CollaborationInvitation | null;
     isInvitation: boolean;
@@ -102,7 +152,7 @@ export type CollaborationDetailHandle = {
     tabChanged: (name: string, id?: number, groupIdentifier?: string | number | null) => void;
     doAcceptInvitation: () => void;
     getTabs: (
-        currentCollaboration: CollaborationDetailModel,
+        currentCollaboration: CollaborationView,
         currentUserTokens: CollaborationUserToken[] | null,
         schacHomeOrganisations: unknown,
         currentAdminOfCollaboration: boolean,
@@ -117,7 +167,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     const [invitation, setInvitation] = useState<CollaborationInvitation | null>(null);
     const [serviceEmails, setServiceEmails] = useState<Record<string, string[]>>({});
     const [adminEmails, setAdminEmails] = useState<string[]>([]);
-    const [collaboration, setCollaboration] = useState<CollaborationDetailModel | null>(null);
+    const [collaboration, setCollaboration] = useState<CollaborationView | null>(null);
     const [schacHomeOrganisations, setSchacHomeOrganisations] = useState<unknown>(null);
     const [userTokens, setUserTokens] = useState<CollaborationUserToken[] | null>(null);
     const [adminOfCollaboration, setAdminOfCollaboration] = useState(false);
@@ -232,7 +282,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         if (!currentCollaboration) {
             return;
         }
-        const admins = currentCollaboration.collaboration_memberships.filter(m => m.role === "admin");
+        const admins = (currentCollaboration.collaboration_memberships ?? []).filter(m => m.role === "admin");
         const nextLastAdminWarning = admins.length === 1 && admins[0].user_id === currentUser.id;
         const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, currentCollaboration.organisation_id);
         if (!canStay || nextLastAdminWarning) {
@@ -246,15 +296,22 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         }
     };
 
-    const showExpiryDateFlash = createShowExpiryDateFlash({
-        onActivate: activate(true),
-        onUnsuspend: unsuspend(true),
-        onEditCollaboration: (collaborationId: number) => {
-            latestRef.current.props.history.push(`/edit-collaboration/${collaborationId}`);
-        }
-    });
+    const showExpiryDateFlash = (
+        currentUser: CurrentUserView,
+        currentCollaboration: CollaborationView,
+        currentConfig: AppConfig,
+        currentShowMemberView: boolean
+    ) => {
+        createShowExpiryDateFlash({
+            onActivate: activate(true),
+            onUnsuspend: unsuspend(true),
+            onEditCollaboration: (collaborationId: number) => {
+                latestRef.current.props.history.push(`/edit-collaboration/${collaborationId}`);
+            }
+        })(currentUser, currentCollaboration, currentConfig, currentShowMemberView);
+    };
 
-    const subscribeToCollaborationSocket = (currentCollaboration: CollaborationDetailModel) => {
+    const subscribeToCollaborationSocket = (currentCollaboration: CollaborationView) => {
         if (socketSubscribedRef.current) {
             return;
         }
@@ -307,15 +364,13 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
                     const nextAdminOfCollaboration = json.access === "full";
-                    const promises = nextAdminOfCollaboration
-                        ? [collaborationById(collaboration_id), userTokensOfUser()]
-                        : [collaborationLiteById(collaboration_id), userTokensOfUser()];
-                    Promise.all(promises)
-                        .then(res => {
+                    const collaborationPromise = nextAdminOfCollaboration
+                        ? collaborationById(collaboration_id)
+                        : collaborationLiteById(collaboration_id);
+                    Promise.all([collaborationPromise, userTokensOfUser()])
+                        .then(([nextCollaboration, nextUserTokens]) => {
                             const {user: currentUser, config: currentConfig} = latestRef.current.props;
                             const nextTab = params.tab || (nextAdminOfCollaboration ? latestRef.current.tab : "about");
-                            const nextCollaboration = res[0] as CollaborationDetailModel;
-                            const nextUserTokens = res[1] as CollaborationUserToken[];
                             const nextSchacHomeOrganisations = nextAdminOfCollaboration ? null : currentUser.organisations_from_user_schac_home;
                             const nextOrgManager = isUserAllowed(ROLES.ORG_MANAGER, currentUser, nextCollaboration.organisation_id, null);
                             const nextFirstTime = getParameterByName("first", window.location.search) === "true";
@@ -508,10 +563,10 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     // ---- TABS ----
     const addUserTokenTab = (
         currentUserTokens: CollaborationUserToken[] | null,
-        services: CollaborationDetailModel["services"],
+        services: CollaborationView["services"],
         isJoinRequest: boolean,
         tabs: Array<ReactElement | null>,
-        currentCollaboration: CollaborationDetailModel
+        currentCollaboration: CollaborationView
     ) => {
         if (currentUserTokens) {
             const filteredTokens = currentUserTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
@@ -521,8 +576,8 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         }
     };
 
-    const getCollaborationAdminsTab = (currentCollaboration: CollaborationDetailModel): ReactElement => {
-        const expiredInvitations = (currentCollaboration.invitations || []).some((inv: CollaborationInvitationSummary) => isInvitationExpired(inv));
+    const getCollaborationAdminsTab = (currentCollaboration: CollaborationView): ReactElement => {
+        const expiredInvitations = (currentCollaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<CollaborationTabPane key="admins"
                                       name="admins"
                                       label={I18n.t("home.tabs.coAdmins")}
@@ -535,11 +590,11 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         </CollaborationTabPane>);
     };
 
-    const getMembersTab = (currentCollaboration: CollaborationDetailModel, currentShowMemberView: boolean, isJoinRequest = false): ReactElement | null => {
+    const getMembersTab = (currentCollaboration: CollaborationView, currentShowMemberView: boolean, isJoinRequest = false): ReactElement | null => {
         if (isJoinRequest) {
             return null;
         }
-        const expiredInvitations = (currentCollaboration.invitations || []).some((inv: CollaborationInvitationSummary) => isInvitationExpired(inv));
+        const expiredInvitations = (currentCollaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<CollaborationTabPane key="members" name="members"
                                       label={I18n.t("home.tabs.members")}
                                       readOnly={isJoinRequest}
@@ -553,7 +608,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         </CollaborationTabPane>);
     };
 
-    const getGroupsTab = (currentCollaboration: CollaborationDetailModel, currentShowMemberView: boolean, isJoinRequest = false): ReactElement | null => {
+    const getGroupsTab = (currentCollaboration: CollaborationView, currentShowMemberView: boolean, isJoinRequest = false): ReactElement | null => {
         if (isJoinRequest) {
             return null;
         }
@@ -571,8 +626,8 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
 
     const getUserTokensTab = (
         currentUserTokens: CollaborationUserToken[],
-        currentCollaboration: CollaborationDetailModel,
-        services: CollaborationDetailModel["services"]
+        currentCollaboration: CollaborationView,
+        services: CollaborationView["services"]
     ): ReactElement => {
         return (
             <CollaborationTabPane key="tokens"
@@ -587,7 +642,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         );
     };
 
-    const getJoinRequestsTab = (currentCollaboration: CollaborationDetailModel): ReactElement | null => {
+    const getJoinRequestsTab = (currentCollaboration: CollaborationView): ReactElement | null => {
         const openJoinRequests = (currentCollaboration.join_requests || []).filter(jr => jr.status === "open").length;
         if (currentCollaboration.disable_join_requests) {
             return null;
@@ -602,7 +657,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         </CollaborationTabPane>);
     };
 
-    const getServicesTab = (currentCollaboration: CollaborationDetailModel, currentUser: CollaborationHeaderUser): ReactElement => {
+    const getServicesTab = (currentCollaboration: CollaborationView, currentUser: CurrentUserView): ReactElement => {
         const usedServices = currentCollaboration.services;
         const openServiceConnectionRequests = (currentCollaboration.service_connection_requests || [])
             .filter(r => r.status === "open")
@@ -618,7 +673,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         </CollaborationTabPane>);
     };
 
-    const getAboutTab = (currentCollaboration: CollaborationDetailModel, currentShowMemberView: boolean, isJoinRequest = false): ReactElement => {
+    const getAboutTab = (currentCollaboration: CollaborationView, currentShowMemberView: boolean, isJoinRequest = false): ReactElement => {
         return (<CollaborationTabPane key="about"
                                       name="about"
                                       label={I18n.t("home.tabs.about")}>
@@ -631,7 +686,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     };
 
     const getTabs = (
-        currentCollaboration: CollaborationDetailModel,
+        currentCollaboration: CollaborationView,
         currentUserTokens: CollaborationUserToken[] | null,
         _schacHomeOrganisations: unknown,
         currentAdminOfCollaboration: boolean,
