@@ -1,22 +1,6 @@
 // These types are specified on the frontend for now, these should eventually come from backend. Just like the ones in apiTypes.ts
 // They describe the endpoints that still return the serialized SQLAlchemy models, so they only
 // declare the parts of those responses that the frontend actually reads.
-
-type UserOrganisationMembershipView = {
-    organisation_id: number;
-    role?: string;
-};
-
-type UserCollaborationMembershipView = {
-    collaboration_id: number;
-    role?: string;
-};
-
-type UserServiceMembershipView = {
-    service_id: number;
-    role?: string;
-};
-
 /**
  * What /api/users/me and /api/users/refresh return: the logged-in user with the memberships that
  * determine what they are allowed to see and do.
@@ -26,10 +10,19 @@ export type CurrentUserView = {
     admin: boolean;
     guest?: boolean;
     name?: string;
-    organisation_memberships: UserOrganisationMembershipView[];
-    collaboration_memberships: UserCollaborationMembershipView[];
+    organisation_memberships: Array<{
+        organisation_id: number;
+        role?: string;
+    }>;
+    collaboration_memberships: Array<{
+        collaboration_id: number;
+        role?: string;
+    }>;
     organisations_from_user_schac_home?: unknown;
-    service_memberships?: UserServiceMembershipView[];
+    service_memberships?: Array<{
+        service_id: number;
+        role?: string;
+    }>;
 };
 
 export type CollaborationMembershipView = {
@@ -47,22 +40,6 @@ export type CollaborationMembershipView = {
     };
 };
 
-type CollaborationOrganisationView = {
-    id: number;
-    name: string;
-};
-
-type CollaborationGroupView = {
-    id: number;
-    name: string;
-};
-
-type CollaborationServiceView = {
-    id: number;
-    name: string;
-    token_enabled?: boolean | null;
-};
-
 /**
  * What /api/collaborations/find_by_identifier returns: the collaboration as shown to a user who is
  * not a member and considers requesting to join.
@@ -77,7 +54,10 @@ export type CollaborationJoinRequestView = {
     website_url?: string | null;
     support_email?: string | null;
     organisation_id: number;
-    organisation: CollaborationOrganisationView;
+    organisation: {
+        id: number;
+        name: string;
+    };
     status: string;
     expiry_date?: number | null;
     last_activity_date: number;
@@ -85,8 +65,15 @@ export type CollaborationJoinRequestView = {
     disclose_member_information?: boolean | null;
     disclose_email_information?: boolean | null;
     collaboration_memberships_count: number;
-    groups: CollaborationGroupView[];
-    services: CollaborationServiceView[];
+    groups: Array<{
+        id: number;
+        name: string;
+    }>;
+    services: Array<{
+        id: number;
+        name: string;
+        token_enabled?: boolean | null;
+    }>;
 };
 
 /**
