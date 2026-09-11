@@ -45,7 +45,17 @@ class TestMembershipExpiration(AbstractTest):
             self.assertEqual(user_jane_name, results["memberships_expired"][0]["user"]["name"])
             self.assertEqual(1, len(results["memberships_deleted"]))
             self.assertEqual(user_boss_name, results["memberships_deleted"][0]["user"]["name"])
-            self.assertEqual(2, len(outbox))
+            self.assertEqual(4, len(outbox))
+
+            # The warning mails are sent before the admin (Boss)'s own expired membership is deleted below
+            warning_admin_mail, warning_member_mail, expired_admin_mail, expired_member_mail = outbox
+            self.assertEqual(["boss@example.org"], warning_admin_mail.to)
+            self.assertEqual(["sarah@uni-franeker.nl"], warning_member_mail.to)
+            self.assertEqual(["jane@ucc.org"], expired_member_mail.to)
+            # Boss (the only collaboration admin) has been deleted by the time the expired notification is sent,
+            # so the admin mail falls back to the organisation admins/managers
+            self.assertNotIn("boss@example.org", expired_admin_mail.to)
+            self.assertTrue(len(expired_admin_mail.to) > 0)
 
         self.assertEqual(0, CollaborationMembership.query
                          .join(CollaborationMembership.collaboration)
