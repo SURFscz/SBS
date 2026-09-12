@@ -41,7 +41,7 @@ dependencies = [
     "pytz==2026.3.post1",
     "PyYAML==6.0.3",
     "qrcode==8.2",
-    "redis~=7.4",
+    "redis~=8.1",
     "requests==2.34.2",
     "SQLAlchemy==2.0.52",
     "urllib3==2.7.0",
