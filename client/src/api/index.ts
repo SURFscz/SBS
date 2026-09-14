@@ -7,11 +7,10 @@ import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
-import {CollaborationDTO, CollaborationDetailDTO} from "./apiTypes";
+import {CollaborationDTO, CollaborationDetailDTO, CollaborationJoinRequestDTO} from "./apiTypes";
 import {
     CollaborationAccessResponse,
     CollaborationIdResponse,
-    CollaborationJoinRequestView,
     CollaborationUserToken,
     InvitationByHashResponse
 } from "./apiFrontendTypes";
@@ -423,9 +422,8 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
-// THIS one!!!
-export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestView> {
-    return fetchJson<CollaborationJoinRequestView>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestDTO> {
+    return fetchJson<CollaborationJoinRequestDTO>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
 export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {

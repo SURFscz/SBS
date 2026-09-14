@@ -42,34 +42,41 @@ import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {isUuid4} from "../../validations/regExps";
 import {isInvitationExpired} from "../../utils/Date";
 import {AppConfig} from "@/api/config";
-import {InvitationDTO, JoinRequestDTO, ServiceConnectionRequestDTO} from "@/api/apiTypes";
+import {
+    CollaborationJoinRequestDTO,
+    InvitationDTO,
+    JoinRequestDTO,
+    OrganisationJoinRequestDTO,
+    ServiceConnectionRequestDTO,
+    ServiceJoinRequestDTO
+} from "@/api/apiTypes";
 import {
     CollaborationInvitation,
-    CollaborationJoinRequestView,
     CollaborationMembershipView,
     CollaborationUserToken,
     CurrentUserView
 } from "@/api/apiFrontendTypes";
 
-export type CollaborationView = Pick<CollaborationJoinRequestView,
+export type CollaborationView = Pick<CollaborationJoinRequestDTO,
     "id"
     | "name"
     | "description"
-    | "short_name"
-    | "logo"
-    | "website_url"
-    | "support_email"
     | "organisation_id"
-    | "organisation"
-    | "status"
-    | "expiry_date"
-    | "last_activity_date"
-    | "disable_join_requests"
-    | "disclose_member_information"
-    | "disclose_email_information"
     | "collaboration_memberships_count"
-    | "groups"
-    | "services"> & {
+    | "groups"> & {
+    short_name?: string;
+    logo?: string | null;
+    website_url?: string | null;
+    support_email?: string | null;
+    status?: string;
+    expiry_date?: number | null;
+    last_activity_date?: number;
+    disable_join_requests?: boolean | null;
+    disclose_member_information?: boolean | null;
+    disclose_email_information?: boolean | null;
+    // The join request view discloses less of the organisation and the services than the other views
+    organisation: Pick<OrganisationJoinRequestDTO, "id" | "name"> & Partial<OrganisationJoinRequestDTO>;
+    services: Array<Pick<ServiceJoinRequestDTO, "id" | "name"> & Partial<ServiceJoinRequestDTO>>;
     collaboration_memberships?: CollaborationMembershipView[];
     invitations?: InvitationDTO[];
     join_requests?: JoinRequestDTO[];

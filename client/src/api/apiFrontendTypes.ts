@@ -41,10 +41,9 @@ export type CollaborationMembershipView = {
 };
 
 /**
- * What /api/collaborations/find_by_identifier returns: the collaboration as shown to a user who is
- * not a member and considers requesting to join.
+ * The collaboration as shown to an invitee, which does list the members.
  */
-export type CollaborationJoinRequestView = {
+type CollaborationInvitationView = {
     id: number;
     identifier: string;
     name: string;
@@ -74,12 +73,6 @@ export type CollaborationJoinRequestView = {
         name: string;
         token_enabled?: boolean | null;
     }>;
-};
-
-/**
- * The collaboration as shown to an invitee, which does list the members.
- */
-type CollaborationInvitationView = CollaborationJoinRequestView & {
     collaboration_memberships: CollaborationMembershipView[];
 };
 
