@@ -233,3 +233,71 @@ class CollaborationDetailDTO(BaseModel):
     service_connection_requests: list[ServiceConnectionRequestDTO]
     tags: list[TagDTO]
     units: list[UnitDTO]
+
+
+# The DTO's below describe the collaboration as shown to a user who is not a member and considers requesting to join.
+# It does not disclose the memberships and only contains what that page actually renders.
+
+class ServiceContactUserJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str | None
+    email: str | None
+
+
+class ServiceMembershipJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    user: ServiceContactUserJoinRequestDTO
+
+
+class ServiceJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    # The service card looks up the groups of a service by uuid4
+    uuid4: str
+    name: str
+    description: str | None
+    logo: str | None
+    uri: str | None
+    uri_info: str | None
+    privacy_policy: str | None
+    accepted_user_policy: str | None
+    contact_email: str | None
+    support_email: str | None
+    organisation_name: str | None
+    token_enabled: bool | None
+    service_memberships: list[ServiceMembershipJoinRequestDTO]
+
+
+class OrganisationJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    accepted_user_policy: str | None
+    schac_home_organisations: list[SchacHomeOrganisationDTO]
+
+
+class GroupJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    # Only the number of groups is shown, so the group itself is not disclosed
+    id: int
+
+
+class CollaborationJoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str
+    logo: str | None
+    organisation_id: int
+    disable_join_requests: bool | None
+    disclose_member_information: bool | None
+    collaboration_memberships_count: int
+    organisation: OrganisationJoinRequestDTO
+    groups: list[GroupJoinRequestDTO]
+    services: list[ServiceJoinRequestDTO]

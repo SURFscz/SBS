@@ -423,6 +423,7 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
+// THIS one!!!
 export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestView> {
     return fetchJson<CollaborationJoinRequestView>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }

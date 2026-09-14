@@ -199,3 +199,48 @@ export interface TagDTO {
   id: number;
   tag_value: string;
 }
+export interface CollaborationJoinRequestDTO {
+  id: number;
+  name: string;
+  description: string;
+  logo: string | null;
+  organisation_id: number;
+  disable_join_requests: boolean | null;
+  disclose_member_information: boolean | null;
+  collaboration_memberships_count: number;
+  organisation: OrganisationJoinRequestDTO;
+  groups: GroupJoinRequestDTO[];
+  services: ServiceJoinRequestDTO[];
+}
+export interface OrganisationJoinRequestDTO {
+  id: number;
+  name: string;
+  accepted_user_policy: string | null;
+  schac_home_organisations: SchacHomeOrganisationDTO[];
+}
+export interface GroupJoinRequestDTO {
+  id: number;
+}
+export interface ServiceJoinRequestDTO {
+  id: number;
+  uuid4: string;
+  name: string;
+  description: string | null;
+  logo: string | null;
+  uri: string | null;
+  uri_info: string | null;
+  privacy_policy: string | null;
+  accepted_user_policy: string | null;
+  contact_email: string | null;
+  support_email: string | null;
+  organisation_name: string | null;
+  token_enabled: boolean | null;
+  service_memberships: ServiceMembershipJoinRequestDTO[];
+}
+export interface ServiceMembershipJoinRequestDTO {
+  user: ServiceContactUserJoinRequestDTO;
+}
+export interface ServiceContactUserJoinRequestDTO {
+  name: string | null;
+  email: string | null;
+}

@@ -50,7 +50,10 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get("/api/collaborations/find_by_identifier",
                                  query_data={"identifier": co_ai_computing_uuid},
                                  with_basic_auth=False)
-        self.assertEqual(collaboration["identifier"], co_ai_computing_uuid)
+        self.assertEqual(self.find_entity_by_name(Collaboration, co_ai_computing_name).id, collaboration["id"])
+        self.assertEqual(co_ai_computing_name, collaboration["name"])
+        # The join request view does not disclose the memberships
+        self.assertNotIn("collaboration_memberships", collaboration)
 
     def test_search(self):
         self.login("urn:john")
@@ -235,11 +238,12 @@ class TestCollaboration(AbstractTest):
         self.assertIn("123_invalid", res["message"])
 
     def test_collaboration_update_organisation(self):
-        collaboration = self._find_by_identifier()
-        pre_uuid4 = collaboration["uuid4"]
+        pre_uuid4 = self.find_entity_by_name(Collaboration, co_ai_computing_name).uuid4
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
 
         organisation_id = self.find_entity_by_name(Organisation, unifra_name).id
         self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["units"] = []
         collaboration["organisation_id"] = organisation_id
         self.put("/api/collaborations", body=collaboration)
@@ -251,9 +255,10 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(pre_uuid4, collaboration.uuid4)
 
     def test_collaboration_update_organisation_not_allowed(self):
-        collaboration = self._find_by_identifier()
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
         organisation_id = self.find_entity_by_name(Organisation, unifra_name).id
         self.login("urn:admin")
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["units"] = []
         collaboration["organisation_id"] = organisation_id
         self.put("/api/collaborations", body=collaboration, response_status_code=403)
