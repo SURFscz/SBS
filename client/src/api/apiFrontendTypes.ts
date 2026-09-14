@@ -25,10 +25,6 @@ export type CurrentUserView = {
     }>;
 };
 
-export type CollaborationAccessResponse = {
-    access: string;
-};
-
 export type CollaborationUserToken = {
     service_id: number;
 };

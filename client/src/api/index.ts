@@ -8,6 +8,7 @@ import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
 import {
+    CollaborationAccessDTO,
     CollaborationDTO,
     CollaborationDetailDTO,
     CollaborationIdDTO,
@@ -15,7 +16,7 @@ import {
     InvitationByHashDTO,
     InvitationByHashExpandedDTO
 } from "./apiTypes";
-import {CollaborationAccessResponse, CollaborationUserToken} from "./apiFrontendTypes";
+import {CollaborationUserToken} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -432,8 +433,8 @@ export function collaborationIdByIdentifier(identifier: string): Promise<Collabo
     return fetchJson<CollaborationIdDTO>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessResponse> {
-    return fetchJson<CollaborationAccessResponse>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
+export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessDTO> {
+    return fetchJson<CollaborationAccessDTO>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
 export function collaborationById(id: number): Promise<CollaborationDetailDTO> {
