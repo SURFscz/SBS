@@ -50,9 +50,10 @@ import {
     OrganisationSummaryDTO,
     SanitizedCollaborationMembershipDTO,
     ServiceCardDTO,
-    ServiceConnectionRequestDTO
+    ServiceConnectionRequestDTO,
+    UserTokenDTO
 } from "@/api/apiTypes";
-import {CollaborationUserToken, CurrentUserView} from "@/api/apiFrontendTypes";
+import {CurrentUserView} from "@/api/apiFrontendTypes";
 
 export type CollaborationView = Pick<CollaborationJoinRequestDTO,
     "id"
@@ -123,7 +124,7 @@ export type CollaborationDetailHandle = {
     doAcceptInvitation: () => void;
     getTabs: (
         currentCollaboration: CollaborationView,
-        currentUserTokens: CollaborationUserToken[] | null,
+        currentUserTokens: UserTokenDTO[] | null,
         schacHomeOrganisations: unknown,
         currentAdminOfCollaboration: boolean,
         currentShowMemberView: boolean,
@@ -162,7 +163,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     const [adminEmails, setAdminEmails] = useState<string[]>([]);
     const [collaboration, setCollaboration] = useState<CollaborationView | null>(null);
     const [schacHomeOrganisations, setSchacHomeOrganisations] = useState<unknown>(null);
-    const [userTokens, setUserTokens] = useState<CollaborationUserToken[] | null>(null);
+    const [userTokens, setUserTokens] = useState<UserTokenDTO[] | null>(null);
     const [adminOfCollaboration, setAdminOfCollaboration] = useState(false);
     const [collaborationJoinRequest, setCollaborationJoinRequest] = useState(false);
     const [showMemberView, setShowMemberView] = useState(true);
@@ -556,7 +557,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
 
     //<editor-fold desc="Tab components">
     const addUserTokenTab = (
-        currentUserTokens: CollaborationUserToken[] | null,
+        currentUserTokens: UserTokenDTO[] | null,
         services: CollaborationView["services"],
         isJoinRequest: boolean,
         tabs: Array<ReactElement | null>,
@@ -619,7 +620,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
     };
 
     const getUserTokensTab = (
-        currentUserTokens: CollaborationUserToken[],
+        currentUserTokens: UserTokenDTO[],
         currentCollaboration: CollaborationView,
         services: CollaborationView["services"]
     ): ReactElement => {
@@ -681,7 +682,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
 
     const getTabs = (
         currentCollaboration: CollaborationView,
-        currentUserTokens: CollaborationUserToken[] | null,
+        currentUserTokens: UserTokenDTO[] | null,
         _schacHomeOrganisations: unknown,
         currentAdminOfCollaboration: boolean,
         currentShowMemberView: boolean,

@@ -24,7 +24,3 @@ export type CurrentUserView = {
         role?: string;
     }>;
 };
-
-export type CollaborationUserToken = {
-    service_id: number;
-};

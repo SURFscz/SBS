@@ -14,9 +14,9 @@ import {
     CollaborationIdDTO,
     CollaborationJoinRequestDTO,
     InvitationByHashDTO,
-    InvitationByHashExpandedDTO
+    InvitationByHashExpandedDTO,
+    UserTokenDTO
 } from "./apiTypes";
-import {CollaborationUserToken} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -1106,9 +1106,9 @@ export function serviceAupDelete(service) {
 }
 
 //User Tokens
-export function userTokensOfUser(serviceId?: number): Promise<CollaborationUserToken[]> {
+export function userTokensOfUser(serviceId?: number): Promise<UserTokenDTO[]> {
     const queryPart = serviceId ? `?service_id=${serviceId}` : "";
-    return fetchJson<CollaborationUserToken[]>(`/api/user_tokens${queryPart}`);
+    return fetchJson<UserTokenDTO[]>(`/api/user_tokens${queryPart}`);
 }
 
 export function userTokenGenerateValue() {
