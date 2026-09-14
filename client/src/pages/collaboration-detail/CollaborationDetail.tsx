@@ -44,18 +44,15 @@ import {isInvitationExpired} from "../../utils/Date";
 import {AppConfig} from "@/api/config";
 import {
     CollaborationJoinRequestDTO,
+    InvitationByHashDTO,
     InvitationDTO,
     JoinRequestDTO,
-    OrganisationJoinRequestDTO,
-    ServiceConnectionRequestDTO,
-    ServiceJoinRequestDTO
+    OrganisationSummaryDTO,
+    SanitizedCollaborationMembershipDTO,
+    ServiceCardDTO,
+    ServiceConnectionRequestDTO
 } from "@/api/apiTypes";
-import {
-    CollaborationInvitation,
-    CollaborationMembershipView,
-    CollaborationUserToken,
-    CurrentUserView
-} from "@/api/apiFrontendTypes";
+import {CollaborationUserToken, CurrentUserView} from "@/api/apiFrontendTypes";
 
 export type CollaborationView = Pick<CollaborationJoinRequestDTO,
     "id"
@@ -75,9 +72,9 @@ export type CollaborationView = Pick<CollaborationJoinRequestDTO,
     disclose_member_information?: boolean | null;
     disclose_email_information?: boolean | null;
     // The join request view discloses less of the organisation and the services than the other views
-    organisation: Pick<OrganisationJoinRequestDTO, "id" | "name"> & Partial<OrganisationJoinRequestDTO>;
-    services: Array<Pick<ServiceJoinRequestDTO, "id" | "name"> & Partial<ServiceJoinRequestDTO>>;
-    collaboration_memberships?: CollaborationMembershipView[];
+    organisation: Pick<OrganisationSummaryDTO, "id" | "name"> & Partial<OrganisationSummaryDTO>;
+    services: Array<Pick<ServiceCardDTO, "id" | "name"> & Partial<ServiceCardDTO>>;
+    collaboration_memberships?: SanitizedCollaborationMembershipDTO[];
     invitations?: InvitationDTO[];
     join_requests?: JoinRequestDTO[];
     service_connection_requests?: ServiceConnectionRequestDTO[];
@@ -113,7 +110,7 @@ type LatestCollaborationState = {
     props: CollaborationDetailProps;
     collaboration: CollaborationView | null;
     tab: string;
-    invitation: CollaborationInvitation | null;
+    invitation: InvitationByHashDTO | null;
     isInvitation: boolean;
     adminOfCollaboration: boolean;
     orgManager: boolean;
@@ -160,7 +157,7 @@ const updateAppStore = (
 export const CollaborationDetail = forwardRef<CollaborationDetailHandle, CollaborationDetailProps>((props, ref) => {
     const {user, history, refreshUser} = props;
 
-    const [invitation, setInvitation] = useState<CollaborationInvitation | null>(null);
+    const [invitation, setInvitation] = useState<InvitationByHashDTO | null>(null);
     const [serviceEmails, setServiceEmails] = useState<Record<string, string[]>>({});
     const [adminEmails, setAdminEmails] = useState<string[]>([]);
     const [collaboration, setCollaboration] = useState<CollaborationView | null>(null);
@@ -389,7 +386,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         });
     };
 
-    const alreadyMemberConfirmation = (currentInvitation: CollaborationInvitation) => {
+    const alreadyMemberConfirmation = (currentInvitation: InvitationByHashDTO) => {
         setLoading(true);
         deleteInvitationByHash(currentInvitation.hash).then(() => {
             const path = encodeURIComponent(`/collaborations/${currentInvitation.collaboration_id}`);

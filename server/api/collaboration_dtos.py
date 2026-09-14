@@ -235,23 +235,23 @@ class CollaborationDetailDTO(BaseModel):
     units: list[UnitDTO]
 
 
-# The DTO's below describe the collaboration as shown to a user who is not a member and considers requesting to join.
-# It does not disclose the memberships and only contains what that page actually renders.
+# The DTO's below describe the collaboration as shown to a user who is not a member yet: the one considering a join
+# request and the one following an invitation. They only contain what those pages actually render.
 
-class ServiceContactUserJoinRequestDTO(BaseModel):
+class SanitizedUserDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str | None
     email: str | None
 
 
-class ServiceMembershipJoinRequestDTO(BaseModel):
+class ServiceCardMembershipDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user: ServiceContactUserJoinRequestDTO
+    user: SanitizedUserDTO
 
 
-class ServiceJoinRequestDTO(BaseModel):
+class ServiceCardDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -268,19 +268,20 @@ class ServiceJoinRequestDTO(BaseModel):
     support_email: str | None
     organisation_name: str | None
     token_enabled: bool | None
-    service_memberships: list[ServiceMembershipJoinRequestDTO]
+    service_memberships: list[ServiceCardMembershipDTO]
 
 
-class OrganisationJoinRequestDTO(BaseModel):
+class OrganisationSummaryDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
+    logo: str | None
     accepted_user_policy: str | None
     schac_home_organisations: list[SchacHomeOrganisationDTO]
 
 
-class GroupJoinRequestDTO(BaseModel):
+class GroupIdDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     # Only the number of groups is shown, so the group itself is not disclosed
@@ -295,9 +296,56 @@ class CollaborationJoinRequestDTO(BaseModel):
     description: str
     logo: str | None
     organisation_id: int
+    collaboration_memberships_count: int
+    organisation: OrganisationSummaryDTO
+    groups: list[GroupIdDTO]
+    services: list[ServiceCardDTO]
     disable_join_requests: bool | None
     disclose_member_information: bool | None
+
+
+# The DTO's below describe what an invitee sees, which does list the members, but only the name and the email of the
+# users behind them.
+
+class SanitizedCollaborationMembershipDTO(CollaborationMembershipDTO):
+    user: SanitizedUserDTO
+
+
+class InvitationCollaborationDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str
+    logo: str | None
+    organisation_id: int
     collaboration_memberships_count: int
-    organisation: OrganisationJoinRequestDTO
-    groups: list[GroupJoinRequestDTO]
-    services: list[ServiceJoinRequestDTO]
+    organisation: OrganisationSummaryDTO
+    groups: list[GroupIdDTO]
+    services: list[ServiceCardDTO]
+    short_name: str
+    website_url: str | None
+    support_email: str | None
+    collaboration_memberships: list[SanitizedCollaborationMembershipDTO]
+    tags: list[TagDTO]
+
+
+class InvitationByHashDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    hash: str
+    collaboration_id: int
+    intended_role: str | None
+    expiry_date: EpochSeconds | None
+    # The inviter, of whom only the name and the email are disclosed
+    user: SanitizedUserDTO
+    collaboration: InvitationCollaborationDTO
+
+
+class InvitationByHashExpandedDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    invitation: InvitationByHashDTO
+    # The service contacts per service id and the organisation admins, both needed to accept the policies
+    service_emails: dict[int, list[str]]
+    admin_emails: list[str]

@@ -7,13 +7,14 @@ import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
-import {CollaborationDTO, CollaborationDetailDTO, CollaborationJoinRequestDTO} from "./apiTypes";
 import {
-    CollaborationAccessResponse,
-    CollaborationIdResponse,
-    CollaborationUserToken,
-    InvitationByHashResponse
-} from "./apiFrontendTypes";
+    CollaborationDTO,
+    CollaborationDetailDTO,
+    CollaborationJoinRequestDTO,
+    InvitationByHashDTO,
+    InvitationByHashExpandedDTO
+} from "./apiTypes";
+import {CollaborationAccessResponse, CollaborationIdResponse, CollaborationUserToken} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -667,8 +668,11 @@ export function organisationInvitationExists(emails, organisationId) {
 }
 
 //Invitations
-export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashResponse> {
-    return fetchJson<InvitationByHashResponse>(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
+// Expanding adds the service and admin emails needed to accept the policies
+export function invitationByHash(hash: string, expand: true): Promise<InvitationByHashExpandedDTO>;
+export function invitationByHash(hash: string, expand?: false): Promise<InvitationByHashDTO>;
+export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashDTO | InvitationByHashExpandedDTO> {
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
 export function deleteInvitationByHash(hash) {

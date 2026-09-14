@@ -205,23 +205,24 @@ export interface CollaborationJoinRequestDTO {
   description: string;
   logo: string | null;
   organisation_id: number;
+  collaboration_memberships_count: number;
+  organisation: OrganisationSummaryDTO;
+  groups: GroupIdDTO[];
+  services: ServiceCardDTO[];
   disable_join_requests: boolean | null;
   disclose_member_information: boolean | null;
-  collaboration_memberships_count: number;
-  organisation: OrganisationJoinRequestDTO;
-  groups: GroupJoinRequestDTO[];
-  services: ServiceJoinRequestDTO[];
 }
-export interface OrganisationJoinRequestDTO {
+export interface OrganisationSummaryDTO {
   id: number;
   name: string;
+  logo: string | null;
   accepted_user_policy: string | null;
   schac_home_organisations: SchacHomeOrganisationDTO[];
 }
-export interface GroupJoinRequestDTO {
+export interface GroupIdDTO {
   id: number;
 }
-export interface ServiceJoinRequestDTO {
+export interface ServiceCardDTO {
   id: number;
   uuid4: string;
   name: string;
@@ -235,12 +236,52 @@ export interface ServiceJoinRequestDTO {
   support_email: string | null;
   organisation_name: string | null;
   token_enabled: boolean | null;
-  service_memberships: ServiceMembershipJoinRequestDTO[];
+  service_memberships: ServiceCardMembershipDTO[];
 }
-export interface ServiceMembershipJoinRequestDTO {
-  user: ServiceContactUserJoinRequestDTO;
+export interface ServiceCardMembershipDTO {
+  user: SanitizedUserDTO;
 }
-export interface ServiceContactUserJoinRequestDTO {
+export interface SanitizedUserDTO {
   name: string | null;
   email: string | null;
+}
+export interface InvitationByHashDTO {
+  hash: string;
+  collaboration_id: number;
+  intended_role: string | null;
+  expiry_date: number | null;
+  user: SanitizedUserDTO;
+  collaboration: InvitationCollaborationDTO;
+}
+export interface InvitationCollaborationDTO {
+  id: number;
+  name: string;
+  description: string;
+  logo: string | null;
+  organisation_id: number;
+  collaboration_memberships_count: number;
+  organisation: OrganisationSummaryDTO;
+  groups: GroupIdDTO[];
+  services: ServiceCardDTO[];
+  short_name: string;
+  website_url: string | null;
+  support_email: string | null;
+  collaboration_memberships: SanitizedCollaborationMembershipDTO[];
+  tags: TagDTO[];
+}
+export interface SanitizedCollaborationMembershipDTO {
+  id: number;
+  user_id: number;
+  role: string;
+  status: string;
+  expiry_date: number | null;
+  created_at: number;
+  user: SanitizedUserDTO;
+}
+export interface InvitationByHashExpandedDTO {
+  invitation: InvitationByHashDTO;
+  service_emails: {
+    [k: string]: string[];
+  };
+  admin_emails: string[];
 }
