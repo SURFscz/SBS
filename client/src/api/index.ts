@@ -10,11 +10,12 @@ import Cookies from "js-cookie";
 import {
     CollaborationDTO,
     CollaborationDetailDTO,
+    CollaborationIdDTO,
     CollaborationJoinRequestDTO,
     InvitationByHashDTO,
     InvitationByHashExpandedDTO
 } from "./apiTypes";
-import {CollaborationAccessResponse, CollaborationIdResponse, CollaborationUserToken} from "./apiFrontendTypes";
+import {CollaborationAccessResponse, CollaborationUserToken} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -427,8 +428,8 @@ export function collaborationByIdentifier(identifier: string): Promise<Collabora
     return fetchJson<CollaborationJoinRequestDTO>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {
-    return fetchJson<CollaborationIdResponse>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdDTO> {
+    return fetchJson<CollaborationIdDTO>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
 export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessResponse> {

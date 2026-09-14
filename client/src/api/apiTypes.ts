@@ -199,6 +199,9 @@ export interface TagDTO {
   id: number;
   tag_value: string;
 }
+export interface CollaborationIdDTO {
+  id: number;
+}
 export interface CollaborationJoinRequestDTO {
   id: number;
   name: string;

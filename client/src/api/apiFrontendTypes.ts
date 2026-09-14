@@ -29,10 +29,6 @@ export type CollaborationAccessResponse = {
     access: string;
 };
 
-export type CollaborationIdResponse = {
-    id: number;
-};
-
 export type CollaborationUserToken = {
     service_id: number;
 };
