@@ -360,3 +360,14 @@ class InvitationByHashExpandedDTO(BaseModel):
     # The service contacts per service id and the organisation admins, both needed to accept the policies
     service_emails: dict[int, list[str]]
     admin_emails: list[str]
+
+
+class UserTokenDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str | None
+    service_id: int
+    created_at: EpochSeconds
+    last_used_date: EpochSeconds | None

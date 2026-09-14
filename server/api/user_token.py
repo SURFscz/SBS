@@ -1,7 +1,10 @@
-from flask import Blueprint, jsonify, request as current_request, session
+from typing import Any
+
+from flask import Blueprint, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, emit_socket
+from server.api.collaboration_dtos import UserTokenDTO
 from server.api.service import user_service
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import current_user_id
@@ -32,16 +35,17 @@ def _sanitize_and_verify(data, hash_token=True):
 
 @user_token_api.route("/", strict_slashes=False)
 @json_endpoint
-def user_tokens():
+def user_tokens() -> tuple[list[dict[str, Any]], int]:
     user = db.session.get(User, current_user_id())
     tokens = user.user_tokens
     service_id = query_param("service_id", False)
     if service_id:
         tokens = [token for token in tokens if token.service_id == int(service_id)]
-    tokens = jsonify(tokens).json
-    for token in tokens:
-        del token["hashed_token"]
-    return tokens, 200
+
+    # The DTO does not disclose the hashed token
+    result: list[UserTokenDTO] = [UserTokenDTO.model_validate(token) for token in tokens]
+
+    return [token.model_dump(mode="python", exclude_none=True) for token in result], 200
 
 
 @user_token_api.route("/generate_token", strict_slashes=False)

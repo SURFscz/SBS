@@ -291,3 +291,11 @@ export interface InvitationByHashExpandedDTO {
   };
   admin_emails: string[];
 }
+export interface UserTokenDTO {
+  id: number;
+  name: string;
+  description: string | null;
+  service_id: number;
+  created_at: number;
+  last_used_date: number | null;
+}
