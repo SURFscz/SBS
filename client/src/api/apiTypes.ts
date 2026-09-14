@@ -5,6 +5,9 @@
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
+export interface CollaborationAccessDTO {
+  access: "full" | "lite";
+}
 export interface CollaborationDTO {
   id: number;
   name: string;

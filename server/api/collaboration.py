@@ -38,8 +38,8 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import CollaborationDTO, CollaborationDetailDTO, CollaborationIdDTO, \
-    CollaborationJoinRequestDTO
+from server.api.collaboration_dtos import CollaborationAccessDTO, CollaborationDTO, CollaborationDetailDTO, \
+    CollaborationIdDTO, CollaborationJoinRequestDTO
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -505,13 +505,15 @@ def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
 
 @collaboration_api.route("/access_allowed/<collaboration_id>", strict_slashes=False)
 @json_endpoint
-def collaboration_access_allowed(collaboration_id):
+def collaboration_access_allowed(collaboration_id) -> tuple[dict[str, Any], int]:
     try:
         confirm_collaboration_admin(collaboration_id)
-        return {"access": "full"}, 200
+        result: CollaborationAccessDTO = CollaborationAccessDTO(access="full")
     except Forbidden:
         confirm_collaboration_member(collaboration_id)
-        return {"access": "lite"}, 200
+        result = CollaborationAccessDTO(access="lite")
+
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)

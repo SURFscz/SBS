@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, PlainSerializer
 
@@ -239,6 +239,11 @@ class CollaborationIdDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+
+class CollaborationAccessDTO(BaseModel):
+    # Admins get the full collaboration, members only the lite version
+    access: Literal["full", "lite"]
 
 
 # The DTO's below describe the collaboration as shown to a user who is not a member yet: the one considering a join
