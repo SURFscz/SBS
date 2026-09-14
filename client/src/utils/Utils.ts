@@ -2,7 +2,19 @@ import moment from "moment";
 import escape from "lodash.escape";
 import I18n from "../locale/I18n";
 
-export function stopEvent(e) {
+type AnyRecord = Record<string, unknown>;
+
+export type StoppableEvent = {
+    preventDefault: () => void;
+    stopPropagation: () => void;
+};
+
+export type SelectOption = {
+    value: string;
+    label: string;
+};
+
+export function stopEvent(e?: StoppableEvent | null): boolean {
     if (e !== undefined && e !== null) {
         e.preventDefault();
         e.stopPropagation();
@@ -11,7 +23,11 @@ export function stopEvent(e) {
     return true;
 }
 
-export function isEmpty(obj) {
+/**
+ * The predicate only claims null/undefined - empty strings, arrays and objects also return true, but
+ * narrowing those away is not possible. This makes `!isEmpty(x)` enough to treat x as defined.
+ */
+export function isEmpty<T>(obj: T): obj is Extract<T, null | undefined> {
     if (obj === undefined || obj === null) {
         return true;
     }
@@ -21,8 +37,9 @@ export function isEmpty(obj) {
     if (typeof obj === "string") {
         return obj.trim().length === 0;
     }
-    if (obj && obj.getTime) {
-        return obj.getTime() !== obj.getTime();
+    const dateLike = obj as { getTime?: () => number };
+    if (dateLike.getTime) {
+        return dateLike.getTime() !== dateLike.getTime();
     }
     if (typeof obj === "object") {
         return Object.keys(obj).length === 0;
@@ -30,14 +47,18 @@ export function isEmpty(obj) {
     return false;
 }
 
-export function groupBy(arr, key) {
-    return arr.reduce((acc, item) => {
-        (acc[item[key]] = acc[item[key]] || []).push(item);
+export function groupBy<T>(arr: T[], key: keyof T): Record<string, T[]> {
+    return arr.reduce<Record<string, T[]>>((acc, item) => {
+        const group = String(item[key]);
+        (acc[group] = acc[group] || []).push(item);
         return acc;
     }, {});
 }
 
-export function sortObjects(objects, attribute, reverse, customSort = null) {
+export function sortObjects<T extends AnyRecord>(objects: T[],
+                                                 attribute: string,
+                                                 reverse: boolean,
+                                                 customSort: ((a: T, b: T, reverse: boolean) => number) | null = null): T[] {
     //Check if the column has a custom sort function
     if (!isEmpty(customSort) && typeof customSort === "function") {
         return [...objects].sort((a, b) => customSort(a, b, reverse));
@@ -48,8 +69,8 @@ export function sortObjects(objects, attribute, reverse, customSort = null) {
         if (typeof val1 === "number" && typeof val2 === "number") {
             return (val1 - val2) * (reverse ? -1 : 1);
         }
-        const aS = val1.toString();
-        const bS = val2.toString();
+        const aS = String(val1);
+        const bS = String(val2);
         if (aS.length === 0) {
             return (reverse ? -1 : 1);
         }
@@ -60,7 +81,7 @@ export function sortObjects(objects, attribute, reverse, customSort = null) {
     });
 }
 
-export function valueForSort(attribute, obj) {
+export function valueForSort(attribute: string, obj: AnyRecord): unknown {
     if (attribute.endsWith("_date")) {
         return obj[attribute] || Number.MAX_SAFE_INTEGER;
     }
@@ -75,40 +96,40 @@ export function valueForSort(attribute, obj) {
         return val;
     }
     const parts = attribute.replace(/__/g, ".").split(".");
-    const res = parts.reduce((acc, e) => {
+    const res = parts.reduce<unknown>((acc, e) => {
         if (isEmpty(acc)) {
             return "";
         }
-        return acc[e];
+        return (acc as AnyRecord)[e];
     }, obj);
     return res || "";
 
 }
 
-export function pseudoGuid() {
+export function pseudoGuid(): string {
     return (crypto.randomUUID && typeof crypto.randomUUID === "function" && crypto.randomUUID()) ||
         Math.round((new Date().getTime() * Math.random() * 1000)).toString()
 }
 
-export function escapeDeep(obj) {
+export function escapeDeep(obj: AnyRecord | null | undefined): void {
     if (!isEmpty(obj)) {
         Object.keys(obj).forEach(key => {
             const val = obj[key];
             if (typeof (val) === "string" || val instanceof String) {
-                obj[key] = escape(val);
+                obj[key] = escape(val as string);
             } else if (typeof (val) === "object" || val instanceof Object) {
-                escapeDeep(val);
+                escapeDeep(val as AnyRecord);
             }
         });
 
     }
 }
 
-export const removeDuplicates = (arr, attr) => arr
+export const removeDuplicates = <T extends AnyRecord>(arr: T[], attr: keyof T): T[] => arr
     .filter((obj, pos, arr) => arr
         .filter(filObj => !isEmpty(filObj))
         .map(mapObj => mapObj[attr])
-        .indexOf((obj || {})[attr]) === pos);
+        .indexOf((obj || {} as T)[attr]) === pos);
 
 export const ErrorOrigins = {
     invitationNotFound: "invitationNotFound",
@@ -116,11 +137,11 @@ export const ErrorOrigins = {
     invalidPamWebSSO: "invalidPamWebSSO"
 }
 
-export const splitListSemantically = (arr, lastSeparator) => {
+export const splitListSemantically = (arr: string[], lastSeparator: string): string => {
     return [arr.slice(0, -1).join(", "), arr.slice(-1)[0]].join(arr.length < 2 ? "" : ` ${lastSeparator} `);
 }
 
-export const shuffleArray = arr => {
+export const shuffleArray = <T>(arr: T[]): T[] => {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -128,16 +149,16 @@ export const shuffleArray = arr => {
     return [...arr];
 }
 
-export const capitalize = str => {
+export const capitalize = (str: string): string => {
     return isEmpty(str) ? str : (str.charAt(0).toUpperCase() + str.slice(1));
 }
 
-export const statusCustomSort = (o1, o2, reverse) => {
+export const statusCustomSort = (o1: { status: string }, o2: { status: string }, reverse: boolean): number => {
     const comparison = o1.status === "open" ? -1 : o2.status === "open" ? 1 : o1.status.localeCompare(o2.status);
     return reverse ? comparison * -1 : comparison;
 };
 
-const stringArraySort = (val1, val2, reverse) => {
+const stringArraySort = (val1: string, val2: string, reverse: boolean): number => {
     let comparison;
     if (val1 === val2) {
         comparison = 0;
@@ -151,34 +172,56 @@ const stringArraySort = (val1, val2, reverse) => {
     return reverse ? comparison * -1 : comparison;
 }
 
-export const unitArraySort = (a1, a2, reverse) => {
+export type UnitSortEntity = {
+    units?: { name: string }[];
+};
+
+export const unitArraySort = (a1: UnitSortEntity, a2: UnitSortEntity, reverse: boolean): number => {
     const val1 = (a1.units || []).map(unit => unit.name.toLowerCase()).sort().join("");
     const val2 = (a2.units || []).map(unit => unit.name.toLowerCase()).sort().join("");
     return stringArraySort(val1, val2, reverse);
 }
 
-export const tagArraySort = (a1, a2, reverse) => {
+export type TagSortEntity = {
+    tags?: { tag_value: string }[];
+};
+
+export const tagArraySort = (a1: TagSortEntity, a2: TagSortEntity, reverse: boolean): number => {
     const val1 = (a1.tags || []).map(tag => tag.tag_value.toLowerCase()).sort().join("");
     const val2 = (a2.tags || []).map(tag => tag.tag_value.toLowerCase()).sort().join("");
     return stringArraySort(val1, val2, reverse);
 }
 
-export const userColumnsCustomSort = (o1, o2, reverse) => {
-    let comparison;
+export type UserColumnSortEntity = {
+    invite?: boolean;
+    invitee_email?: string;
+    user?: { name: string } | null;
+};
+
+export const userColumnsCustomSort = (o1: UserColumnSortEntity, o2: UserColumnSortEntity, reverse: boolean): number => {
+    //The invite/no-invite branches below are exhaustive, the initial value is never used
+    let comparison = 0;
     if (o1.invite && !o2.invite) {
         comparison = 1;
     } else if (!o1.invite && o2.invite) {
         comparison = -1;
     } else if (o1.invite && o2.invite) {
-        comparison = o1.invitee_email.localeCompare(o2.invitee_email);
+        comparison = (o1.invitee_email || "").localeCompare(o2.invitee_email || "");
     } else if (!o1.invite && !o2.invite) {
         comparison = (o1.user || {name: ""}).name.localeCompare((o2.user || {name: ""}).name);
     }
     return reverse ? comparison * -1 : comparison;
 }
 
-export const expiryDateCustomSort = (o1, o2, reverse) => {
-    let comparison;
+export type ExpiryDateSortEntity = {
+    invite?: boolean;
+    expiry_date?: number | null;
+    organisation_id?: number | null;
+};
+
+export const expiryDateCustomSort = (o1: ExpiryDateSortEntity, o2: ExpiryDateSortEntity, reverse: boolean): number => {
+    //The invite/no-invite branches below are exhaustive, the initial value is never used
+    let comparison = 0;
     if (o1.invite && !o2.invite) {
         comparison = 1;
     } else if (!o1.invite && o2.invite) {
@@ -194,25 +237,25 @@ export const expiryDateCustomSort = (o1, o2, reverse) => {
 
 }
 
-export const joinSelectValuesArray = arr => {
+export const joinSelectValuesArray = (arr: SelectOption[] | string | null | undefined): string | null => {
     return isEmpty(arr) ? null : Array.isArray(arr) ? arr.map(option => option.value).join(",") : arr;
 }
 
-export const commaSeparatedArrayToSelectValues = str => {
+export const commaSeparatedArrayToSelectValues = (str: string | SelectOption[] | null | undefined): SelectOption[] | string => {
     return isEmpty(str) ? [] : Array.isArray(str) ? str : str.split ? str.split(",").map(s => ({
         value: s.trim(),
         label: s.trim()
     })) : str;
 }
 
-export const commaSeparatedArrayToValues = str => {
+export const commaSeparatedArrayToValues = (str: string | string[] | null | undefined): string[] | string => {
     return isEmpty(str) ? [] : Array.isArray(str) ? str : str.split ? str.split(",").map(s => s.trim()) : str;
 }
 
-export const scrollToBottom = () => {
-    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"}), 425);
+export const scrollToBottom = (): void => {
+    setTimeout(() => window.scrollTo({top: document.body.scrollHeight, behavior: "smooth"}), 425);
 }
 
-export const serial = (tasks, fn) => {
-    return tasks.reduce((promise, task, index) => promise.then(() => fn(task, index)), Promise.resolve(null))
+export const serial = <T, R>(tasks: T[], fn: (task: T, index: number) => Promise<R>): Promise<R | null> => {
+    return tasks.reduce<Promise<R | null>>((promise, task, index) => promise.then(() => fn(task, index)), Promise.resolve(null))
 }

@@ -50,6 +50,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@types/lodash.escape": "^4.0.9",
         "@types/node": "^26.5.0",
         "@types/react": "18",
         "@types/react-dom": "18",

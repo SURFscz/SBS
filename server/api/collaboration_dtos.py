@@ -1,6 +1,17 @@
+import time
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, PlainSerializer
+
+
+def _epoch_seconds(value: datetime) -> int:
+    return int(time.mktime(value.timetuple()))
+
+
+# All dates are sent as epoch seconds, like DynamicExtendedJSONProvider does for the ORM models.
+# Serializing here instead of in the json provider keeps the generated TypeScript types honest.
+EpochSeconds = Annotated[datetime, PlainSerializer(_epoch_seconds, return_type=int)]
 
 
 class UserDTO(BaseModel):
@@ -20,8 +31,8 @@ class CollaborationMembershipDTO(BaseModel):
     user_id: int
     role: str
     status: str
-    expiry_date: datetime | None
-    created_at: datetime
+    expiry_date: EpochSeconds | None
+    created_at: EpochSeconds
     user: UserDTO
 
 
@@ -35,7 +46,7 @@ class GroupDTO(BaseModel):
     identifier: str
     global_urn: str
     auto_provision_members: bool | None
-    created_at: datetime
+    created_at: EpochSeconds
     service_group_id: int | None
     collaboration_memberships: list[CollaborationMembershipDTO]
 
@@ -94,8 +105,8 @@ class CollaborationDTO(BaseModel):
     support_email: str | None
     organisation_id: int
     status: str
-    expiry_date: datetime | None
-    last_activity_date: datetime
+    expiry_date: EpochSeconds | None
+    last_activity_date: EpochSeconds
     disclose_member_information: bool | None
     disclose_email_information: bool | None
     collaboration_memberships_count: int
@@ -103,3 +114,122 @@ class CollaborationDTO(BaseModel):
     collaboration_memberships: list[CollaborationMembershipDTO]
     groups: list[GroupDTO]
     services: list[ServiceDTO]
+
+
+# The DTO's below are the additions the admin view of a collaboration needs on top of the lite / member view.
+
+class UnitDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class TagDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    tag_value: str
+
+
+class OrganisationDetailDTO(OrganisationDTO):
+    services_restricted: bool | None
+    service_connection_requires_approval: bool | None
+    invitation_message: str | None
+    invitation_sender_name: str | None
+    units: list[UnitDTO]
+
+
+class ServiceGroupServiceDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class ServiceGroupDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    service_id: int
+    service: ServiceGroupServiceDTO
+
+
+class GroupDetailDTO(GroupDTO):
+    service_group: ServiceGroupDTO | None
+
+
+class ServiceDetailDTO(ServiceDTO):
+    uuid4: str
+
+
+class InvitationDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invitee_email: str
+    intended_role: str
+    status: str
+    expiry_date: EpochSeconds | None
+    created_at: EpochSeconds
+    created_by: str
+    # Only set once the invitee is a known user, the frontend falls back on created_by
+    user: UserDTO | None
+
+
+class JoinRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    hash: str | None
+    status: str
+    message: str | None
+    rejection_reason: str | None
+    created_at: EpochSeconds
+    user: UserDTO
+
+
+class RequesterDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str | None
+    uid: str
+
+
+class ServiceConnectionRequestDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    status: str
+    created_at: EpochSeconds
+    service: ServiceDetailDTO
+    requester: RequesterDTO
+
+
+class CollaborationDetailDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    identifier: str
+    name: str
+    description: str
+    short_name: str
+    logo: str | None
+    website_url: str | None
+    support_email: str | None
+    organisation_id: int
+    status: str
+    expiry_date: EpochSeconds | None
+    last_activity_date: EpochSeconds
+    disable_join_requests: bool | None
+    disclose_member_information: bool | None
+    disclose_email_information: bool | None
+    collaboration_memberships_count: int
+    organisation: OrganisationDetailDTO
+    collaboration_memberships: list[CollaborationMembershipDTO]
+    groups: list[GroupDetailDTO]
+    services: list[ServiceDetailDTO]
+    invitations: list[InvitationDTO]
+    join_requests: list[JoinRequestDTO]
+    service_connection_requests: list[ServiceConnectionRequestDTO]
+    tags: list[TagDTO]
+    units: list[UnitDTO]

@@ -1,8 +1,20 @@
+// Disabling type checks in this file since it contains all clients of the backend.
+// Can be removed when backend implemented types to all endpoints
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import {capitalize, isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
+import {CollaborationDTO, CollaborationDetailDTO} from "./apiTypes";
+import {
+    CollaborationAccessResponse,
+    CollaborationIdResponse,
+    CollaborationJoinRequestView,
+    CollaborationUserToken,
+    InvitationByHashResponse
+} from "./apiFrontendTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -71,14 +83,25 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
-export function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
+export function fetchJson<T>(
+    path: string,
+    options: RequestInit = {},
+    headers: Record<string, string> = {},
+    showErrorDialog = true
+): Promise<T> {
     return validFetch(path, options, headers, showErrorDialog)
         .then(res => res.json());
 }
 
-export function postPutJson(path, body, method, showErrorDialog = true, headers = {}) {
+export function postPutJson<T>(
+    path: string,
+    body?: unknown,
+    method?: string,
+    showErrorDialog = true,
+    headers: Record<string, string> = {}
+): Promise<T> {
     const jsonBody = JSON.stringify(body);
-    return fetchJson(path, {method: method, body: jsonBody}, headers, showErrorDialog);
+    return fetchJson<T>(path, {method: method, body: jsonBody}, headers, showErrorDialog);
 }
 
 function fetchDelete(path, showErrorDialog = true) {
@@ -400,24 +423,24 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
-export function collaborationByIdentifier(identifier) {
-    return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestView> {
+    return fetchJson<CollaborationJoinRequestView>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationIdByIdentifier(identifier) {
-    return fetchJson(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {
+    return fetchJson<CollaborationIdResponse>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationAccessAllowed(id) {
-    return fetchJson(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
+export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessResponse> {
+    return fetchJson<CollaborationAccessResponse>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
-export function collaborationById(id) {
-    return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
+export function collaborationById(id: number): Promise<CollaborationDetailDTO> {
+    return fetchJson<CollaborationDetailDTO>(`/api/collaborations/${id}`, {}, {}, false);
 }
 
-export function collaborationLiteById(id) {
-    return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
+export function collaborationLiteById(id: string | number): Promise<CollaborationDTO> {
+    return fetchJson<CollaborationDTO>(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
 export function myCollaborationsOptimized() {
@@ -645,8 +668,8 @@ export function organisationInvitationExists(emails, organisationId) {
 }
 
 //Invitations
-export function invitationByHash(hash, expand = false) {
-    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
+export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashResponse> {
+    return fetchJson<InvitationByHashResponse>(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
 export function deleteInvitationByHash(hash) {
@@ -1078,9 +1101,9 @@ export function serviceAupDelete(service) {
 }
 
 //User Tokens
-export function userTokensOfUser(serviceId) {
+export function userTokensOfUser(serviceId?: number): Promise<CollaborationUserToken[]> {
     const queryPart = serviceId ? `?service_id=${serviceId}` : "";
-    return fetchJson(`/api/user_tokens${queryPart}`);
+    return fetchJson<CollaborationUserToken[]>(`/api/user_tokens${queryPart}`);
 }
 
 export function userTokenGenerateValue() {
