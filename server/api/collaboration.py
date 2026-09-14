@@ -38,7 +38,7 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import CollaborationDTO, CollaborationDetailDTO
+from server.api.collaboration_dtos import CollaborationDTO, CollaborationDetailDTO, CollaborationJoinRequestDTO
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -211,17 +211,21 @@ def id_by_identifier():
 
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)
 @json_endpoint
-def collaboration_by_identifier():
+def collaboration_by_identifier() -> tuple[dict[str, Any], int]:
     identifier = query_param("identifier")
 
-    collaboration = Collaboration.query \
+    collaboration: Collaboration = Collaboration.query \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.organisation)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
-    return collaboration, 200
+    result: CollaborationJoinRequestDTO = CollaborationJoinRequestDTO.model_validate(collaboration)
+
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/v1/<co_identifier>", strict_slashes=False, methods=["GET"])
