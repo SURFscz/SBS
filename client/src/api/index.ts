@@ -1,3 +1,5 @@
+// Disabling type checks in this file since it contains all clients of the backend.
+// Can be removed when backend implemented types to all endpoints
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import {capitalize, isEmpty} from "../utils/Utils";

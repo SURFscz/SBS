@@ -198,19 +198,19 @@ export function chipTypeForStatus(entity: ChipStatusEntity) {
 
 export function getUserRequests(user: RoleUser): UserRequest[] {
     const requests: UserRequest[] = [];
-    if (!isEmpty(user.join_requests) && user.join_requests) {
+    if (!isEmpty(user.join_requests)) {
         user.join_requests.forEach(joinRequest => joinRequest.requestType = JOIN_REQUEST_TYPE);
         requests.push(...user.join_requests);
     }
-    if (!isEmpty(user.collaboration_requests) && user.collaboration_requests) {
+    if (!isEmpty(user.collaboration_requests)) {
         user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.requestType = COLLABORATION_REQUEST_TYPE);
         requests.push(...user.collaboration_requests);
     }
-    if (!isEmpty(user.service_requests) && user.service_requests) {
+    if (!isEmpty(user.service_requests)) {
         user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_REQUEST_TYPE);
         requests.push(...user.service_requests);
     }
-    if (!isEmpty(user.service_connection_requests) && user.service_connection_requests) {
+    if (!isEmpty(user.service_connection_requests)) {
         user.service_connection_requests.forEach(serviceConnectionRequest => serviceConnectionRequest.requestType = SERVICE_CONNECTION_REQUEST_TYPE);
         requests.push(...user.service_connection_requests);
     }

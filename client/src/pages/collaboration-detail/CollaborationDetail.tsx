@@ -36,7 +36,7 @@ import {createShowExpiryDateFlash} from "./createShowExpiryDateFlash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestDialog";
 import LastAdminWarning from "../../components/redesign/last-admin-warning/LastAdminWarning";
-import {ErrorOrigins, isEmpty, stopEvent} from "../../utils/Utils";
+import {ErrorOrigins, isEmpty, stopEvent, StoppableEvent} from "../../utils/Utils";
 import UserTokens from "../../components/redesign/user-tokens/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {isUuid4} from "../../validations/regExps";
@@ -366,7 +366,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
             });
     };
 
-    const addMe = (e?: unknown) => {
+    const addMe = (e?: StoppableEvent) => {
         stopEvent(e);
         const currentCollaboration = latestRef.current.collaboration;
         if (!currentCollaboration) {
@@ -456,7 +456,7 @@ export const CollaborationDetail = forwardRef<CollaborationDetailHandle, Collabo
         }
     };
 
-    const deleteMe = (e?: unknown) => {
+    const deleteMe = (e?: StoppableEvent) => {
         stopEvent(e);
         const currentUser = latestRef.current.props.user;
         const currentCollaboration = latestRef.current.collaboration;

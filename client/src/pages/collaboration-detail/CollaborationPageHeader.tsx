@@ -6,7 +6,7 @@ import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import Button from "../../components/button/Button";
 import I18n from "../../locale/I18n";
 import {clearFlash} from "../../utils/Flash";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, StoppableEvent} from "../../utils/Utils";
 import MemberIcon from "../../icons/groups.svg?react";
 import TimerIcon from "../../icons/streamline/timer2.svg?react";
 import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
@@ -21,7 +21,7 @@ export type HistoryLike = {
 export type HeaderAction = {
     buttonType: string;
     name: string;
-    perform: (e?: unknown) => void;
+    perform: (e?: StoppableEvent) => void;
 };
 
 export type IconListItem = {
@@ -38,8 +38,8 @@ export type CollaborationPageHeaderProps = {
     showMemberView: boolean;
     collaborationJoinRequest: boolean;
     alreadyMember: boolean;
-    onLeave: (e?: unknown) => void;
-    onAddMe: (e?: unknown) => void;
+    onLeave: (e?: StoppableEvent) => void;
+    onAddMe: (e?: StoppableEvent) => void;
     onToggleView: () => void;
     onBoarding: () => void;
     onOpenJoinRequest: () => void;

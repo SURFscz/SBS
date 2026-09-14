@@ -1,5 +1,5 @@
 import {emitter} from "./Events";
-import {stopEvent} from "./Utils";
+import {stopEvent, StoppableEvent} from "./Utils";
 
 export type FlashState = {
     message?: string;
@@ -26,7 +26,7 @@ export function setFlash(
     emitter.emit("flash", flash);
 }
 
-export function clearFlash(e?: unknown): void {
+export function clearFlash(e?: StoppableEvent): void {
     stopEvent(e);
     emitter.emit("flash", {});
 }
