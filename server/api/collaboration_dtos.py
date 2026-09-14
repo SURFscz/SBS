@@ -235,6 +235,12 @@ class CollaborationDetailDTO(BaseModel):
     units: list[UnitDTO]
 
 
+class CollaborationIdDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+
+
 # The DTO's below describe the collaboration as shown to a user who is not a member yet: the one considering a join
 # request and the one following an invitation. They only contain what those pages actually render.
 
