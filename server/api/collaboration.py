@@ -38,7 +38,7 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import CollaborationAccessDTO, CollaborationDTO, CollaborationDetailDTO, \
+from server.api.dtos.collaboration_dtos import CollaborationAccessDTO, CollaborationDTO, CollaborationDetailDTO, \
     CollaborationIdDTO, CollaborationJoinRequestDTO
 
 
