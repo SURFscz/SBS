@@ -11,8 +11,7 @@ import MemberIcon from "../../icons/groups.svg?react";
 import TimerIcon from "../../icons/streamline/timer2.svg?react";
 import MemberStatusIcon from "@surfnet/sds/icons/functional-icons/id-1.svg?react";
 
-import {CurrentUserView} from "@/api/apiFrontendTypes";
-import type {CollaborationView} from "./CollaborationDetail";
+import type {CollaborationView, CurrentUserView} from "./CollaborationDetail";
 
 export type HistoryLike = {
     push: (path: string, state?: unknown) => void;

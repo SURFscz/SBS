@@ -53,7 +53,26 @@ import {
     ServiceConnectionRequestDTO,
     UserTokenDTO
 } from "@/api/apiTypes";
-import {CurrentUserView} from "@/api/apiFrontendTypes";
+
+export type CurrentUserView = {
+    id: number;
+    admin: boolean;
+    guest?: boolean;
+    name?: string;
+    organisation_memberships: Array<{
+        organisation_id: number;
+        role?: string;
+    }>;
+    collaboration_memberships: Array<{
+        collaboration_id: number;
+        role?: string;
+    }>;
+    organisations_from_user_schac_home?: unknown;
+    service_memberships?: Array<{
+        service_id: number;
+        role?: string;
+    }>;
+};
 
 export type CollaborationView = Pick<CollaborationJoinRequestDTO,
     "id"
