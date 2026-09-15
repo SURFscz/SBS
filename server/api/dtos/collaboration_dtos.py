@@ -1,17 +1,8 @@
-import time
-from datetime import datetime
-from typing import Annotated, Literal
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, PlainSerializer
+from pydantic import BaseModel, ConfigDict
 
-
-def _epoch_seconds(value: datetime) -> int:
-    return int(time.mktime(value.timetuple()))
-
-
-# All dates are sent as epoch seconds, like DynamicExtendedJSONProvider does for the ORM models.
-# Serializing here instead of in the json provider keeps the generated TypeScript types honest.
-EpochSeconds = Annotated[datetime, PlainSerializer(_epoch_seconds, return_type=int)]
+from server.api.dtos.base import EpochSeconds
 
 
 class UserDTO(BaseModel):
@@ -360,14 +351,3 @@ class InvitationByHashExpandedDTO(BaseModel):
     # The service contacts per service id and the organisation admins, both needed to accept the policies
     service_emails: dict[int, list[str]]
     admin_emails: list[str]
-
-
-class UserTokenDTO(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    name: str
-    description: str | None
-    service_id: int
-    created_at: EpochSeconds
-    last_used_date: EpochSeconds | None

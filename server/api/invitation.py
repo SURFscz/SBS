@@ -13,7 +13,7 @@ from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest, HTTPException
 
 from server.api.base import json_endpoint, query_param, emit_socket
-from server.api.collaboration_dtos import InvitationByHashDTO, InvitationByHashExpandedDTO
+from server.api.dtos.collaboration_dtos import InvitationByHashDTO, InvitationByHashExpandedDTO
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \

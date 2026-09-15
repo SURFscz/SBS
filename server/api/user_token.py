@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, emit_socket
-from server.api.collaboration_dtos import UserTokenDTO
+from server.api.dtos.user_token_dtos import UserTokenDTO
 from server.api.service import user_service
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import current_user_id
