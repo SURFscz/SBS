@@ -5,7 +5,7 @@ from operator import xor
 from typing import Any
 
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, current_app, g as request_context
+from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy import or_, func
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import joinedload, selectinload
@@ -31,7 +31,9 @@ CREATED_BY_SYSTEM = "system"
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
-email_re = re.compile("^\\S+@\\S+$")
+# The local part excludes "@" to keep the pattern unambiguous; a "\\S+" local part makes matching
+# polynomial in the input length for strings like "!@!@!@..."
+email_re = re.compile("^[^\\s@]+@\\S+$")
 
 
 def _invitation_query():
@@ -269,7 +271,8 @@ def collaboration_invites_api():
 
     emit_socket(f"collaboration_{collaboration.id}")
 
-    return invites_results, 201
+    # The invitee emails are echoed back, so serialize as JSON here instead of relying on json_endpoint
+    return jsonify(invites_results), 201
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
@@ -460,7 +463,8 @@ def invitations_bulk_upload():
         except HTTPException as e:
             results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
-    return results, 201
+    # The error messages echo request data back, so serialize as JSON here instead of relying on json_endpoint
+    return jsonify(results), 201
 
 
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)

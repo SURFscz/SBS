@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
+from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context, Response
 from jsonschema import ValidationError
 from redis.exceptions import ConnectionError
 from sqlalchemy.exc import OperationalError, DatabaseError
@@ -198,7 +198,9 @@ def json_endpoint(f):
             session.modified = False
             # This will mark the session modified again if something is stored like TOTP secret
             body, status = f(*args, **kwargs)
-            response = jsonify(body)
+            # Endpoints that echo request data may serialize the response themselves, so the
+            # JSON content type is explicit at the point where the data leaves the endpoint
+            response = body if isinstance(body, Response) else jsonify(body)
             # Sneaky way to implement callback to add headers to the status
             if inspect.isfunction(status):
                 status = status(response)
