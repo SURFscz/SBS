@@ -14,12 +14,15 @@ class TestUserToken(AbstractTest):
         return self.get("/api/user_tokens/generate_token")["value"]
 
     def test_user_tokens(self):
+        sarah_id = self.find_entity_by_name(User, user_sarah_name).id
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(1, len(user_tokens))
         self.assertIsNone(user_tokens[0].get("hashed_token"))
 
         user_tokens[0]["name"] = "changed"
+        # The user id is not part of the response, so it is added like the frontend does
+        user_tokens[0]["user_id"] = sarah_id
         self.put("/api/user_tokens", body=user_tokens[0])
 
         user_tokens_updated = self.get("/api/user_tokens")
@@ -124,9 +127,12 @@ class TestUserToken(AbstractTest):
 
     def test_renew_lease(self):
         self.expire_user_token(user_sarah_user_token_network)
+        sarah_id = self.find_entity_by_name(User, user_sarah_name).id
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
 
+        # The user id is not part of the response, so it is added like the frontend does
+        user_tokens[0]["user_id"] = sarah_id
         self.put("/api/user_tokens/renew_lease", body=user_tokens[0])
 
         user_tokens_updated = self.get("/api/user_tokens")

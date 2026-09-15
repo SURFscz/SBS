@@ -38,7 +38,8 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import CollaborationDTO, CollaborationDetailDTO
+from server.api.dtos.collaboration_dtos import CollaborationAccessDTO, CollaborationDTO, CollaborationDetailDTO, \
+    CollaborationIdDTO, CollaborationJoinRequestDTO
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -199,29 +200,35 @@ def collaboration_admins(service_id):
 
 @collaboration_api.route("/id_by_identifier", strict_slashes=False)
 @json_endpoint
-def id_by_identifier():
+def id_by_identifier() -> tuple[dict[str, Any], int]:
     identifier = query_param("identifier")
-    coll = Collaboration.query \
+    coll: Collaboration = Collaboration.query \
         .options(load_only(Collaboration.id)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
-    return coll, 200
+    result: CollaborationIdDTO = CollaborationIdDTO.model_validate(coll)
+
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)
 @json_endpoint
-def collaboration_by_identifier():
+def collaboration_by_identifier() -> tuple[dict[str, Any], int]:
     identifier = query_param("identifier")
 
-    collaboration = Collaboration.query \
+    collaboration: Collaboration = Collaboration.query \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.organisation)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
-    return collaboration, 200
+    result: CollaborationJoinRequestDTO = CollaborationJoinRequestDTO.model_validate(collaboration)
+
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/v1/<co_identifier>", strict_slashes=False, methods=["GET"])
@@ -498,13 +505,15 @@ def collaboration_lite_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
 
 @collaboration_api.route("/access_allowed/<collaboration_id>", strict_slashes=False)
 @json_endpoint
-def collaboration_access_allowed(collaboration_id):
+def collaboration_access_allowed(collaboration_id) -> tuple[dict[str, Any], int]:
     try:
         confirm_collaboration_admin(collaboration_id)
-        return {"access": "full"}, 200
+        result: CollaborationAccessDTO = CollaborationAccessDTO(access="full")
     except Forbidden:
         confirm_collaboration_member(collaboration_id)
-        return {"access": "lite"}, 200
+        result = CollaborationAccessDTO(access="lite")
+
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
