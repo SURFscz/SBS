@@ -42,10 +42,10 @@ def user_attributes(service: Service, user: User):
             "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
             # If we add them here, we get multi-valued EB uid and eppn because of EB Sram AttributeMerger
             # "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-            "urn:oid:1.3.6.1.4.1.25178.4.1.5": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],  # voPersonExternalID
-            "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid], # voPersonID
-            "urn:oid:1.3.6.1.4.1.25178.4.1.8": [user.username], # voPersonSoRID
-            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
+            "urn:mace:dir:attribute-def:voPersonExternalID": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
+            "urn:mace:dir:attribute-def:voPersonID": [user.uid],
+            "urn:mace:dir:attribute-def:voPersonSoRID": [user.username],
+            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]
         }
     }
 
