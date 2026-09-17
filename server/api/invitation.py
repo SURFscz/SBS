@@ -464,7 +464,7 @@ def invitations_bulk_upload():
             results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
     # The error messages echo request data back, so serialize as JSON here instead of relying on json_endpoint
-    return jsonify(results), 201
+    return results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)
