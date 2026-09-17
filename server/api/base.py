@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context, Response
+from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from redis.exceptions import ConnectionError
 from sqlalchemy.exc import OperationalError, DatabaseError
@@ -200,7 +200,7 @@ def json_endpoint(f):
             body, status = f(*args, **kwargs)
             # Endpoints that echo request data may serialize the response themselves, so the
             # JSON content type is explicit at the point where the data leaves the endpoint
-            response = body if isinstance(body, Response) else jsonify(body)
+            response = jsonify(body) # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
             # Sneaky way to implement callback to add headers to the status
             if inspect.isfunction(status):
                 status = status(response)
