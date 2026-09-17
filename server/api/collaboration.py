@@ -38,7 +38,7 @@ from server.tools import dt_now
 
 from typing import Any
 
-from server.api.collaboration_dtos import CollaborationDTO
+from server.api.collaboration_dtos import CollaborationDTO, CollaborationDetailDTO
 
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -509,7 +509,7 @@ def collaboration_access_allowed(collaboration_id):
 
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
-def collaboration_by_id(collaboration_id):
+def collaboration_by_id(collaboration_id) -> tuple[dict[str, Any], int]:
     if collaboration_id == "v1":
         raise MethodNotAllowed()
 
@@ -537,11 +537,10 @@ def collaboration_by_id(collaboration_id):
                  .joinedload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
-    collaboration_json = jsonify(collaboration).json
-    collaboration_json["invitations"] = [invitation for invitation in collaboration_json["invitations"] if
-                                         invitation["status"] == "open"]
+    result: CollaborationDetailDTO = CollaborationDetailDTO.model_validate(collaboration)
+    result.invitations = [invitation for invitation in result.invitations if invitation.status == "open"]
 
-    return collaboration_json, 200
+    return result.model_dump(mode="python", exclude_none=True), 200
 
 
 @collaboration_api.route("/invites", methods=["PUT"], strict_slashes=False)
