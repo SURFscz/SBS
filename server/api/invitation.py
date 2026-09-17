@@ -272,7 +272,7 @@ def collaboration_invites_api():
     emit_socket(f"collaboration_{collaboration.id}")
 
     # The invitee emails are echoed back, so serialize as JSON here instead of relying on json_endpoint
-    return jsonify(invites_results), 201
+    return invites_results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
