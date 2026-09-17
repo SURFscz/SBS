@@ -5,7 +5,7 @@ from operator import xor
 from typing import Any
 
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy import or_, func
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import joinedload, selectinload
@@ -271,7 +271,6 @@ def collaboration_invites_api():
 
     emit_socket(f"collaboration_{collaboration.id}")
 
-    # The invitee emails are echoed back, so serialize as JSON here instead of relying on json_endpoint
     return invites_results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
@@ -463,7 +462,6 @@ def invitations_bulk_upload():
         except HTTPException as e:
             results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
-    # The error messages echo request data back, so serialize as JSON here instead of relying on json_endpoint
     return results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
