@@ -7,14 +7,16 @@ import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
-import {CollaborationDTO, CollaborationDetailDTO} from "./apiTypes";
 import {
-    CollaborationAccessResponse,
-    CollaborationIdResponse,
-    CollaborationJoinRequestView,
-    CollaborationUserToken,
-    InvitationByHashResponse
-} from "./apiFrontendTypes";
+    CollaborationAccessDTO,
+    CollaborationDTO,
+    CollaborationDetailDTO,
+    CollaborationIdDTO,
+    CollaborationJoinRequestDTO,
+    InvitationByHashDTO,
+    InvitationByHashExpandedDTO,
+    UserTokenDTO
+} from "./apiTypes";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -423,16 +425,16 @@ export function generateOidcClientSecret() {
 }
 
 //Collaborations
-export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestView> {
-    return fetchJson<CollaborationJoinRequestView>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationByIdentifier(identifier: string): Promise<CollaborationJoinRequestDTO> {
+    return fetchJson<CollaborationJoinRequestDTO>(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdResponse> {
-    return fetchJson<CollaborationIdResponse>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+export function collaborationIdByIdentifier(identifier: string): Promise<CollaborationIdDTO> {
+    return fetchJson<CollaborationIdDTO>(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
-export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessResponse> {
-    return fetchJson<CollaborationAccessResponse>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
+export function collaborationAccessAllowed(id: number): Promise<CollaborationAccessDTO> {
+    return fetchJson<CollaborationAccessDTO>(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
 export function collaborationById(id: number): Promise<CollaborationDetailDTO> {
@@ -668,8 +670,11 @@ export function organisationInvitationExists(emails, organisationId) {
 }
 
 //Invitations
-export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashResponse> {
-    return fetchJson<InvitationByHashResponse>(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
+// Expanding adds the service and admin emails needed to accept the policies
+export function invitationByHash(hash: string, expand: true): Promise<InvitationByHashExpandedDTO>;
+export function invitationByHash(hash: string, expand?: false): Promise<InvitationByHashDTO>;
+export function invitationByHash(hash: string, expand = false): Promise<InvitationByHashDTO | InvitationByHashExpandedDTO> {
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
 export function deleteInvitationByHash(hash) {
@@ -1101,9 +1106,9 @@ export function serviceAupDelete(service) {
 }
 
 //User Tokens
-export function userTokensOfUser(serviceId?: number): Promise<CollaborationUserToken[]> {
+export function userTokensOfUser(serviceId?: number): Promise<UserTokenDTO[]> {
     const queryPart = serviceId ? `?service_id=${serviceId}` : "";
-    return fetchJson<CollaborationUserToken[]>(`/api/user_tokens${queryPart}`);
+    return fetchJson<UserTokenDTO[]>(`/api/user_tokens${queryPart}`);
 }
 
 export function userTokenGenerateValue() {

@@ -2,9 +2,10 @@ import datetime
 import re
 import uuid
 from operator import xor
+from typing import Any
 
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy import or_, func
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import joinedload, selectinload
@@ -12,6 +13,7 @@ from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest, HTTPException
 
 from server.api.base import json_endpoint, query_param, emit_socket
+from server.api.dtos.collaboration_dtos import InvitationByHashDTO, InvitationByHashExpandedDTO
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
@@ -29,7 +31,9 @@ CREATED_BY_SYSTEM = "system"
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
-email_re = re.compile("^\\S+@\\S+$")
+# The local part excludes "@" to keep the pattern unambiguous; a "\\S+" local part makes matching
+# polynomial in the input length for strings like "!@!@!@..."
+email_re = re.compile("^[^\\s@]+@\\S+$")
 
 
 def _invitation_query():
@@ -139,7 +143,7 @@ def _find_invitation_groups(collaboration, data):
 
 @invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def invitations_by_hash():
+def invitations_by_hash() -> tuple[dict[str, Any], int]:
     hash_value = query_param("hash")
     invitation_query = _invitation_query()
     invitation = invitation_query \
@@ -155,18 +159,16 @@ def invitations_by_hash():
     for member in invitation.collaboration.collaboration_memberships:
         member.user
 
-    invitation_json = jsonify(invitation).json
-    # Sanitize user information
-    for cm in invitation_json["collaboration"]["collaboration_memberships"]:
-        cm["user"] = User.sanitize_user(cm["user"])
-    invitation_json["user"] = User.sanitize_user(invitation_json["user"])
+    # The DTO only discloses the name and the email of the inviter and of the members
+    result: InvitationByHashDTO = InvitationByHashDTO.model_validate(invitation)
 
     if not query_param("expand", required=False):
-        return invitation_json, 200
+        return result.model_dump(mode="python", exclude_none=True), 200
 
-    service_emails = invitation.collaboration.service_emails()
-    admin_emails = invitation.collaboration.organisation.admin_emails()
-    return {"invitation": invitation_json, "service_emails": service_emails, "admin_emails": admin_emails}, 200
+    expanded = InvitationByHashExpandedDTO(invitation=result,
+                                           service_emails=invitation.collaboration.service_emails(),
+                                           admin_emails=invitation.collaboration.organisation.admin_emails())
+    return expanded.model_dump(mode="python", exclude_none=True), 200
 
 
 @invitations_api.route("/exists_email", methods=["POST"], strict_slashes=False)
@@ -269,7 +271,7 @@ def collaboration_invites_api():
 
     emit_socket(f"collaboration_{collaboration.id}")
 
-    return invites_results, 201
+    return invites_results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
@@ -460,7 +462,7 @@ def invitations_bulk_upload():
         except HTTPException as e:
             results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
-    return results, 201
+    return results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)

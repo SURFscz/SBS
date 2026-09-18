@@ -25,7 +25,11 @@ class TestInvitation(AbstractTest):
         invitation = self.get("/api/invitations/find_by_hash",
                               query_data={"hash": invitation_hash_no_way})
         self.assertEqual(invitation_hash_no_way, invitation["hash"])
-        self.assertTrue(len(invitation["collaboration"]["collaboration_memberships"]) > 0)
+        memberships = invitation["collaboration"]["collaboration_memberships"]
+        self.assertTrue(len(memberships) > 0)
+        # The invitee only sees the name and the email of the inviter and of the members
+        for user in [invitation["user"]] + [membership["user"] for membership in memberships]:
+            self.assertTrue(set(user.keys()).issubset({"name", "email"}))
 
     def test_find_by_hash_expand(self):
         invitation_result = self.get("/api/invitations/find_by_hash",

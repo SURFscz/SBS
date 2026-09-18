@@ -120,16 +120,16 @@ yarn analyze
 
 ### [Types](#Types)
 
-Types are defined in the backend, for example `server/api/collaboration_dtos.py`. Types in the frontend are generated from these types.
+Types are defined in the backend, for example `server/api/dtos/collaboration_dtos.py`. Types in the frontend are generated from these types.
 Requirements:
 - `json-schema-to-typescript` globally installed (`npm install json-schema-to-typescript --global`)
 - `pydantic2-to-typescript` (installed via test profile)
 
-Command to generate types:
+Command to generate types, it picks up every DTO module in `server/api/dtos`:
 ```shell
-pydantic2ts --module server.api.collaboration_dtos --output client/src/api/apiTypes.ts
+pydantic2ts --module server.api.dtos --output client/src/api/apiTypes.ts
 ```
-Currently there is only one object in the backend to generate types from
+New DTO modules have to be imported in `server/api/dtos/__init__.py` to be included.
 
 ### [API](#api)
 

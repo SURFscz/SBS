@@ -5,8 +5,7 @@ import {isEmpty} from "../../utils/Utils";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import moment from "moment";
 
-import {CurrentUserView} from "@/api/apiFrontendTypes";
-import type {CollaborationView} from "./CollaborationDetail";
+import type {CollaborationView, CurrentUserView} from "./CollaborationDetail";
 
 export type UseCollaborationExpiryFlashArgs = {
     onActivate: () => void;
