@@ -39,6 +39,10 @@ def inactive_days(date_at):
     return inactivity(delta.days)
 
 
+def ssh_public_keys(user: User):
+    return sorted(ssh_key.ssh_value for ssh_key in user.ssh_keys)
+
+
 def create_user_template(user: User):
     from server.scim.schema_template import get_scim_schema_sram_user
 
@@ -56,6 +60,8 @@ def create_user_template(user: User):
         "displayName": user.name,
         "active": not user.suspended,
         "emails": [{"value": user.email, "primary": True}],
+        # Legacy: SSH keys were historically provisioned as x509Certificates (not RFC-compliant).
+        # Keep for existing consumers; prefer sshPublicKey in the SRAM User extension.
         "x509Certificates": [{"value": base64.b64encode(ssh_key.ssh_value.encode()).decode()} for ssh_key in
                              user.ssh_keys],
         get_scim_schema_sram_user(): {
@@ -63,7 +69,8 @@ def create_user_template(user: User):
             "eduPersonUniqueId": user.uid,
             "voPersonExternalAffiliation": user.scoped_affiliation,
             "voPersonExternalId": user.eduperson_principal_name,
-            "sramInactiveDays": inactive_days(user.last_login_date)
+            "sramInactiveDays": inactive_days(user.last_login_date),
+            "sshPublicKey": ssh_public_keys(user),
         }
     })
 
