@@ -198,7 +198,7 @@ def json_endpoint(f):
             session.modified = False
             # This will mark the session modified again if something is stored like TOTP secret
             body, status = f(*args, **kwargs)
-            response = jsonify(body)  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
+            response = jsonify(body)
             # Sneaky way to implement callback to add headers to the status
             if inspect.isfunction(status):
                 status = status(response)
