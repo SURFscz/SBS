@@ -31,7 +31,9 @@ CREATED_BY_SYSTEM = "system"
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
-email_re = re.compile("^\\S+@\\S+$")
+# The local part excludes "@" to keep the pattern unambiguous; a "\\S+" local part makes matching
+# polynomial in the input length for strings like "!@!@!@..."
+email_re = re.compile("^[^\\s@]+@\\S+$")
 
 
 def _invitation_query():
@@ -269,7 +271,7 @@ def collaboration_invites_api():
 
     emit_socket(f"collaboration_{collaboration.id}")
 
-    return invites_results, 201
+    return invites_results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
@@ -460,7 +462,7 @@ def invitations_bulk_upload():
         except HTTPException as e:
             results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
-    return results, 201
+    return results, 201  # codeql[py/reflective-xss]: suppress Response is JSON-encoded by the endpoint contract
 
 
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)
