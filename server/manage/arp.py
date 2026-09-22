@@ -74,6 +74,28 @@ def arp_attributes():
             "motivation": "The schacHomeOrganization attribute is necessary to be able to handle 2-factor "
                           "authentication using SURFsecureID"
         }],
+        "urn:mace:terena.org:attribute-def:voPersonExternalID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonExternalID attribute is necessary to communicate the old eduTEAMS "
+                          "SBS-generated eduPersonPrincipalName"
+        }],
+        "urn:mace:terena.org:attribute-def:voPersonID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonID attribute is necessary to communicate the stable SBS identifier"
+        }],
+        "urn:mace:terena.org:attribute-def:voPersonSoRID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonSoRID attribute is necessary to communicate the SBS username"
+        }],
+        "urn:mace:terena.org:attribute-def:voPersonExternalAffiliation": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonExternalAffiliation attribute is necessary to share the affiliations "
+                          "with one's home organisation, to adhere to the AARC spec"
+        }],
         "urn:mace:surf.nl:attribute-def:ssh-key": [{
             "value": "*",
             "source": "idp",
