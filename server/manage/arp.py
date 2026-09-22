@@ -37,12 +37,6 @@ def arp_attributes():
             "motivation": "Name attributes are necessary for fellow researchers to be able to identify and find their "
                           "collaboration members."
         }],
-        "urn:mace:dir:attribute-def:uid": [{
-            "value": "*",
-            "source": "idp",
-            "motivation": "The uid attribute is necessary to be able to handle 2-factor authentication using "
-                          "SURFsecureID"
-        }],
         "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [{
             "value": "*",
             "source": "idp",
