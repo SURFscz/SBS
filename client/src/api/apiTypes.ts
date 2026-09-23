@@ -251,14 +251,6 @@ export interface SanitizedUserDTO {
   name: string | null;
   email: string | null;
 }
-export interface InvitationByHashDTO {
-  hash: string;
-  collaboration_id: number;
-  intended_role: string | null;
-  expiry_date: number | null;
-  user: SanitizedUserDTO;
-  collaboration: InvitationCollaborationDTO;
-}
 export interface InvitationCollaborationDTO {
   id: number;
   name: string;
@@ -283,6 +275,14 @@ export interface SanitizedCollaborationMembershipDTO {
   expiry_date: number | null;
   created_at: number;
   user: SanitizedUserDTO;
+}
+export interface InvitationByHashDTO {
+  hash: string;
+  collaboration_id: number;
+  intended_role: string | null;
+  expiry_date: number | null;
+  user: SanitizedUserDTO;
+  collaboration: InvitationCollaborationDTO;
 }
 export interface InvitationByHashExpandedDTO {
   invitation: InvitationByHashDTO;
