@@ -44,8 +44,8 @@ def _configure_worker_database(worker_id: str) -> None:
     os.environ["SBS_DB_URI_OVERRIDE"] = database_uri
     db_migrations(database_uri)
 
-    if hasattr(config, "scim_schema_sram"):
-        init_scim_schemas(config.scim_schema_sram)
+    if hasattr(config, "scim") and hasattr(config.scim, "schema_sram"):
+        init_scim_schemas(config.scim.schema_sram)
 
     _configured_workers.add(worker_id)
 

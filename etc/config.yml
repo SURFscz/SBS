@@ -68,7 +68,6 @@ oidc:
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
 eppn_scope: "test.sram.surf.nl"
-id_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 environment_disclaimer: "local"
@@ -126,7 +125,6 @@ feature:
   sbs_swagger_enabled: True
   admin_platform_backdoor_totp: True
   past_dates_allowed: True
-  mock_scim_enabled: True
 
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:
@@ -231,13 +229,15 @@ open_requests:
   enabled: True
   cron_day_of_week: 1
 
-scim_sweep:
-  # Do we enable scim sweeps?
-  enabled: True
-  # How often do we check if scim sweeps are needed per service
-  cron_minutes_expression: "*/15"
-
-scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+scim:
+  id_scope: "test.sram.surf.nl"
+  schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+  mock_scim_enabled: True
+  sweep:
+    # Do we enable scim sweeps?
+    enabled: True
+    # How often do we check if scim sweeps are needed per service
+    cron_minutes_expression: "*/15"
 
 ldap:
   url: "${LDAP_URL}"
