@@ -250,8 +250,9 @@ class TestUser(AbstractTest):
         body = {"ssh_keys": [{"ssh_value": ssh2_pub}],
                 "convertSSHKey": True,
                 "id": user.id}
-        res = self.put("/api/users", body=body)
-        self.assertTrue(res["ssh_keys"][0]["ssh_value"].startswith("ssh-rsa"))
+        self.put("/api/users", body=body)
+        user = User.query.filter(User.uid == "urn:john").one()
+        self.assertTrue(user.ssh_keys[0].ssh_value.startswith("ssh-rsa"))
 
     def test_platform_admins(self):
         self.login("urn:john")
