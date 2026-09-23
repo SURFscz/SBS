@@ -583,7 +583,7 @@ def update_user():
 
     broadcast_user_changed(user_id)
 
-    return user, 201
+    return {}, 201
 
 
 @user_api.route("/other", strict_slashes=False)
