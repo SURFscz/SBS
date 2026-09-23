@@ -108,8 +108,8 @@ config_file_location = os.environ.get("CONFIG", "config/config.yml")
 config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
 config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else config.base_url
 
-if hasattr(config, 'scim_schema_sram'):
-    init_scim_schemas(config.scim_schema_sram)
+if hasattr(config, "scim") and hasattr(config.scim, "schema_sram"):
+    init_scim_schemas(config.scim.schema_sram)
 
 # Do only import the SCIM endpoints after scim schema is initialized !
 from server.api.scim import scim_api
@@ -147,7 +147,7 @@ blueprints = [
 for api_blueprint in blueprints:
     app.register_blueprint(api_blueprint)
 
-if config.feature.mock_scim_enabled:
+if hasattr(config, "scim") and getattr(config.scim, "mock_scim_enabled", False):
     app.register_blueprint(scim_mock_api)
 
 app.register_error_handler(404, page_not_found)
@@ -155,6 +155,10 @@ app.register_error_handler(404, page_not_found)
 if 'SBS_DB_URI_OVERRIDE' in os.environ:
     # used for pytest fixture: override database uri to use a separate database for each worker
     config.database.uri = os.environ['SBS_DB_URI_OVERRIDE']
+
+# Docker compose sets REDIS_URI (redis://redis:6379/); test_config.yml uses localhost.
+if 'REDIS_URI' in os.environ:
+    config.redis.uri = os.environ['REDIS_URI']
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

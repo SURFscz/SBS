@@ -303,7 +303,7 @@ def config():
             "continue_eb_redirect_uri": cfg.oidc.continue_eb_redirect_uri,
             "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
             "past_dates_allowed": cfg.feature.past_dates_allowed,
-            "mock_scim_enabled": cfg.feature.mock_scim_enabled,
+            "mock_scim_enabled": cfg.scim.mock_scim_enabled,
             "threshold_for_collaboration_inactivity_warning": threshold_for_warning,
             "manage_enabled": cfg.manage.enabled,
             "manage_base_url": manage_base_url,

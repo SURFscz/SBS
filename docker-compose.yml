@@ -68,6 +68,11 @@ services:
     image: "docker.io/mariadb:11"
     container_name: "sbs-db"
     restart: "no"
+    # Match CI MySQL behaviour: utf8mb4 + no snapshot isolation (avoids ER_CHECKREAD 1020).
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-snapshot-isolation=OFF
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
