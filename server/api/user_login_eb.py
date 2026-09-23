@@ -34,6 +34,8 @@ def user_attributes(service: Service, user: User):
     all_tags = co_tags(connected_collaborations)
     all_attributes = all_memberships.union(all_tags)
 
+    affiliations = [value.strip() for value in user.scoped_affiliation.split(",") if value.strip()] if user.scoped_affiliation else []
+
     log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service.entity_id, "AUTHORIZED")
 
     return {
@@ -46,7 +48,7 @@ def user_attributes(service: Service, user: User):
             "urn:mace:dir:attribute-def:voPersonID": [user.uid],
             "urn:mace:dir:attribute-def:voPersonSoRID": [user.username],
             # To adhere to the AARC-G025 spec, which says home organisation information should be in voPersonExternalAffiliation
-            "urn:mace:dir:attribute-def:voPersonExternalAffiliation": user.scoped_affiliation.split(', '),
+            "urn:mace:dir:attribute-def:voPersonExternalAffiliation": affiliations,
             "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]
         }
     }
