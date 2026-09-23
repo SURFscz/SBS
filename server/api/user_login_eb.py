@@ -34,7 +34,11 @@ def user_attributes(service: Service, user: User):
     all_tags = co_tags(connected_collaborations)
     all_attributes = all_memberships.union(all_tags)
 
-    affiliations = [value.strip() for value in user.scoped_affiliation.split(",") if value.strip()] if user.scoped_affiliation else []
+    affiliations = [
+        value.strip()
+        for value in user.scoped_affiliation.split(",")
+        if value.strip()
+    ] if user.scoped_affiliation else []
 
     log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service.entity_id, "AUTHORIZED")
 
