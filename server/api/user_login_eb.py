@@ -39,14 +39,14 @@ def user_attributes(service: Service, user: User):
     return {
         "msg": "authorized",
         "attributes": {
-            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
-            # If we add them here, we get multi-valued EB uid and eppn because of EB Sram AttributeMerger
-            # "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-            "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [f"member@{current_app.app_config.eppn_scope.strip()}"],
-            "urn:mace:dir:attribute-def:voPersonExternalID": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
+            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
+            # eduTEAMS has always put this value here (member@sram.surf.nl in prod), also adhering to AARC-G025 spec
+            "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [f"member@{current_app.app_config.base_scope.strip()}"],
+            "urn:mace:dir:attribute-def:voPersonExternalID": [f"{user.username}@{current_app.app_config.base_scope.strip()}"],
             "urn:mace:dir:attribute-def:voPersonID": [user.uid],
             "urn:mace:dir:attribute-def:voPersonSoRID": [user.username],
-            "urn:mace:dir:attribute-def:voPersonExternalAffiliation": [user.scoped_affiliation],
+            # To adhere to the AARC-G025 spec, which says home organisation information should be in voPersonExternalAffiliation
+            "urn:mace:dir:attribute-def:voPersonExternalAffiliation": user.scoped_affiliation.split(', '),
             "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]
         }
     }
