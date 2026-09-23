@@ -92,6 +92,8 @@ mail:
 
 manage:
   enabled: false
+  # The entity_id of the SRAM RP in Manage for API retrieval
+  sram_rp_entity_id: "sbs.test2.sram.surf.nl"
   base_url: ""
   user: ""
   password: ""
@@ -283,3 +285,4 @@ stress_test:
 
 engine_block:
   api_token: secret
+  entity_id: "engineblock"

@@ -28,19 +28,38 @@ def _worker_database_uris(base_uri: str, worker_id: str) -> tuple[str, str]:
     return root_uri, worker_uri
 
 
+def _test_database_uri_from_env(config_database_uri: str) -> str:
+    """Use docker DATABASE_URI host/credentials when set; keep sbs_test db name."""
+    if not os.environ.get("DATABASE_URI"):
+        return config_database_uri
+    docker_db = urlparse(os.environ["DATABASE_URI"])
+    test_db = urlparse(config_database_uri)
+    return urlunparse(test_db._replace(netloc=docker_db.netloc))
+
+
 def _configure_worker_database(worker_id: str) -> None:
     if worker_id == "master" or worker_id in _configured_workers:
         return
 
-    config_file = os.environ.get("CONFIG", "config/test_config.yml")
-    config = munchify(yaml.load(read_file(config_file), Loader=yaml.FullLoader))
-    database_uri_root, database_uri = _worker_database_uris(config.database.uri, worker_id)
+    # Always use test_config for pytest (docker sets CONFIG=config/_config.yml).
+    os.environ["CONFIG"] = "config/test_config.yml"
+    os.environ.pop("PROFILE", None)
+    config = munchify(yaml.load(read_file("config/test_config.yml"), Loader=yaml.FullLoader))
+    base_uri = _test_database_uri_from_env(config.database.uri)
+    database_uri_root, database_uri = _worker_database_uris(base_uri, worker_id)
 
     engine = sqlalchemy.create_engine(database_uri_root)
     with engine.connect() as conn:
-        conn.execute(sqlalchemy.text(f"CREATE DATABASE IF NOT EXISTS sbs_{worker_id}"))
+        conn.execute(sqlalchemy.text(
+            f"CREATE DATABASE IF NOT EXISTS sbs_{worker_id} "
+            "DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci"
+        ))
+        try:
+            conn.execute(sqlalchemy.text("SET GLOBAL innodb_snapshot_isolation=OFF"))
+        except Exception:
+            pass
+        conn.commit()
 
-    os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
     os.environ["SBS_DB_URI_OVERRIDE"] = database_uri
     db_migrations(database_uri)
 

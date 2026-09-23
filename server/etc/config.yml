@@ -89,9 +89,12 @@ mail:
 
 manage:
   enabled: True
+  # The entity_id of the SRAM RP in Manage for API retrieval
+  sram_rp_entity_id: "sbs.test2.sram.surf.nl"
   base_url: "http://localhost:9002"
   user: "sram"
   password: "secret"
+  verify_peer: False
 
 aup:
   version: 1
@@ -257,6 +260,8 @@ excluded_user_accounts:
   - uid: "urn:peter"
 
 engine_block:
+  api_token: secret
+  entity_id: "engineblock"
   # Either one is required, if specified both then the public_key is used
   public_key_url: http://localhost:8099/idp/certificate
   public_key: |

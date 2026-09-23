@@ -156,6 +156,10 @@ if 'SBS_DB_URI_OVERRIDE' in os.environ:
     # used for pytest fixture: override database uri to use a separate database for each worker
     config.database.uri = os.environ['SBS_DB_URI_OVERRIDE']
 
+# Docker compose sets REDIS_URI (redis://redis:6379/); test_config.yml uses localhost.
+if 'REDIS_URI' in os.environ:
+    config.redis.uri = os.environ['REDIS_URI']
+
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging
