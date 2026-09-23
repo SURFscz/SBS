@@ -43,7 +43,7 @@ def _oidc_grants(service):
     return [translate_grant(g) for g in service.grants.split(",")] if service.grants else []
 
 
-allowed_bool_false_fields = ["version"]
+allowed_bool_false_fields = ["enabled", "version"]
 
 
 def _replace_none_values(d: dict):

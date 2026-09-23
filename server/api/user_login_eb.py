@@ -34,15 +34,26 @@ def user_attributes(service: Service, user: User):
     all_tags = co_tags(connected_collaborations)
     all_attributes = all_memberships.union(all_tags)
 
+    affiliations = [
+        value.strip()
+        for value in user.scoped_affiliation.split(",")
+        if value.strip()
+    ] if user.scoped_affiliation else []
+
     log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service.entity_id, "AUTHORIZED")
 
     return {
         "msg": "authorized",
         "attributes": {
-            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
-            "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-            "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
-            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
+            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
+            # eduTEAMS has always put this value here (member@sram.surf.nl in prod), also adhering to AARC-G025 spec
+            "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [f"member@{current_app.app_config.base_scope.strip()}"],
+            "urn:mace:dir:attribute-def:voPersonExternalID": [f"{user.username}@{current_app.app_config.base_scope.strip()}"],
+            "urn:mace:dir:attribute-def:voPersonID": [user.uid],
+            "urn:mace:dir:attribute-def:voPersonSoRID": [user.username],
+            # To adhere to the AARC-G025 spec, which says home organisation information should be in voPersonExternalAffiliation
+            "urn:mace:dir:attribute-def:voPersonExternalAffiliation": affiliations,
+            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]
         }
     }
 
@@ -54,16 +65,20 @@ def proxy_authz_eb():
     confirm_authorization()
 
     json_dict = current_request.get_json()
+    logger = logging.getLogger("user_login_eb")
+    logger.debug(f"authz_eb called with {json_dict}")
+
     collab_person_id = json_dict["user_id"]
     eppn = json_dict.get("eppn")
-    external_subject_id = json_dict.get("external_subject_id")
+    upstream_saml_attributes = json_dict.get("attributes")
+    if upstream_saml_attributes and upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id"):
+        upstream_subject_id = upstream_saml_attributes.get("urn:oasis:names:tc:SAML:attribute:subject-id")[0]
+    else:
+        upstream_subject_id = None
     emails = json_dict.get("email")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
-
-    logger = logging.getLogger("user_login_eb")
-    logger.debug(f"authz_eb called with {json_dict}")
 
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
@@ -78,8 +93,8 @@ def proxy_authz_eb():
     ]
     if eppn:
         conditions.append(User.eduperson_principal_name == eppn)
-    if external_subject_id:
-        conditions.append(User.uid == external_subject_id)
+    if upstream_subject_id:
+        conditions.append(User.uid == upstream_subject_id)
     if emails:
         for email in emails:
             conditions.append(User.email == email)
@@ -166,6 +181,7 @@ def proxy_authz_eb():
         }
     else:
         attributes = user_attributes(service, user)
+        logger.debug(f"Returning attributes {jsonify(attributes).json}")
         return attributes, 200
 
     # Once we got here, we need to store the UserNonce
