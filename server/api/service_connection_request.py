@@ -43,6 +43,8 @@ def _do_send_mail(collaboration, service, service_connection_request, user, pend
         recipients = [m.user.email for m in collaboration.organisation.organisation_memberships if m.role == "admin"]
     else:
         recipients = [service_membership.user.email for service_membership in service.service_memberships]
+        if service.contact_email and service.contact_email not in recipients:
+            recipients.append(service.contact_email)
     if recipients:
         recipient = "Organisation admin" if pending_organisation_approval else "Service admin"
     else:
