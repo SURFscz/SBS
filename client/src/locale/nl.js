@@ -413,7 +413,7 @@ const nl = {
         members: {
             searchPlaceHolder: "Zoek leden...",
             title: "Leden",
-            new: "Nodig leden uit",
+            new: "Leden toevoegen",
             noEntities: "Er zijn geen leden",
         },
         servicesAvailable: {

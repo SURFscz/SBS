@@ -55,7 +55,7 @@ test.describe('Collaboration detail (collab member)', () => {
         await expect(search.getByRole('heading', {level: 2})).toHaveText(/Members \(6\)|Leden \(6\)/);
         await expect(search.getByPlaceholder(/Search for members|Zoek leden/)).toBeVisible();
         await expect(page.getByRole('button', {
-            name: /Invite members|Nodig leden uit/,
+            name: /Add members|Leden toevoegen/,
         })).toHaveCount(0);
 
         const membersTable = page.locator('table.members');

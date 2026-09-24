@@ -50,7 +50,7 @@ const en = {
         organisationInvitation: "Invitation",
         serviceInvite: "Invite admins",
         serviceInvitation: "Invitation",
-        invite: "Invite members",
+        invite: "Add members",
         invitation: "Invitation",
         users: "Users",
         userToken: "Application token '{{name}}'",
@@ -413,7 +413,7 @@ const en = {
         members: {
             searchPlaceHolder: "Search for members...",
             title: "Members",
-            new: "Invite members",
+            new: "Add members",
             noEntities: "There are no members",
         },
         servicesAvailable: {
