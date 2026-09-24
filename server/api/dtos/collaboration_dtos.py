@@ -9,6 +9,7 @@ class UserDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    uid: str | None
     name: str | None
     email: str | None
     username: str | None
@@ -57,6 +58,7 @@ class ServiceDTO(BaseModel):
     logo: str | None
     uri: str | None
     uri_info: str | None
+    uuid4: str | None
     privacy_policy: str | None
     accepted_user_policy: str | None
     contact_email: str | None

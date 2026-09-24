@@ -50,6 +50,7 @@ export interface CollaborationMembershipDTO {
 }
 export interface UserDTO {
   id: number;
+  uid: string | null;
   name: string | null;
   email: string | null;
   username: string | null;
@@ -69,6 +70,7 @@ export interface GroupDTO {
 }
 export interface ServiceDTO {
   id: number;
+  uuid4: string;
   name: string;
   description: string | null;
   logo: string | null;
