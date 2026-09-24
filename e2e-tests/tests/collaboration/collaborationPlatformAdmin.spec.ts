@@ -358,7 +358,7 @@ test.describe('Collaboration detail (platform admin)', () => {
             await expect(rows.filter({hasText: 'Jane Doe'})).toHaveCount(1);
 
             // The invite action is absent for a plain member, see collaboration.spec.ts
-            const inviteButton = search.getByRole('button', {name: /Invite members|Nodig leden uit/});
+            const inviteButton = search.getByRole('button', {name: /Add members|Leden toevoegen/});
             await expect(inviteButton).toBeVisible();
 
             await inviteButton.click();
