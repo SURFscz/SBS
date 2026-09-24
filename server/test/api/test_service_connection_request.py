@@ -47,7 +47,7 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing (local)",
                              mail_msg.subject)
-            self.assertEqual(["service_admin@ucc.org"], mail_msg.to)
+            self.assertListEqual(["help@wiki.com", "service_admin@ucc.org"], sorted(mail_msg.to))
 
     def test_service_connection_request_with_no_admins(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -68,6 +68,24 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual(["john@example.org"], mail_msg.to)
             self.assertEqual(0, len(mail_msg.cc))
+
+    def test_service_connection_request_with_only_contact_email(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        service.service_memberships = []
+        db.session.merge(service)
+        db.session.commit()
+
+        self.login("urn:admin")
+        data = {
+            "collaboration_id": collaboration.id,
+            "service_id": service.id,
+            "message": "Pretty please"
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
+            mail_msg = outbox[0]
+            self.assertEqual(["help@wiki.com"], mail_msg.to)
 
     def test_service_connection_request_by_admin_email_admin(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
