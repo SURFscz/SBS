@@ -11,7 +11,7 @@ from server.scim.group_template import create_group_template, update_group_templ
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template, \
-    inactive_days
+    inactive_days, ssh_public_keys
 
 CONNECTION_TIMEOUT = 3.05  # seconds
 READ_TIMEOUT = 10  # seconds
@@ -67,6 +67,9 @@ def _user_changed(user: User, remote_user: dict):
             return True
         sramInactiveDays = remote_user[get_scim_schema_sram_user()].get("sramInactiveDays")
         if _compare_with_none_equals_empty(sramInactiveDays, inactive_days(user.last_login_date)):
+            return True
+        remote_ssh_public_keys = sorted(remote_user[get_scim_schema_sram_user()].get("sshPublicKey", []) or [])
+        if remote_ssh_public_keys != ssh_public_keys(user):
             return True
     return False
 

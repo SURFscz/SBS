@@ -31,3 +31,5 @@ class TestUserTemplate(TestCase):
         self.assertEqual(result["displayName"], user.name)
         self.assertEqual(result["name"]["familyName"], "")
         self.assertEqual(days, result[get_scim_schema_sram_user()]["sramInactiveDays"])
+        self.assertEqual([], result[get_scim_schema_sram_user()]["sshPublicKey"])
+        self.assertEqual([], result["x509Certificates"])

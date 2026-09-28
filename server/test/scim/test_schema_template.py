@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from server.scim.schema_template import schema_sram_group_template
+from server.scim.schema_template import schema_sram_group_template, schema_sram_user_template
 
 
 class TestSchemaTemplate(TestCase):
@@ -13,3 +13,12 @@ class TestSchemaTemplate(TestCase):
         self.assertTrue(links["multiValued"])
         sub_attribute_names = {sub_attribute["name"] for sub_attribute in links["subAttributes"]}
         self.assertEqual({"name", "value"}, sub_attribute_names)
+
+    def test_schema_sram_user_includes_ssh_public_key(self):
+        schema = schema_sram_user_template()
+        ssh_public_key = next(
+            attribute for attribute in schema["attributes"] if attribute["name"] == "sshPublicKey"
+        )
+
+        self.assertEqual("string", ssh_public_key["type"])
+        self.assertTrue(ssh_public_key["multiValued"])
