@@ -51,11 +51,39 @@ class AbstractTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
+        # Always use test_config for pytest (docker sets CONFIG=config/_config.yml).
+        os.environ["CONFIG"] = "config/test_config.yml"
         os.environ["TESTING"] = "1"
         os.environ["SCIM_DISABLED"] = "1"
         # Run SCIM broadcasts on the test thread so seed()/clean_db() do not race pool workers.
         os.environ["SCIM_FIFO_SYNC"] = "1"
+        # Docker compose sets PROFILE=local; /api/config asserts local=False in tests.
+        os.environ.pop("PROFILE", None)
+
+        # Docker: DATABASE_URI points at host `db`; test_config uses 127.0.0.1/sbs_test.
+        if "SBS_DB_URI_OVERRIDE" not in os.environ and os.environ.get("DATABASE_URI"):
+            from urllib.parse import urlparse, urlunparse
+            import sqlalchemy
+            from server.db.db import db_migrations
+
+            docker_db = urlparse(os.environ["DATABASE_URI"])
+            test_uri = urlunparse(docker_db._replace(path="/sbs_test"))
+            root_uri = urlunparse(docker_db._replace(path="/"))
+            engine = sqlalchemy.create_engine(root_uri)
+            with engine.connect() as conn:
+                # Recreate so an older utf8mb3 sbs_test (from init.sql) cannot stick around.
+                conn.execute(sqlalchemy.text("DROP DATABASE IF EXISTS sbs_test"))
+                conn.execute(sqlalchemy.text(
+                    "CREATE DATABASE sbs_test "
+                    "DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci"
+                ))
+                try:
+                    conn.execute(sqlalchemy.text("SET GLOBAL innodb_snapshot_isolation=OFF"))
+                except Exception:
+                    pass
+                conn.commit()
+            os.environ["SBS_DB_URI_OVERRIDE"] = test_uri
+            db_migrations(test_uri)
 
         from server.__main__ import app
 

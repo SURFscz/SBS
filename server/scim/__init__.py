@@ -9,7 +9,7 @@ def external_id_postfix(config=None):
     if config is None:
         from flask import current_app
         config = current_app.app_config
-    scope = config.id_scope.strip().lstrip("@")
+    scope = config.scim.id_scope.strip().lstrip("@")
     return f"@{scope}"
 
 

@@ -12,7 +12,7 @@ class TestUserTemplate(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
+        os.environ["CONFIG"] = "config/test_config.yml"
         os.environ["TESTING"] = "1"
         from server.__main__ import app
         cls.app = app

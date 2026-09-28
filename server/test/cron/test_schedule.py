@@ -6,7 +6,7 @@ from server.test.abstract_test import AbstractTest
 class TestSchedule(AbstractTest):
 
     def test_start_scheduling(self):
-        self.app.app_config.scim_sweep.enabled = True
+        self.app.app_config.scim.sweep.enabled = True
 
         scheduler = start_scheduling(self.app)
         jobs = scheduler.get_jobs()

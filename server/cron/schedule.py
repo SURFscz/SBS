@@ -26,8 +26,8 @@ def start_scheduling(app):
     scheduler.add_job(func=suspend_users, hour=retention.cron_hour_of_day, **options)
     scheduler.add_job(func=parse_idp_metadata, hour=retention.cron_hour_of_day, **options)
 
-    if cfg.scim_sweep.enabled:
-        sweep_services_options = {**options, **{"hour": "*", "minute": cfg.scim_sweep.cron_minutes_expression}}
+    if cfg.scim.sweep.enabled:
+        sweep_services_options = {**options, **{"hour": "*", "minute": cfg.scim.sweep.cron_minutes_expression}}
         scheduler.add_job(func=scim_sweep_services, **sweep_services_options)
 
     if cfg.platform_admin_notifications.enabled:
