@@ -3,7 +3,7 @@ import {
     allCRMOrganisations,
     createServiceToken,
     deleteService,
-    deleteServiceToken, generateOidcClientID,
+    deleteServiceToken, getOidcClientID,
     parseSAMLMetaData,
     requestDeleteService,
     resetLdapPassword,
@@ -1534,7 +1534,7 @@ class ServiceOverview extends React.Component {
         }, () => {
             const {service: updatedService} = this.state;
             if (e.target.checked) {
-                Promise.all([resetOidcClientSecret(updatedService), generateOidcClientID()])
+                Promise.all([resetOidcClientSecret(updatedService), getOidcClientID(updatedService)])
                     .then(res =>
                         this.setState({
                             oidcClientSecret: res[0].oidc_client_secret,
