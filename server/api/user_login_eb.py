@@ -48,7 +48,9 @@ def user_attributes(service: Service, user: User):
             "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
             # eduTEAMS has always put this value here (member@sram.surf.nl in prod), also adhering to AARC-G025 spec
             "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [f"member@{current_app.app_config.base_scope.strip()}"],
-            "urn:mace:surf.nl:attribute-def:voPersonExternalID": [f"{user.username}@{current_app.app_config.base_scope.strip()}"],
+            "urn:mace:surf.nl:attribute-def:voPersonExternalID": [
+                f"{user.username}@{current_app.app_config.base_scope.strip()}"
+            ],
             "urn:mace:surf.nl:attribute-def:voPersonID": [user.uid],
             "urn:mace:surf.nl:attribute-def:voPersonSoRID": [user.username],
             # To adhere to the AARC-G025 spec, which says home organisation information should be in voPersonExternalAffiliation
