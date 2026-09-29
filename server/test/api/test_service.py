@@ -11,7 +11,7 @@ from server.test.seed import service_mail_name, service_network_entity_id, uniha
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_ssh_name, unifra_name, unihard_secret, \
     user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name, read_image, \
-    service_demo_sp_name
+    service_demo_sp_name, service_storage_entity_id
 
 
 class TestService(AbstractTest):
@@ -412,7 +412,8 @@ class TestService(AbstractTest):
 
         self.assertEqual(True, service.allow_restricted_orgs)
         self.assertEqual(False, service.non_member_users_access_allowed)
-        self.assertEqual("https://changed", service.entity_id)
+        # The entity_id of an existing OIDC RP is never overwritten
+        self.assertEqual(service_storage_entity_id, service.entity_id)
         self.assertEqual("storage", service.abbreviation)
 
     def test_service_delete(self):
