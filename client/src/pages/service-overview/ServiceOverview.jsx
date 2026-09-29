@@ -3,7 +3,7 @@ import {
     allCRMOrganisations,
     createServiceToken,
     deleteService,
-    deleteServiceToken, getOidcClientID,
+    deleteServiceToken, generateOidcClientID,
     parseSAMLMetaData,
     requestDeleteService,
     resetLdapPassword,
@@ -1534,7 +1534,10 @@ class ServiceOverview extends React.Component {
         }, () => {
             const {service: updatedService} = this.state;
             if (e.target.checked) {
-                Promise.all([resetOidcClientSecret(updatedService), getOidcClientID(updatedService)])
+                // Keep the entity_id of an already persisted OIDC service, only new RP's get a generated one
+                const {oidc_enabled: persistedOidc, entity_id: persistedEntityId} = this.props.service;
+                const existingEntityId = persistedOidc && !isEmpty(persistedEntityId) ? persistedEntityId : null;
+                Promise.all([resetOidcClientSecret(updatedService), existingEntityId ? {oidc_client_id: existingEntityId} : generateOidcClientID()])
                     .then(res =>
                         this.setState({
                             oidcClientSecret: res[0].oidc_client_secret,
@@ -1543,7 +1546,7 @@ class ServiceOverview extends React.Component {
             } else {
                 const {entity_id} = updatedService;
                 const newState = {oidcClientSecret: null}
-                if (!isEmpty(entity_id) && entity_id.startsWith("SURFACCESS")) {
+                if (!isEmpty(entity_id) && entity_id.startsWith("SURFACCESS") && isEmpty(this.props.service.entity_id)) {
                     newState.service = {...updatedService, entity_id: null}
                 }
                 this.setState(newState);

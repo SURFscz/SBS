@@ -647,6 +647,10 @@ def update_service():
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
+    # The entity_id of an existing OIDC RP is the client_id and must not change once it is set
+    if service.oidc_enabled and data.get("oidc_enabled") and service.entity_id:
+        data["entity_id"] = service.entity_id
+
     for attr in ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret", "exported_at"]:
         if attr in data:
             del data[attr]
@@ -745,12 +749,6 @@ def reset_ldap_password(service_id):
 @json_endpoint
 def generate_oidc_client_id():
     return {"oidc_client_id": f"SURFACCESS-{uuid.uuid4()}"}, 200
-
-@service_api.route("/get_oidc_client_id", strict_slashes=False)
-@json_endpoint
-def get_oidc_client_id(service_id):
-    service = db.session.get(Service, service_id)
-    return {"oidc_client_id": service.entity_id}, 200
 
 
 @service_api.route("/reset_oidc_client_secret/<service_id>", strict_slashes=False)
