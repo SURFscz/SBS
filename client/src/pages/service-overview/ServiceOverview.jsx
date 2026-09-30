@@ -1535,8 +1535,8 @@ class ServiceOverview extends React.Component {
             const {service: updatedService} = this.state;
             if (e.target.checked) {
                 // Keep the entity_id of an already persisted OIDC service, only new RP's get a generated one
-                const {oidc_enabled: persistedOidc, entity_id: persistedEntityId} = this.props.service;
-                const existingEntityId = persistedOidc && !isEmpty(persistedEntityId) ? persistedEntityId : null;
+                const persistedEntityId = this.props.service.entity_id;
+                const existingEntityId = !isEmpty(persistedEntityId) ? persistedEntityId : null;
                 Promise.all([resetOidcClientSecret(updatedService), existingEntityId ? {oidc_client_id: existingEntityId} : generateOidcClientID()])
                     .then(res =>
                         this.setState({

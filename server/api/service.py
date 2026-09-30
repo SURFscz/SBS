@@ -647,8 +647,8 @@ def update_service():
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
-    # The entity_id of an existing OIDC RP is the client_id and must not change once it is set
-    if service.oidc_enabled and data.get("oidc_enabled") and service.entity_id:
+    # The entity_id of an OIDC RP is the client_id and must not change once it is set
+    if data.get("oidc_enabled") and service.entity_id:
         data["entity_id"] = service.entity_id
 
     for attr in ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret", "exported_at"]:
