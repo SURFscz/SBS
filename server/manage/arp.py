@@ -57,11 +57,6 @@ def arp_attributes():
                           "who log in via SRAM to users who are already in their system (for example, because they "
                           "have used this service via SURFconext before)."
         }],
-        "urn:mace:dir:attribute-def:eduPersonTargetedID": [{
-            "value": "*",
-            "source": "idp",
-            "motivation": "eduPersonTargetedId is used to uniquely identify a user."
-        }],
         "urn:mace:terena.org:attribute-def:schacHomeOrganization": [{
             "value": "*",
             "source": "idp",
