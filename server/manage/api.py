@@ -56,7 +56,7 @@ def sync_external_service(app, service: Service):
             logger.error(f"Error in manage API retrieving {entity_id}", exc_info=1)
             sbs_rp_json = default_idp_matrix
 
-        service_template = create_service_template(service, sbs_rp_json)
+        service_template = create_service_template(app, service, sbs_rp_json)
         request_method = requests.put if service.export_external_identifier else requests.post
         url = f"{manage_base_url}/manage/api/internal/metadata"
         service.exported_at = dt_now()
