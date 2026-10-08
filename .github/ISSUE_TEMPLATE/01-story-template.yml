@@ -2,7 +2,7 @@
 
 name: User Story
 description: Use this template for new user stories.
-title: "[]"
+title: "[Short imperative statement, starting with a verb]"
 type: "feature"
 body:
   - type: markdown
