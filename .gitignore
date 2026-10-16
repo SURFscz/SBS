@@ -120,6 +120,7 @@ log
 
 # server config
 server/config/config.yml
+server/config/*-config.yml
 server/config/jwt_private_key
 server/config/jwt_public_keys.json
 server/config/saml_copy
