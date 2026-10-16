@@ -1,4 +1,4 @@
-from flask import Blueprint, request as current_request, g as request_context
+from flask import Blueprint, request as current_request, g as request_context, abort
 
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin
@@ -19,6 +19,10 @@ def do_add_group_members(data, assert_collaboration_admin, broadcast_change):
         confirm_collaboration_admin(collaboration_id)
 
     group = db.session.get(Group, group_id)
+
+    if int(collaboration_id) != group.collaboration_id:
+        abort(403, description="You do not have permission to access this resource.")
+
     members_ids = data["members_ids"]
     for members_id in members_ids:
         group.collaboration_memberships.append(db.session.get(CollaborationMembership, int(members_id)))
@@ -53,6 +57,9 @@ def delete_group_members(group_id, collaboration_membership_id, collaboration_id
     confirm_collaboration_admin(collaboration_id)
 
     group = db.session.get(Group, group_id)
+    if int(collaboration_id) != group.collaboration_id:
+        abort(403, description="You do not have permission to access this resource.")
+
     group.collaboration_memberships.remove(db.session.get(CollaborationMembership, collaboration_membership_id))
     db.session.merge(group)
 
