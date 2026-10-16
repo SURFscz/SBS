@@ -1,6 +1,6 @@
 from server.db.domain import Group, Collaboration, User, CollaborationMembership
 from server.test.abstract_test import AbstractTest
-from server.test.seed import group_ai_researchers, co_ai_computing_name, user_boss_name, co_research_name
+from server.test.seed import group_ai_researchers, co_ai_computing_name, user_boss_name, co_research_name, user_john_name
 
 
 class TestGroupMembers(AbstractTest):
@@ -24,7 +24,7 @@ class TestGroupMembers(AbstractTest):
         group = self.find_entity_by_name(Group, group_ai_researchers)
         self.assertEqual(pre_count + 1, len(group.collaboration_memberships))
 
-    def test_add_group_members_unauthorized(self):
+    def test_add_group_members_forbidden(self):
         # Find the Research CO
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         # Find the AI Researchers group, which is part of the AI Computing CO, NOT the Research CO
@@ -66,3 +66,21 @@ class TestGroupMembers(AbstractTest):
         count = len(group.collaboration_memberships)
 
         self.assertEqual(1, count)
+
+    def test_delete_group_members_forbidden(self):
+        # Find the Research CO
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        # Find the AI Researchers group, which is part of the AI Computing CO, NOT the Research CO
+        group = self.find_entity_by_name(Group, group_ai_researchers)
+        # John is a member of the AI Researchers group
+        john = self.find_entity_by_name(User, user_john_name)
+        member = CollaborationMembership.query.filter(CollaborationMembership.user_id == john.id).one()
+
+        # Sarah is the admin of the Research CO, but only a member of the AI Computing CO,
+        # so deleting participants from the AI Researchers group should not be possible
+        self.login("urn:sarah")
+        self.delete("/api/group_members",
+                    primary_key=f"{group.id}/"
+                                f"{member.id}/"
+                                f"{collaboration.id}",
+                    with_basic_auth=False, response_status_code=403)
