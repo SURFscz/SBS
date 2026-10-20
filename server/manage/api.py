@@ -82,6 +82,7 @@ def sync_external_service(app, service: Service):
         except RequestException:
             logger.error("Error in manage API", exc_info=1)
             service.export_successful = False
+            raise
 
         db.session.merge(service)
         db.session.commit()
