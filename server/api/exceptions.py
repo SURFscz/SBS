@@ -6,3 +6,10 @@ class APIBadRequest(HTTPException):
     description = (
         "Invalid API request."
     )
+
+
+class ManageSyncException(HTTPException):
+    code = 502
+    description = (
+        "Error in syncing the service data to Manage."
+    )

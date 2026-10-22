@@ -2,6 +2,7 @@ import uuid
 
 import responses
 
+from server.api.exceptions import ManageSyncException
 from server.db.domain import Service
 from server.manage.api import sync_external_service, delete_external_service
 from server.test.abstract_test import AbstractTest
@@ -84,8 +85,10 @@ class TestApi(AbstractTest):
     def test_save_oidc_service_manage_no_connection(self):
         service = self.find_entity_by_name(Service, service_storage_name)
         self.login("urn:john")
-        updated_service = sync_external_service(self.app, service)
+        with self.assertRaises(ManageSyncException):
+            sync_external_service(self.app, service, raise_on_error=True)
 
+        updated_service = self.find_entity_by_name(Service, service_storage_name)
         self.assertIsNone(updated_service.export_external_version)
         self.assertFalse(updated_service.export_successful)
         self.assertIsNotNone(updated_service.exported_at)

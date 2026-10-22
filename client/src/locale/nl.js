@@ -1047,6 +1047,7 @@ const nl = {
             tokenAdded: "Nieuw token voor applicatie {{name}} is aangemaakt",
             tokenUpdated: "Token van applicatie {{name}} is bijgewerkt",
             tokenDeleted: "Token van applicatie {{name}} is verwijderd",
+            manageSyncError: "Fout bij het synchroniseren van de applicatiegegevens naar onze interne backend. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> voor hulp.",
         },
         scim_token: {
             preTitle: "Om veiligheidsredenen kan het huidige SCIM token niet worden weergegeven. ",

@@ -5,6 +5,7 @@ from requests import RequestException
 from requests.auth import HTTPBasicAuth
 
 from server.api.base import send_error_mail
+from server.api.exceptions import ManageSyncException
 from server.db.db import db
 from server.db.domain import Service
 from server.manage.service_template import create_service_template
@@ -33,7 +34,7 @@ def service_applies_for_external_sync(service: Service):
     return True
 
 
-def sync_external_service(app, service: Service):
+def sync_external_service(app, service: Service, raise_on_error=False):
     if not app.app_config.manage.enabled or not service_applies_for_external_sync(service):
         return None
     with app.app_context():
@@ -79,9 +80,14 @@ def sync_external_service(app, service: Service):
                 if not service.export_successful:
                     logger.error(f"Error in manage API {service_json}")
                     send_error_mail(tb=f"Error in syncing service {service.name} to manage\n\n{service_json}")
-        except RequestException:
+        except RequestException as e:
             logger.error("Error in manage API", exc_info=1)
             service.export_successful = False
+            if raise_on_error:
+                # Persist the failed export state before reporting the failure to the caller
+                db.session.merge(service)
+                db.session.commit()
+                raise ManageSyncException() from e
 
         db.session.merge(service)
         db.session.commit()

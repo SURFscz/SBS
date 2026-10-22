@@ -14,6 +14,22 @@ from server.test.seed import service_mail_name, service_network_entity_id, uniha
     service_demo_sp_name, service_storage_entity_id
 
 
+def mock_manage(test):
+    """Mock the Manage endpoints, as a failing sync to Manage is reported as an error"""
+
+    def wrapper(self, *args, **kwargs):
+        base_url = self.app.app_config.manage.base_url.rstrip("/")
+        url = f"{base_url}/manage/api/internal/metadata"
+        with responses.RequestsMock(assert_all_requests_are_fired=False) as res_mock:
+            res_mock.add(responses.POST, f"{base_url}/manage/api/internal/search/oidc10_rp", json=[], status=200)
+            for method in (responses.POST, responses.PUT):
+                res_mock.add(method, url, json={"id": str(uuid.uuid4()), "version": 0}, status=200)
+            return test(self, *args, **kwargs)
+
+    wrapper.__name__ = test.__name__
+    return wrapper
+
+
 class TestService(AbstractTest):
 
     def _find_by_name(self, name=service_mail_name):
@@ -177,6 +193,7 @@ class TestService(AbstractTest):
                  body={"service_id": service_id, "administrators": ["opta@apta.org"], "intended_role": "admin"},
                  response_status_code=403)
 
+    @mock_manage
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
@@ -197,6 +214,7 @@ class TestService(AbstractTest):
         self.login("urn:betty")  # service manager
         self.put("/api/services", body=service, with_basic_auth=False, response_status_code=403)
 
+    @mock_manage
     def test_service_update_disallowed(self):
         disallowed_fields = ["allow_restricted_orgs", "non_member_users_access_allowed", "abbreviation"]
         immutable_fields = ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret"]
@@ -398,6 +416,7 @@ class TestService(AbstractTest):
         row = next(rows)
         self.assertIsNotNone(row[0])
 
+    @mock_manage
     def test_service_update_service_admin(self):
         service = self._find_by_name(service_storage_name)
         service["allow_restricted_orgs"] = False
@@ -725,6 +744,7 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertEqual(3, len(service.allowed_organisations))
 
+    @mock_manage
     def test_service_update_scim_url(self):
         service = self._find_by_name(service_cloud_name)
         self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",

@@ -1047,6 +1047,7 @@ const en = {
             tokenAdded: "New token for application {{name}} was created",
             tokenUpdated: "Token of application {{name}} was updated",
             tokenDeleted: "Token of application {{name}} was deleted",
+            manageSyncError: "Error in syncing the service data to our internal backend. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> for help.",
         },
         scim_token: {
             preTitle: "For security reasons, the current SCIM token can not be displayed. ",

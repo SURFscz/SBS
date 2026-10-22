@@ -682,7 +682,7 @@ def update_service():
     res = update(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
-    sync_external_service(current_app, service)
+    sync_external_service(current_app, service, raise_on_error=True)
 
     if scim_url_changed and scim_enabled:
         service.scim_bearer_token = plain_bearer_token
