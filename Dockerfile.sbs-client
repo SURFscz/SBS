@@ -1,3 +1,4 @@
+## This is used by the sram_sbs role in OpenConext-deploy
 # Build SRAM SBS (apache) server image
 FROM ghcr.io/openconext/openconext-basecontainers/apache2:latest AS sram-sbs-client
 
