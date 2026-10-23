@@ -31,7 +31,7 @@ dependencies = [
     "mysqlclient==2.2.8",
     "paramiko==5.0.0",
     "passlib==1.7.4",
-    "Pillow==12.3.0",
+    "Pillow==13.0.0",
     "puremagic==1.30",
     "pydantic==2.13.5",
     "PyJWT==2.13.0",
