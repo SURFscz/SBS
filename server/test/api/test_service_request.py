@@ -169,6 +169,23 @@ class TestServiceRequest(AbstractTest):
         new_service = self.find_entity_by_name(Service, body["name"])
         self.assertEqual(36, len(new_service.ldap_identifier))
 
+    def test_request_service_approve_without_entity_id(self):
+        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
+        body = {
+            "name": "New Service",
+            "abbreviation": "new_service_abbreviation",
+            "comment": "pretty please",
+            "providing_organisation": "cloudy",
+            "entity_id": "",
+            "privacy_policy": "https://privacy_policy.org"
+        }
+        self.login("urn:john")
+        self.put(f"/api/service_requests/approve/{service_request.id}",
+                 body=body, with_basic_auth=False)
+
+        new_service = self.find_entity_by_name(Service, body["name"])
+        self.assertEqual(36, len(new_service.entity_id))
+
     @responses.activate
     def test_request_service_approve_oidc_enabled(self):
         self.login("urn:john")
