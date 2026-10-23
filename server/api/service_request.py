@@ -142,6 +142,8 @@ def approve_request(service_request_id):
     confirm_write_access()
     client_data = current_request.get_json()
     client_data["identifier"] = str(uuid.uuid4())
+    if not client_data.get("entity_id"):
+        client_data["entity_id"] = str(uuid.uuid4())
 
     cleanse_short_name(client_data, "abbreviation")
     client_data["ldap_enabled"] = False

@@ -127,14 +127,11 @@ class Service extends React.Component {
         } else if (isServiceRequestDetails) {
             serviceRequestById(match.params.service_request_id)
                 .then(res => {
-                    const newRequired = [...this.state.required];
-                    newRequired.push("entity_id");
                     this.setState({
                         ...res,
                         service: res,
                         serviceRequest: res,
                         isNew: false,
-                        required: newRequired,
                         isServiceRequestDetails: isServiceRequestDetails,
                         redirect_urls: commaSeparatedArrayToSelectValues(res.redirect_urls),
                         grants: commaSeparatedArrayToSelectValues(res.grants)
@@ -613,13 +610,9 @@ class Service extends React.Component {
                             onBlur={e => this.validateServiceEntityId(e, connection_type)}
                             name={I18n.t("service.entity_id")}
                             toolTip={I18n.t("service.entity_idTooltip")}
-                            error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
-                            required={true}/>
+                            error={alreadyExists.entity_id}/>
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
-                })}/>}
-                {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
-                    attribute: I18n.t("service.entity_id").toLowerCase()
                 })}/>}
             </>}
 
