@@ -217,6 +217,16 @@ def schema_sram_user_template() -> dict[str, Any]:
             "mutability": "readOnly",
             "returned": "default",
             "uniqueness": "none"
+        },
+        {
+            "name": "sshPublicKey",
+            "type": "string",
+            "multiValued": True,
+            "required": False,
+            "caseExact": True,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
         }
     ])
 
