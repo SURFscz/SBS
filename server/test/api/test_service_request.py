@@ -184,7 +184,7 @@ class TestServiceRequest(AbstractTest):
                  body=body, with_basic_auth=False)
 
         new_service = self.find_entity_by_name(Service, body["name"])
-        self.assertEqual(36, len(new_service.entity_id))
+        self.assertIsNone(new_service.entity_id)
 
     @responses.activate
     def test_request_service_approve_oidc_enabled(self):
@@ -194,8 +194,7 @@ class TestServiceRequest(AbstractTest):
         service_request_id = service_request.id
 
         body = self.get(f"/api/service_requests/{service_request_id}")
-        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
-        body["entity_id"] = "http://entity/id"
+        body["entity_id"] = ""
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
             manage_base_url = self._resolve_manage_base_url()
             fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
@@ -211,6 +210,7 @@ class TestServiceRequest(AbstractTest):
             new_service = self.find_entity_by_name(Service, body["name"])
             self.assertTrue(new_service.oidc_enabled)
             self.assertFalse(new_service.saml_enabled)
+            self.assertTrue(new_service.entity_id.startswith("SURFACCESS-"))
 
     @responses.activate
     def test_request_service_approve_saml_enabled(self):

@@ -140,7 +140,7 @@ class Service extends React.Component {
                             Promise.all([
                                 serviceAbbreviationExists(sanitizeShortName(res.abbreviation), null),
                                 serviceNameExists(res.name, null),
-                                serviceEntityIdExists(isEmpty(res.entity_id) ? crypto.randomUUID() : res.entity_id, null)
+                                isEmpty(res.entity_id) ? false : serviceEntityIdExists(res.entity_id, null)
                             ]).then(res => {
                                 this.setState({
                                     initial: false,
@@ -599,22 +599,6 @@ class Service extends React.Component {
                         multiline={true}
                         required={true}
             />
-
-            {isServiceRequestDetails && <>
-                <InputField value={entity_id}
-                            onChange={e => this.setState({
-                                entity_id: e.target.value,
-                                alreadyExists: {...this.state.alreadyExists, entity_id: false}
-                            })}
-                            placeholder={I18n.t("service.entity_idPlaceHolder")}
-                            onBlur={e => this.validateServiceEntityId(e, connection_type)}
-                            name={I18n.t("service.entity_id")}
-                            toolTip={I18n.t("service.entity_idTooltip")}
-                            error={alreadyExists.entity_id}/>
-                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                    attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
-                })}/>}
-            </>}
 
             <div className="first-column">
                 <InputField value={providing_organisation}

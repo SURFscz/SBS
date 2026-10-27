@@ -559,7 +559,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     __tablename__ = "services"
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
+    entity_id = db.Column("entity_id", db.String(length=255), nullable=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
