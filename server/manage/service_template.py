@@ -77,6 +77,7 @@ def create_service_template(app, service: Service, sbs_rp_json: dict):
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
                 "coin:sign_response": True,
                 "coin:collab_enabled": True,
+                "coin:no_consent_required": True,
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
                 "grants": _oidc_grants(service),
                 "isPublicClient": service.is_public_client,
