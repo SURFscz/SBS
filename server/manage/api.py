@@ -52,7 +52,10 @@ def sync_external_service(app, service: Service, raise_on_error=False):
                                 verify=verify_peer,
                                 timeout=10)
             sbs_rp_json_results = res.json()
-            sbs_rp_json = sbs_rp_json_results[0] if sbs_rp_json_results else default_idp_matrix
+            if sbs_rp_json_results:
+                sbs_rp_json = sbs_rp_json_results[0]
+            else: 
+                sbs_rp_json = default_idp_matrix
         except RequestException:
             logger.error(f"Error in manage API retrieving {entity_id}", exc_info=1)
             sbs_rp_json = default_idp_matrix
