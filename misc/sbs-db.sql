@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision fdeb5f8ff280 (head)
+-- Dump of empty SBS database, alembic revision 3c1d7a9e5b42 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('fdeb5f8ff280');
+INSERT INTO `alembic_version` VALUES ('3c1d7a9e5b42');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -888,7 +888,7 @@ DROP TABLE IF EXISTS `services`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `entity_id` varchar(255) NOT NULL,
+  `entity_id` varchar(255) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `description` text,
   `uri` varchar(255) DEFAULT NULL,
@@ -941,9 +941,9 @@ CREATE TABLE `services` (
   `access_allowed_for_crm_organisation` tinyint(1) DEFAULT '0',
   `acs_locations` text,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
   UNIQUE KEY `services_unique_abbreviation` (`abbreviation`),
+  UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   KEY `services_ibfk_1` (`crm_organisation_id`),
   FULLTEXT KEY `ft_services_search` (`name`,`entity_id`,`description`),
   CONSTRAINT `services_ibfk_1` FOREIGN KEY (`crm_organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
