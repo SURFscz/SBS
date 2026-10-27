@@ -691,7 +691,9 @@ class ServiceOverview extends React.Component {
                 } else {
                     this.setState({loading: true});
                     const {name, redirect_urls, grants, acs_locations, entity_id} = service;
-                    service.entity_id = service.oidc_enabled ? entity_id.replaceAll(":", "@").trim() : entity_id.trim();
+                    if (!isEmpty(entity_id)) {
+                        service.entity_id = service.oidc_enabled ? entity_id.replaceAll(":", "@").trim() : entity_id.trim();
+                    }
                     ["name"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
                     const newService = {
                         ...service,

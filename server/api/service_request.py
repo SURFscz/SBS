@@ -142,8 +142,8 @@ def approve_request(service_request_id):
     confirm_write_access()
     client_data = current_request.get_json()
     client_data["identifier"] = str(uuid.uuid4())
-    if not client_data.get("entity_id"):
-        client_data["entity_id"] = str(uuid.uuid4())
+    # Only OIDC services get a generated entity_id (the client_id), SAML services get theirs from the metadata
+    client_data["entity_id"] = client_data.get("entity_id") or None
 
     cleanse_short_name(client_data, "abbreviation")
     client_data["ldap_enabled"] = False
@@ -166,6 +166,8 @@ def approve_request(service_request_id):
     if oidc_client_secret and client_data.get("redirect_urls") and client_data.get("grants"):
         client_data["oidc_enabled"] = True
         client_data["oidc_client_secret"] = oidc_client_secret
+        if not client_data["entity_id"]:
+            client_data["entity_id"] = f"SURFACCESS-{uuid.uuid4()}"
     if client_data.get("acs_locations"):
         client_data["saml_enabled"] = True
 
