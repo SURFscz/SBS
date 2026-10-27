@@ -704,7 +704,7 @@ class ServiceOverview extends React.Component {
                         .then(() => this.afterUpdate(name, "updated", sweepAfterwards))
                         .catch(e => {
                             // ManageSyncException is returned as a 502
-                            if (e.message && e.message.status === 502) {
+                            if (e.response && e.response?.status === 502) {
                                 setFlash(I18n.t("service.flash.manageSyncError"), "error");
                             }
                             this.setState({loading: false});
