@@ -51,10 +51,10 @@ def sync_external_service(app, service: Service, raise_on_error=False):
                                 auth=manage_basic_auth,
                                 verify=verify_peer,
                                 timeout=10)
-            sbs_rp_json_results = res.json()
-            if sbs_rp_json_results:
+            sbs_rp_json_results: dict = res.json()
+            try:
                 sbs_rp_json = sbs_rp_json_results[0]
-            else:
+            except LookupError:
                 sbs_rp_json = default_idp_matrix
         except RequestException:
             logger.error(f"Error in manage API retrieving {entity_id}", exc_info=1)
