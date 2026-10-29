@@ -11,13 +11,6 @@ from server.db.domain import Service
 from server.manage.service_template import create_service_template
 from server.tools import dt_now
 
-default_idp_matrix = {
-    "data": {
-        "allowedall": True,
-        "allowedEntities": []
-    }
-}
-
 
 def _parse_manage_config(manage_conf):
     base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
@@ -41,7 +34,6 @@ def sync_external_service(app, service: Service, raise_on_error=False):
         logger = logging.getLogger("manage")
 
         manage_base_url, manage_basic_auth, verify_peer = _parse_manage_config(app.app_config.manage)
-        # We need the SRAM RP to copy the IdPs that are connected to the main SRAM/SBS instance
         fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
         try:
             entity_id = app.app_config.manage.sram_rp_entity_id
@@ -51,16 +43,13 @@ def sync_external_service(app, service: Service, raise_on_error=False):
                                 auth=manage_basic_auth,
                                 verify=verify_peer,
                                 timeout=10)
-            sbs_rp_json_results: dict = res.json()
-            try:
-                sbs_rp_json = sbs_rp_json_results[0]
-            except LookupError:
-                sbs_rp_json = default_idp_matrix
+            if not res.json():
+                raise RequestException("Fetching SBS RP returned an empty list")
         except RequestException:
             logger.error(f"Error in manage API retrieving {entity_id}", exc_info=1)
-            sbs_rp_json = default_idp_matrix
+            logger.error(f"Please make sure the SBS RP is added to Manage at {manage_base_url}")
 
-        service_template = create_service_template(app, service, sbs_rp_json)
+        service_template = create_service_template(app, service)
         request_method = requests.put if service.export_external_identifier else requests.post
         url = f"{manage_base_url}/manage/api/internal/metadata"
         service.exported_at = dt_now()
