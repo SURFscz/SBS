@@ -511,7 +511,7 @@ class Groups extends React.Component {
                     <section className="group-meta-data">
                         <div className="meta-data-item">
                             <span className="item-label">
-                                {I18n.t("collaboration.shortName")}
+                                {I18n.t("groups.global_urn")}
                             </span>
                             <span className="contains-copy group-urn">
                                 <CopyToClipboard text={selectedGroup.global_urn}>
