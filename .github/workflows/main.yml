@@ -22,7 +22,7 @@ jobs:
   Server_tests:
     name: Server tests
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
 
     # Test different python versions
     strategy:
