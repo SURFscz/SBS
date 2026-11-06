@@ -19,7 +19,7 @@ deserialization_mapping = {"users": User, "collaboration_memberships": Collabora
                            "services": Service, "aups": Aup, "groups": Group,
                            "units": Unit, "tags": Tag}
 
-forbidden_fields = ["created_at", "updated_at"]
+forbidden_fields = ["created_at", "updated_at", "global_urn"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date",
                "last_activity_date", "membership_expiry_date", "expiry_date", "invitation_expiry_date",
                "sweep_scim_last_run", "exported_at"]

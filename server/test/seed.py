@@ -595,7 +595,6 @@ def seed(db, app_config, skip_seed=False):
 
     ai_computing = Collaboration(name=co_ai_computing_name,
                                  identifier=co_ai_computing_uuid,
-                                 global_urn=f"ucc:{co_ai_computing_short_name}",
                                  description="Artificial Intelligence computing for the Unincorporated Urban Community",
                                  logo=read_image("computing.png"),
                                  organisation=uuc, services=[mail, network],
@@ -609,7 +608,6 @@ def seed(db, app_config, skip_seed=False):
                                  disclose_member_information=True)
     ufra_research = Collaboration(name=co_research_name,
                                   short_name="research",
-                                  global_urn="ufra:research",
                                   identifier=co_research_uuid,
                                   tags=[tag_ufra],
                                   website_url="https://www.google.nl",
@@ -620,7 +618,6 @@ def seed(db, app_config, skip_seed=False):
                                   disclose_member_information=True)
     uuc_teachers = Collaboration(name=co_teachers_name,
                                  identifier="033cbc91-45ed-4020-bf86-3cc323e1f1cf",
-                                 global_urn=f"ucc:{co_teachers_name}",
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
                                  logo=read_image("teachers.png"),
@@ -633,7 +630,6 @@ def seed(db, app_config, skip_seed=False):
     monitoring_co_1 = Collaboration(name=co_monitoring_name,
                                     identifier="37d55167-23e4-4099-ae20-4f3d8d284b14",
                                     uuid4="b85e2ae6-05f3-4c27-9078-e11a420bdc08",
-                                    global_urn="ucc:monitoring1",
                                     website_url="https://www.google.nl",
                                     description="CO voor monitoring.  NIET AANKOMEN.",
                                     logo=read_image("monitor1.png"),
@@ -644,7 +640,6 @@ def seed(db, app_config, skip_seed=False):
     monitoring_co_2 = Collaboration(name="Monitoring CO numero 2",
                                     identifier="4c1095e5-ae60-4d6d-8bfe-f711d0f81942",
                                     uuid4="716065e3-5154-4883-b1a6-06d6e32f11e9",
-                                    global_urn="pekela:monitoring2",
                                     website_url="https://www.google.nl",
                                     description="CO voor monitoring.  NIET AANKOMEN.",
                                     logo=read_image("monitor2.png"),
@@ -655,7 +650,6 @@ def seed(db, app_config, skip_seed=False):
 
     ai_disabled_join_request = Collaboration(name=co_robotics_disabled_join_request_name,
                                              short_name="ai_short",
-                                             global_urn="ufra:ai_short",
                                              website_url="https://www.google.nl",
                                              logo=read_image("robot.png"),
                                              identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
@@ -708,7 +702,6 @@ def seed(db, app_config, skip_seed=False):
 
     group_researchers = Group(name=group_ai_researchers,
                               short_name=group_ai_researchers_short_name,
-                              global_urn="uuc:ai_computing:ai_res",
                               identifier=group_ai_researchers_identifier,
                               auto_provision_members=False,
                               description="Artificial computing researchers",
@@ -717,7 +710,6 @@ def seed(db, app_config, skip_seed=False):
                                                          jane_ai_computing])
     group_developers = Group(name="AI developers",
                              short_name="ai_dev",
-                             global_urn="uuc:ai_computing:ai_dev",
                              identifier=group_ai_dev_identifier,
                              auto_provision_members=False,
                              description="Artificial computing developers",
@@ -725,7 +717,6 @@ def seed(db, app_config, skip_seed=False):
                              collaboration_memberships=[john_ai_computing])
     group_science = Group(name=group_science_name,
                           short_name="science",
-                          global_urn="ufra:research:science",
                           identifier=group_science_identifier,
                           auto_provision_members=True,
                           description="Science",
@@ -734,7 +725,6 @@ def seed(db, app_config, skip_seed=False):
 
     group_service_mail = Group(name=service_group_mail_name,
                                short_name="mail-mail",
-                               global_urn="uuc:ai_computing:mail-mail",
                                identifier="9946ca40-2a53-40a8-bc63-fb0758e716e3",
                                auto_provision_members=False,
                                description="Provisioned by service Mail Services - Mail group",

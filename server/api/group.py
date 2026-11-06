@@ -163,7 +163,6 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     duplicates = [g.id for g in collaboration.groups if is_duplicate(g)]
     if duplicates:
         return {}, 201
-    _assign_global_urn(collaboration, data)
     data["identifier"] = str(uuid.uuid4())
     res = save(Group, custom_json=data, allow_child_cascades=False)
 
@@ -178,10 +177,6 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     return res
 
 
-def _assign_global_urn(collaboration, data):
-    data["global_urn"] = f"{collaboration.organisation.short_name}:{collaboration.short_name}:{data['short_name']}"
-
-
 @group_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_group():
@@ -190,7 +185,6 @@ def update_group():
     collaboration_id = int(data["collaboration_id"])
     confirm_collaboration_admin(collaboration_id)
     collaboration = db.session.get(Collaboration, collaboration_id)
-    _assign_global_urn(collaboration, data)
     cleanse_short_name(data)
     group = db.session.get(Group, data["id"])
     if group.service_group:

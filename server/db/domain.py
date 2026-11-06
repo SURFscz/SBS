@@ -336,7 +336,8 @@ class Collaboration(Base, db.Model, LogoMixin):
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
-    global_urn = db.Column("global_urn", db.Text, nullable=True)
+    # Legacy column, no longer used: the global_urn is derived at runtime, see the global_urn property.
+    _legacy_global_urn = db.Column("global_urn", db.Text, nullable=True, default="")
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
     last_activity_date = db.Column("last_activity_date", TZDateTime(), nullable=False,
@@ -380,6 +381,12 @@ class Collaboration(Base, db.Model, LogoMixin):
                                                       .where(CollaborationMembership.collaboration_id == id)
                                                       .correlate_except(CollaborationMembership)
                                                       .scalar_subquery())
+
+    json_properties = ("global_urn",)
+
+    @property
+    def global_urn(self):
+        return f"{self.organisation.short_name}:{self.short_name}"
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
@@ -730,7 +737,8 @@ class Group(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=False)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
-    global_urn = db.Column("global_urn", db.Text, nullable=True)
+    # Legacy column, no longer used: the global_urn is derived at runtime, see the global_urn property.
+    _legacy_global_urn = db.Column("global_urn", db.Text, nullable=True, default="")
     description = db.Column("description", db.Text(), nullable=True)
     auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
@@ -749,6 +757,12 @@ class Group(Base, db.Model):
                            nullable=False)
     updated_at = db.Column("updated_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    json_properties = ("global_urn",)
+
+    @property
+    def global_urn(self):
+        return f"{self.collaboration.organisation.short_name}:{self.collaboration.short_name}:{self.short_name}"
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0

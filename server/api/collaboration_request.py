@@ -7,7 +7,7 @@ from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, emit_socket
-from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
+from server.api.collaboration import do_save_collaboration
 from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager, confirm_write_access
@@ -162,8 +162,6 @@ def approve_request(collaboration_request_id):
     if logo and logo.startswith("http"):
         groups = re.search(r".*api/images/(.*)/(.*)", logo).groups()
         data["logo"] = logo_from_cache(groups[0], groups[1])
-
-    assign_global_urn_to_collaboration(collaboration_request.organisation, data)
 
     data["status"] = STATUS_ACTIVE
 

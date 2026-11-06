@@ -538,14 +538,6 @@ def update_organisation():
     cleanse_short_name(data)
 
     organisation = db.session.get(Organisation, data["id"])
-    if organisation.short_name != data["short_name"]:
-        for collaboration in organisation.collaborations:
-            collaboration.global_urn = f"{data['short_name']}:{collaboration.short_name}"
-            db.session.merge(collaboration)
-            for group in collaboration.groups:
-                group.global_urn = f"{data['short_name']}:{collaboration.short_name}:{group.short_name}"
-                db.session.merge(group)
-
     if not is_application_admin() and organisation.services_restricted:
         data["services_restricted"] = True
 

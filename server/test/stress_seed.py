@@ -211,7 +211,6 @@ def stress_seed(db, app_config):
         collaboration = Collaboration(
             name=name,
             short_name=short_name,
-            global_urn=f"{org.short_name}:{short_name}",
             identifier=str(uuid.uuid4()),
             description=fake.paragraph(),
             logo=choice(images),
@@ -278,7 +277,6 @@ def stress_seed(db, app_config):
                 group = Group(
                     name=name,
                     short_name=short_name,
-                    global_urn=f"{collab.organisation.short_name}:{collab.short_name}:{short_name}",
                     identifier=str(uuid.uuid4()),
                     auto_provision_members=choice([True, False]),
                     description=fake.sentence(),
