@@ -128,8 +128,9 @@ def internal_sync():
         ]
         rs = conn.execute(
             text(
-                "SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description, "
-                "uuid4, website_url from collaborations"
+                "SELECT c.id, c.identifier, c.name, c.short_name, CONCAT(o.short_name, ':', c.short_name), "
+                "c.organisation_id, c.status, c.description, c.uuid4, c.website_url FROM collaborations c "
+                "INNER JOIN organisations o ON o.id = c.organisation_id"
             )
         )
         sbs_url_prefix = f"{current_app.app_config.base_url}/collaborations/"
@@ -151,7 +152,10 @@ def internal_sync():
         ]
         rs = conn.execute(
             text(
-                "SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`"
+                "SELECT g.id, g.name, g.short_name, CONCAT(o.short_name, ':', c.short_name, ':', g.short_name), "
+                "g.identifier, g.collaboration_id, g.description FROM `groups` g "
+                "INNER JOIN collaborations c ON c.id = g.collaboration_id "
+                "INNER JOIN organisations o ON o.id = c.organisation_id"
             )
         )
         groups = [

@@ -1,10 +1,10 @@
 from base64 import b64encode
 
-from server.db.domain import User
+from server.db.domain import User, Collaboration, Organisation
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, service_wiki_entity_id, unihard_name, co_ai_computing_name, \
-    group_ai_researchers, \
+    group_ai_researchers, unifra_name, \
     user_boss_name, service_storage_entity_id
 
 AUTH_HEADER_READ = {"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"}
@@ -31,6 +31,20 @@ class TestPlsc(AbstractTest):
         suspended_user_names = sorted([user["name"] for user in users if user["status"] == "suspended"])
         self.assertListEqual([user_sarah_name, "user_deletion_warning", "user_gets_deleted"], suspended_user_names)
         self.assertEqual(16, len([user["name"] for user in users if user["status"] == "active"]))
+
+    def test_global_urns_derived_at_runtime(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        collaboration.organisation = self.find_entity_by_name(Organisation, unifra_name)
+        collaboration_id, short_name = collaboration.id, collaboration.short_name
+        self.save_entity(collaboration)
+
+        res = self.get("/api/plsc/syncing")
+        organisation = next(o for o in res["organisations"] if o["name"] == unifra_name)
+        res_collaboration = next(c for c in organisation["collaborations"] if c["id"] == collaboration_id)
+        self.assertEqual(f"ufra:{short_name}", res_collaboration["global_urn"])
+        self.assertTrue(len(res_collaboration["groups"]) > 0)
+        for group in res_collaboration["groups"]:
+            self.assertTrue(group["global_urn"].startswith(f"ufra:{short_name}:"))
 
     def test_sram_inactive_days(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)

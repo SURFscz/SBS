@@ -122,7 +122,6 @@ def update_service_group():
             "description": service_group.description,
             # See https://github.com/SURFscz/SBS/issues/1592, what is the expected behaviour? Ignore when different?
             "auto_provision_members": service_group.auto_provision_members,
-            "global_urn": f"{collaboration.organisation.short_name}:{collaboration.short_name}:{short_name}",
             "identifier": group.identifier,
             "collaboration_id": collaboration.id,
             "service_group_id": service_group.id

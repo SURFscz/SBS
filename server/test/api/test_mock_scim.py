@@ -85,7 +85,7 @@ class TestMockScim(AbstractTest):  # type: ignore[misc]
 
         # Update the group
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        collaboration.global_urn = "Changed"
+        collaboration.short_name = "Changed"
         body = update_group_template(collaboration, [member_object], scim_id_group)
         res = self.put(f"/api/scim_mock/Groups/{scim_id_group}",
                        body=body,

@@ -223,7 +223,6 @@ def demo_seed(db, app_config):
         new_collab = Collaboration(
             name=collab['name'],
             identifier=collab['identifier'],
-            global_urn=f"ucc:{collab['short_name']}",
             description=collab['description'],
             logo=read_image(collab['logo'], directory="demo_images"),
             organisation=collab['organisation'],
@@ -270,7 +269,6 @@ def demo_seed(db, app_config):
             new_group = Group(
                 name=group['name'],
                 short_name=group['short_name'],
-                global_urn=f"uuc:{collab['short_name']}:{group['short_name']}",
                 identifier=group['identifier'],
                 auto_provision_members=group['auto_provision'],
                 description=f"{group['name']} users group",
@@ -297,7 +295,6 @@ def demo_seed(db, app_config):
         co = Collaboration(name=f"Samenwerking Numero {i}",
                            identifier=str(uuid.uuid4()),
                            short_name=f"co_nr_{i:03d}",
-                           global_urn=f"ucc:co_nr_{i:03d}",
                            description="Een van vele COs",
                            logo=read_image("scientists.jpg", directory="demo_images"),
                            organisation=org_list[0],

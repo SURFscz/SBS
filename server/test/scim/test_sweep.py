@@ -142,7 +142,7 @@ class TestSweep(AbstractTest):
     def test_group_changed_urn(self):
         group = self.find_entity_by_name(Group, group_ai_researchers)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
-        group.global_urn = "changed"
+        group.collaboration.short_name = "changed"
         self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_changed_name(self):

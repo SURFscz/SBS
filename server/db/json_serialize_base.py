@@ -1,4 +1,5 @@
 from sqlalchemy import inspect
+from sqlalchemy.orm.exc import DetachedInstanceError
 
 
 class JsonSerializableBase(object):
@@ -22,4 +23,12 @@ class JsonSerializableBase(object):
             keys.difference_update(relationships)
             keys.difference_update(unloaded)
 
-        return {key: getattr(self, key) for key in keys}
+        # Legacy columns are mapped to a private attribute and replaced by a runtime derived property
+        keys = {key for key in keys if not key.startswith("_")}
+        res = {key: getattr(self, key) for key in keys}
+        for name in getattr(self, "json_properties", ()):
+            try:
+                res[name] = getattr(self, name)
+            except (DetachedInstanceError, AttributeError):
+                pass
+        return res

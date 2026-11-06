@@ -858,17 +858,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
 
     validate_units(data, organisation)
 
-    _assign_global_urn(data["organisation_id"], data)
     data["last_activity_date"] = dt_now()
-
-
-def _assign_global_urn(organisation_id, data):
-    organisation = db.session.get(Organisation, organisation_id)
-    assign_global_urn_to_collaboration(organisation, data)
-
-
-def assign_global_urn_to_collaboration(organisation, data):
-    data["global_urn"] = f"{organisation.short_name}:{data['short_name']}"
 
 
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)
@@ -893,10 +883,6 @@ def update_collaboration():
     is_admin = is_admin_user(user)
 
     short_name_changed = collaboration.short_name != data["short_name"]
-    if is_admin and (short_name_changed or collaboration.organisation_id != organisation.id):
-        for group in collaboration.groups:
-            group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
-            db.session.merge(group)
 
     if not is_admin and short_name_changed:
         data["short_name"] = collaboration.short_name
