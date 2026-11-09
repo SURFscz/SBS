@@ -22,7 +22,7 @@ jobs:
   Server_tests:
     name: Server tests
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
 
     # Test different python versions
     strategy:
@@ -130,7 +130,7 @@ jobs:
   Client_build:
     name: Client build
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
 
     steps:
       - name: Run errands
@@ -363,7 +363,7 @@ jobs:
       - "Server_tests"
       - "Docker_image"
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
 
     steps:
       - name: Checkout
@@ -437,7 +437,7 @@ jobs:
   Schema_pr:
     name: Update schema cache
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
 
     if: "github.ref == 'refs/heads/main'"
 
