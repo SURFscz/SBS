@@ -34,15 +34,28 @@ def user_attributes(service: Service, user: User):
     all_tags = co_tags(connected_collaborations)
     all_attributes = all_memberships.union(all_tags)
 
+    affiliations = [
+        value.strip()
+        for value in user.scoped_affiliation.split(",")
+        if value.strip()
+    ] if user.scoped_affiliation else []
+
     log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service.entity_id, "AUTHORIZED")
 
     return {
         "msg": "authorized",
         "attributes": {
-            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
-            "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-            "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
-            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
+            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
+            # eduTEAMS has always put this value here (member@sram.surf.nl in prod), also adhering to AARC-G025 spec
+            "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [f"member@{current_app.app_config.base_scope.strip()}"],
+            "urn:mace:surf.nl:attribute-def:voPersonExternalID": [
+                f"{user.username}@{current_app.app_config.base_scope.strip()}"
+            ],
+            "urn:mace:surf.nl:attribute-def:voPersonID": [user.uid],
+            "urn:mace:surf.nl:attribute-def:voPersonSoRID": [user.username],
+            # To adhere to the AARC-G025 spec, which says home organisation information should be in voPersonExternalAffiliation
+            "urn:mace:surf.nl:attribute-def:voPersonExternalAffiliation": affiliations,
+            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]
         }
     }
 
