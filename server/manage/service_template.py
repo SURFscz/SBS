@@ -66,7 +66,7 @@ def create_service_template(app, service: Service):
                 "attributes": arp_attributes()
             },
             "entityid": service.entity_id,
-            "state": "prodaccepted",
+            "state": app.app_config.manage.service_state,
             "metaDataFields": {
                 "coin:application_url": service.uri,
                 "coin:privacy:privacy_policy": bool(service.privacy_policy),
