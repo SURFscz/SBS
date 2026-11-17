@@ -43,7 +43,7 @@ def _oidc_grants(service):
     return [translate_grant(g) for g in service.grants.split(",")] if service.grants else []
 
 
-allowed_bool_false_fields = ["version"]
+allowed_bool_false_fields = ["enabled", "version"]
 
 
 def _replace_none_values(d: dict):
@@ -55,27 +55,26 @@ def _replace_none_values(d: dict):
     return d
 
 
-def create_service_template(service: Service, sbs_rp_json: dict):
-    # We need to copy the IdPs that are connected to the main SRAM/SBS instance
-    sbs_rp_data = sbs_rp_json["data"]
-
+def create_service_template(app, service: Service):
     service_template = {
         "type": "sram",
         "data": {
-            "allowedall": sbs_rp_data["allowedall"],
-            "allowedEntities": sbs_rp_data["allowedEntities"],
+            "allowedall": True,
+            "allowedEntities": [],
             "arp": {
                 "enabled": True,
                 "attributes": arp_attributes()
             },
             "entityid": service.entity_id,
-            "state": "prodaccepted",
+            "state": app.app_config.manage.service_state,
             "metaDataFields": {
                 "coin:application_url": service.uri,
                 "coin:privacy:privacy_policy": bool(service.privacy_policy),
                 "coin:privacy:privacy_policy_url": service.privacy_policy,
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "coin:sign_response": True,
                 "coin:collab_enabled": True,
+                "coin:no_consent_required": True,
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
                 "grants": _oidc_grants(service),
                 "isPublicClient": service.is_public_client,
