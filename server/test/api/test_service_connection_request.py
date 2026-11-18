@@ -219,6 +219,23 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertTrue(f"Request for new service {service_ssh_name} "
                             f"connection to collaboration {co_research_name}" in mail_msg.subject)
 
+    def test_approve_service_connection_org_manager_cannot_do_final_approval(self):
+        service = self.find_entity_by_name(Service, service_ssh_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
+        request_id = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == service_connection_request_ssh_hash).one().id
+
+        # Step one: the organisation approval
+        self.login("urn:jane")
+        self.put("/api/service_connection_requests/approve", body={"id": request_id})
+        pre_services_count = len(self.find_entity_by_name(Collaboration, co_research_name).services)
+
+        # Step two: the same org admin must not be able to do the service-side approval
+        self.put("/api/service_connection_requests/approve", body={"id": request_id}, response_status_code=403)
+        post_services_count = len(self.find_entity_by_name(Collaboration, co_research_name).services)
+        self.assertEqual(pre_services_count, post_services_count)
+
     def test_approve_service_connection(self):
         service = self.find_entity_by_name(Service, service_ssh_name)
         service.override_access_allowed_all_connections = 0

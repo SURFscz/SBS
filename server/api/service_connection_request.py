@@ -7,7 +7,7 @@ from server.api.collaborations_services import connect_service_collaboration
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
     is_service_admin_or_manager, confirm_service_manager, \
-    has_org_manager_unit_access
+    has_org_manager_unit_access, is_application_admin
 from server.db.activity import update_last_activity_date
 from server.db.defaults import STATUS_DENIED, STATUS_APPROVED, STATUS_OPEN
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
@@ -79,7 +79,15 @@ def _do_service_connection_request(approved):
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
-    if not (is_service_admin_or_manager(service.id) or has_org_manager_unit_access(current_user_id(), collaboration)):
+    is_service_side = is_service_admin_or_manager(service.id) or is_application_admin()
+    if approved and not allowed:
+        # Two-party approval: the organisation step is handled above, the final approval must come from the
+        # service side. An organisation manager must not be able to complete both steps.
+        permitted = is_service_side
+    else:
+        # Denying, or approving a connection the service has already pre-authorised (automatic connection allowed)
+        permitted = is_service_side or has_org_manager_unit_access(current_user_id(), collaboration)
+    if not permitted:
         raise Forbidden(f"Not allowed to approve / deny service_connection_request for service {service.entity_id}")
 
     if approved:
