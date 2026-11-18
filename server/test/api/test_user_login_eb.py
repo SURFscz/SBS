@@ -196,7 +196,6 @@ class TestUserLoginEB(AbstractTest):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         body = {"user_id": "nonexisting:userid",
                 "eppn": "sarah@woods.io",
-                "external_subject_id": "urn:sarah",
                 "attributes": {
                     "urn:oasis:names:tc:SAML:attribute:subject-id": [
                         "urn:sarah"
@@ -216,7 +215,6 @@ class TestUserLoginEB(AbstractTest):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         body = {"user_id": "nonexisting:userid",
                 "eppn": "nonexisting:eppn",
-                "external_subject_id": "nonexisting:id",
                 "email": ["unknown@email.nl", "sarah@uni-franeker.nl"],
                 "continue_url": "https://engine.surf.nl",
                 "service_id": service_mail_entity_id,
@@ -228,41 +226,15 @@ class TestUserLoginEB(AbstractTest):
                         body=body)
         self.assertEqual("authorized", res["msg"])
 
-    def test_authz_eb_authorized_with_eppn(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-        body = {"user_id": "nonexisting:userid",
-                "eppn": "sarah@woods.io",
-                "continue_url": "https://engine.surf.nl",
-                "service_id": service_mail_entity_id,
-                "issuer_id": "https://idp.test"}
-
-        res = self.post("/api/users/authz_eb", response_status_code=200,
-                        headers={"Authorization": self.app.app_config.engine_block.api_token,
-                                 "Content-Type": "application/json"},
-                        body=body)
-        self.assertEqual("authorized", res["msg"])
-
-    def test_authz_eb_authorized_with_external_subject_id(self):
+    def test_authz_eb_authorized_with_upstream_subject_id(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         body = {"user_id": "nonexisting:userid",
                 "eppn": "nonexisting:eppn",
-                "external_subject_id": "urn:sarah",
-                "continue_url": "https://engine.surf.nl",
-                "service_id": service_mail_entity_id,
-                "issuer_id": "https://idp.test"}
-
-        res = self.post("/api/users/authz_eb", response_status_code=200,
-                        headers={"Authorization": self.app.app_config.engine_block.api_token,
-                                 "Content-Type": "application/json"},
-                        body=body)
-        self.assertEqual("authorized", res["msg"])
-
-    def test_authz_eb_authorized_with_emails(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-        body = {"user_id": "nonexisting:userid",
-                "eppn": "nonexisting:eppn",
-                "external_subject_id": "nonexisting:id",
-                "email": ["unknown@email.nl", "sarah@uni-franeker.nl"],
+                "attributes": {
+                    "urn:oasis:names:tc:SAML:attribute:subject-id": [
+                        "urn:sarah"
+                    ],
+                },
                 "continue_url": "https://engine.surf.nl",
                 "service_id": service_mail_entity_id,
                 "issuer_id": "https://idp.test"}
