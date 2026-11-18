@@ -76,11 +76,6 @@ jobs:
           mysql -uroot -proot -h127.0.0.1 sbs_gw1 < misc/sbs-db.sql;
           mysql -uroot -proot -h127.0.0.1 sbs_gw2 < misc/sbs-db.sql;
           mysql -uroot -proot -h127.0.0.1 sbs_gw3 < misc/sbs-db.sql;
-      - name: Install SAML2 dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7
         with:
@@ -206,11 +201,6 @@ jobs:
       - name: Load SBS schema
         run: |
           mysql -uroot -proot -h127.0.0.1 sbs_e2e < misc/sbs-db.sql
-
-      - name: Install SAML2 dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
 
       - name: Set up Python
         uses: actions/setup-python@v7
