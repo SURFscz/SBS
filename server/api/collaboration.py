@@ -28,7 +28,8 @@ from server.db.defaults import (default_expiry_date, full_text_search_autocomple
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes,
                                 generate_short_name, invalid_tag_labels, tag_label_rule_description)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, \
+    Unit, OrganisationMembership
 from server.db.image import transform_image
 from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete
@@ -669,12 +670,29 @@ def collaboration_invites_preview():
     return {"html": html}, 201
 
 
+def _confirm_manager_units_allowed(organisation_id, data):
+    # An organisation manager restricted to units may only create collaborations within those units
+    if is_application_admin():
+        return
+    membership = OrganisationMembership.query \
+        .filter(OrganisationMembership.user_id == current_user_id()) \
+        .filter(OrganisationMembership.organisation_id == organisation_id) \
+        .first()
+    if not membership or membership.role == "admin" or not membership.units:
+        return
+    requested_unit_ids = {int(unit["id"]) for unit in data.get("units") or []}
+    manager_unit_ids = {unit.id for unit in membership.units}
+    if not requested_unit_ids or not requested_unit_ids <= manager_unit_ids:
+        raise Forbidden("Collaborations can only be created within the units of the organisation manager")
+
+
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_collaboration():
     data = current_request.get_json()
     if "organisation_id" in data:
         confirm_organisation_admin_or_manager(data["organisation_id"])
+        _confirm_manager_units_allowed(data["organisation_id"], data)
         organisation = db.session.get(Organisation, data["organisation_id"])
         user = db.session.get(User, current_user_id())
     else:

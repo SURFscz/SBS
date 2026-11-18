@@ -138,6 +138,23 @@ class TestCollaborationRequest(AbstractTest):
                              mail_msg.subject)
             self.assertTrue(reason in mail_msg.html)
 
+    def test_request_collaboration_deny_unit_restricted_manager(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        collaboration_request_id = collaboration_request.id
+
+        # Harry is manager of unit support, the request is for unit research
+        self.login("urn:harry")
+        self.put(f"/api/collaboration_requests/deny/{collaboration_request_id}",
+                 body={"rejection_reason": "Not my unit"},
+                 with_basic_auth=False,
+                 response_status_code=403)
+
+        # Paul is manager of unit research
+        self.login("urn:paul")
+        self.put(f"/api/collaboration_requests/deny/{collaboration_request_id}",
+                 body={"rejection_reason": "My unit"},
+                 with_basic_auth=False)
+
     def test_delete(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
         self.login("urn:john")

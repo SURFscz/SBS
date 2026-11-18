@@ -10,7 +10,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
-    confirm_organisation_admin_or_manager, confirm_write_access
+    confirm_write_access
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.db.domain import User, CollaborationRequest, Collaboration, CollaborationMembership, db, \
     SchacHomeOrganisation, OrganisationMembership
@@ -204,7 +204,8 @@ def approve_request(collaboration_request_id):
 @json_endpoint
 def deny_request(collaboration_request_id):
     collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
-    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
+    confirm_write_access(collaboration_request.organisation_id, collaboration_request.units,
+                         override_func=current_member_unit_allowed)
 
     rejection_reason = current_request.get_json()["rejection_reason"]
 

@@ -60,6 +60,11 @@ def has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True
     return unit_allowed
 
 
+def org_manager_unit_access_collaboration_ids(user_id, collaborations):
+    """Ids of the collaborations the (unit restricted) organisation manager is allowed to see / manage."""
+    return {co.id for co in collaborations if has_org_manager_unit_access(user_id, co)}
+
+
 def confirm_api_key_unit_access(api_key: ApiKey, collaboration: Collaboration):
     if not api_key:
         raise Forbidden("ApiKey is None")

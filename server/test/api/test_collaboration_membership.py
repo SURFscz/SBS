@@ -59,6 +59,16 @@ class TestCollaborationMembership(AbstractTest):
             User.uid == "urn:jane").one()
         self.assertEqual("admin", collaboration_membership.role)
 
+    def test_create_collaboration_membership_unit_restricted_manager(self):
+        # Paul is manager of unit research, AI computing belongs to unit support
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
+        self.login("urn:paul")
+        self.post("/api/collaboration_memberships", body={"collaborationId": collaboration_id},
+                  with_basic_auth=False, response_status_code=403)
+        self.assertEqual(0, CollaborationMembership.query.join(CollaborationMembership.user)
+                         .filter(User.uid == "urn:paul")
+                         .filter(CollaborationMembership.collaboration_id == collaboration_id).count())
+
     def test_create_collaboration_membership(self):
         self.login("urn:mary")
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)

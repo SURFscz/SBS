@@ -17,7 +17,7 @@ from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.mfa import ACR_VALUES, store_user_in_session, decode_jwt_token, user_requires_sram_mfa
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
-    confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
+    confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN, org_manager_unit_access_collaboration_ids
 from server.auth.ssh_validator import is_valid_ssh_public_key
 from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
@@ -608,14 +608,16 @@ def find_by_id():
         .one()
 
     if not is_application_admin():
-        # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
+        # Ensure the user has a collaboration membership in a collaboration the current_user is admin or manager of
+        # (taking the units of an organisation manager into account)
         curr_user = db.session.get(User, current_user_id())
         current_user_organisation_identifiers = [om.organisation_id for om in curr_user.organisation_memberships]
-        user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
-        if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):
+        allowed_collaboration_ids = org_manager_unit_access_collaboration_ids(
+            curr_user.id, [cm.collaboration for cm in user.collaboration_memberships])
+        if not allowed_collaboration_ids:
             raise Forbidden()
 
-        return user.allowed_attr_view(current_user_organisation_identifiers, True), 200
+        return user.allowed_attr_view(current_user_organisation_identifiers, True, allowed_collaboration_ids), 200
 
     return user, 200
 

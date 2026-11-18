@@ -177,13 +177,19 @@ class TestUser(AbstractTest):
             self.assertFalse(attr in res)
 
     def test_find_by_id_by_org_manager_including_org_memberships(self):
-        self.login("urn:paul")
-        user_id = User.query.filter(User.uid == "urn:jane").one().id
+        self.login("urn:harry")
+        user_id = User.query.filter(User.uid == "urn:john").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual(1, len(res["organisation_memberships"]))
         membership = res["organisation_memberships"][0]
         self.assertListEqual(sorted(["role", "organisation"]), sorted(list(membership.keys())))
         self.assertListEqual(sorted(["id", "name"]), sorted(list(membership["organisation"].keys())))
+
+    def test_find_by_id_by_unit_restricted_org_manager_not_allowed(self):
+        # Paul is manager of unit research, Jane is only member of a collaboration in unit support
+        self.login("urn:paul")
+        user_id = User.query.filter(User.uid == "urn:jane").one().id
+        self.get("/api/users/find_by_id", query_data={"id": user_id}, response_status_code=403)
 
     def test_find_by_id_by_org_manager_not_allowed(self):
         self.login("urn:harry")

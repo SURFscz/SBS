@@ -85,7 +85,7 @@ class User(Base, db.Model):
     def has_agreed_with_aup(self):
         return len([aup for aup in self.aups if aup.au_version == str(current_app.app_config.aup.version)]) > 0
 
-    def allowed_attr_view(self, organisation_identifiers, include_details):
+    def allowed_attr_view(self, organisation_identifiers, include_details, collaboration_identifiers=None):
         result = {
             "id": self.id,
             "name": self.name,
@@ -100,7 +100,9 @@ class User(Base, db.Model):
             "mfa_reset_token": self.mfa_reset_token,
             "collaboration_memberships": [cm.allowed_attr_view() for cm in
                                           self.collaboration_memberships if
-                                          cm.collaboration.organisation_id in organisation_identifiers]
+                                          cm.collaboration.organisation_id in organisation_identifiers
+                                          and (collaboration_identifiers is None
+                                               or cm.collaboration_id in collaboration_identifiers)]
         }
         if include_details:
             result["organisation_memberships"] = [om.allowed_attr_view() for om in

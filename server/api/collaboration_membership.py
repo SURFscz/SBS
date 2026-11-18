@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
 from flask import Blueprint, request as current_request, jsonify
+from werkzeug.exceptions import NotFound
 
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin, current_user_uid, \
-    current_user_id, confirm_organisation_admin_or_manager
+    current_user_id, confirm_write_access, has_org_manager_unit_access
 from server.db.defaults import STATUS_ACTIVE
 from server.db.activity import update_last_activity_date
 from server.db.domain import CollaborationMembership, db, Collaboration
@@ -119,7 +120,11 @@ def create_collaboration_membership_role():
     collaboration_id = client_data["collaborationId"]
     collaboration = db.session.get(Collaboration, collaboration_id)
 
-    confirm_organisation_admin_or_manager(collaboration.organisation_id)
+    if not collaboration:
+        raise NotFound(f"Collaboration {collaboration_id} not found")
+
+    # Organisation managers restricted to units may only add themselves to collaborations within their units
+    confirm_write_access(override_func=lambda: has_org_manager_unit_access(current_user_id(), collaboration))
 
     user_id = current_user_id()
     collaboration_membership = CollaborationMembership(user_id=user_id,

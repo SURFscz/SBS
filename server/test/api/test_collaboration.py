@@ -16,7 +16,7 @@ from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_res
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
                               unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support,
                               unihard_unit_support_name, service_monitor_name, unihard_secret)
-from server.test.seed import unihard_name
+from server.test.seed import unihard_name, unihard_unit_research_name
 from server.tools import dt_now
 
 
@@ -203,6 +203,24 @@ class TestCollaboration(AbstractTest):
                       "short_name": "new_short_name"
                   }, with_basic_auth=False,
                   response_status_code=400)
+
+    def test_collaboration_new_unit_restricted_manager(self):
+        organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id
+        support = jsonify([self.find_entity_by_name(Unit, unihard_unit_support_name)]).json
+        research = jsonify([self.find_entity_by_name(Unit, unihard_unit_research_name)]).json
+        # Harry is manager of unit support only
+        self.login("urn:harry")
+        for units in ([], research, support + research):
+            self.post("/api/collaborations",
+                      body={"name": "new_collaboration", "description": "new_collaboration",
+                            "organisation_id": organisation_id, "short_name": "new_short_name",
+                            "current_user_admin": False, "units": units},
+                      with_basic_auth=False, response_status_code=403)
+        self.post("/api/collaborations",
+                  body={"name": "new_collaboration", "description": "new_collaboration",
+                        "organisation_id": organisation_id, "short_name": "new_short_name",
+                        "current_user_admin": False, "units": support},
+                  with_basic_auth=False)
 
     def test_collaboration_new_no_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id

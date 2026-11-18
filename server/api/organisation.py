@@ -17,7 +17,7 @@ from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, confirm_external_api_call, confirm_read_access, \
-    confirm_organisation_admin_or_manager, is_service_admin_or_manager
+    confirm_organisation_admin_or_manager, is_service_admin_or_manager, org_manager_unit_access_collaboration_ids
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name, invalid_tag_labels, tag_label_rule_description
@@ -613,7 +613,12 @@ def search_users(organisation_id):
         .filter(Organisation.id == organisation_id) \
         .filter(or_(*conditions)) \
         .all()
-    return [user.allowed_attr_view([organisation_id], False) for user in users], 200
+    # Unit restricted organisation managers only see members of collaborations within their units
+    collaborations = {cm.collaboration for user in users for cm in user.collaboration_memberships
+                      if cm.collaboration.organisation_id == organisation_id}
+    allowed_ids = org_manager_unit_access_collaboration_ids(current_user_id(), collaborations)
+    result = [user.allowed_attr_view([organisation_id], False, allowed_ids) for user in users]
+    return [user_json for user_json in result if user_json["collaboration_memberships"]], 200
 
 
 @organisation_api.route("/<organisation_id>/invites", methods=["GET"], strict_slashes=False)
@@ -627,6 +632,10 @@ def search_invites(organisation_id):
         .filter(Organisation.id == organisation_id) \
         .filter(Invitation.invitee_email.ilike(wildcard)) \
         .all()
+    # Unit restricted organisation managers only see invitations of collaborations within their units
+    allowed_ids = org_manager_unit_access_collaboration_ids(current_user_id(),
+                                                            {invitation.collaboration for invitation in invitations})
+    invitations = [invitation for invitation in invitations if invitation.collaboration_id in allowed_ids]
     invitations_json = jsonify(invitations).json
     for invitation_json in invitations_json:
         co = [invitation for invitation in invitations if invitation.id == invitation_json["id"]][0].collaboration
