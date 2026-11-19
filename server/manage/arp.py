@@ -26,7 +26,7 @@ def arp_attributes():
                           "in the platform (user needs to accept invitation, approve membership, etc)"
         }],
         "urn:mace:dir:attribute-def:eduPersonEntitlement": [{
-            "value": "*",
+            "value": "urn:mace:surf.nl:sram:*",
             "source": "idp",
             "motivation": "This entitlement is used to convey which institutional users are allowed to create COs in "
                           "SRAM without prior institutional approval."
@@ -36,12 +36,6 @@ def arp_attributes():
             "source": "idp",
             "motivation": "Name attributes are necessary for fellow researchers to be able to identify and find their "
                           "collaboration members."
-        }],
-        "urn:mace:dir:attribute-def:uid": [{
-            "value": "*",
-            "source": "idp",
-            "motivation": "The uid attribute is necessary to be able to handle 2-factor authentication using "
-                          "SURFsecureID"
         }],
         "urn:mace:dir:attribute-def:eduPersonScopedAffiliation": [{
             "value": "*",
@@ -63,16 +57,33 @@ def arp_attributes():
                           "who log in via SRAM to users who are already in their system (for example, because they "
                           "have used this service via SURFconext before)."
         }],
-        "urn:mace:dir:attribute-def:eduPersonTargetedID": [{
-            "value": "*",
-            "source": "idp",
-            "motivation": "eduPersonTargetedId is used to uniquely identify a user."
-        }],
         "urn:mace:terena.org:attribute-def:schacHomeOrganization": [{
             "value": "*",
             "source": "idp",
             "motivation": "The schacHomeOrganization attribute is necessary to be able to handle 2-factor "
                           "authentication using SURFsecureID"
+        }],
+        "urn:mace:surf.nl:attribute-def:voPersonExternalID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonExternalID attribute is necessary to communicate the old eduTEAMS "
+                          "SBS-generated eduPersonPrincipalName"
+        }],
+        "urn:mace:surf.nl:attribute-def:voPersonID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonID attribute is necessary to communicate the stable SBS identifier"
+        }],
+        "urn:mace:surf.nl:attribute-def:voPersonSoRID": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonSoRID attribute is necessary to communicate the SBS username"
+        }],
+        "urn:mace:surf.nl:attribute-def:voPersonExternalAffiliation": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The voPersonExternalAffiliation attribute is necessary to share the affiliations "
+                          "with one's home organisation, to adhere to the AARC spec"
         }],
         "urn:mace:surf.nl:attribute-def:ssh-key": [{
             "value": "*",
