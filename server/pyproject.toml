@@ -44,7 +44,7 @@ dependencies = [
     "redis~=8.1",
     "requests==2.34.2",
     "SQLAlchemy==2.0.52",
-    "urllib3==2.7.0",
+    "urllib3==2.8.0",
     "websockets==17.1",
     "werkzeug==3.1.8",
 ]
