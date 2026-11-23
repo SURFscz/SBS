@@ -98,6 +98,7 @@ manage:
   user: "sram"
   password: "secret"
   verify_peer: False
+  service_state: "prodaccepted"
 
 aup:
   version: 1
