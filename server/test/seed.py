@@ -26,6 +26,7 @@ user_john_name = "John Doe"
 user_mike_name = "Mike Doe"
 user_james_name = "James Byrd"
 user_sarah_name = "Sarah Cross"
+user_sarah_eduid_name = "Sarah Cross eduID"
 user_jane_name = "Jane Doe"
 user_paul_name = "Paul Doe"
 user_peter_name = "Peter Doe"
@@ -217,6 +218,10 @@ def seed(db, app_config, skip_seed=False):
                  application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022",
                  last_login_date=yesterday)
+    sarah_eduid = User(uid="urn:sarah_eduid", name=user_sarah_eduid_name, email="sarah@uni-franeker.nl",
+                 application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
+                 username="sarah2", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f023",
+                 last_login_date=yesterday)
     betty = User(uid="urn:betty", name=user_betty_name, email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890",
                  last_login_date=yesterday)
@@ -265,7 +270,7 @@ def seed(db, app_config, skip_seed=False):
 
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
-                     paul, hannibal, service_admin, extra_admin, eb_provisioned)
+                     paul, hannibal, service_admin, extra_admin, eb_provisioned, sarah_eduid)
 
     # old suspension warning, should not affect new suspension warnings
     warning_date_old = retention_today - datetime.timedelta(retention.allowed_inactive_period_days + 1)
