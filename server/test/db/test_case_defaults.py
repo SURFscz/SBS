@@ -1,6 +1,7 @@
 import datetime
 import time
 from unittest import TestCase
+from unittest.mock import patch
 
 from munch import munchify
 from werkzeug.exceptions import BadRequest
@@ -87,6 +88,13 @@ class TestCaseDefaults(TestCase):
         invitation = Invitation(expiry_date=today + datetime.timedelta(days=1))
         period = calculate_expiry_period(invitation, today=today)
         self.assertEqual("1 day", period)
+
+    def test_calculate_expiry_period_uses_current_time(self):
+        later = dt_now() + datetime.timedelta(days=100)
+        invitation = Invitation(expiry_date=later + datetime.timedelta(days=15, minutes=1))
+        with patch("server.db.defaults.dt_now", return_value=later):
+            period = calculate_expiry_period(invitation)
+        self.assertEqual("15 days", period)
 
     def test_cleanse_short_name(self):
         def raises_bad_request():

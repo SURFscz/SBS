@@ -2,6 +2,7 @@ import base64
 import os
 from unittest import TestCase
 
+import bcrypt
 from cryptography.exceptions import InvalidTag
 
 from server.auth.secrets import secure_hash, generate_token, generate_password_with_hash, decrypt_secret, \
@@ -25,6 +26,15 @@ class TestSecret(TestCase):
         hashed_password, password = generate_password_with_hash(rounds=5)
         self.assertEqual(60, len(hashed_password))
         self.assertEqual(32, len(password))
+
+    def test_generated_passwords_are_unique(self):
+        passwords = {generate_password_with_hash()[1] for _ in range(5)}
+        self.assertEqual(5, len(passwords))
+
+    def test_hashed_password_for_given_password(self):
+        hashed_password, password = generate_password_with_hash(password="secret")
+        self.assertEqual("secret", password)
+        self.assertTrue(bcrypt.checkpw(b"secret", hashed_password.encode()))
 
     def test_encrypt_decrypt_secret(self):
         encryption_key = base64.b64encode(os.urandom(256 // 8)).decode()
