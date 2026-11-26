@@ -39,7 +39,10 @@ def generate_random_password():
     return password
 
 
-def generate_password_with_hash(password=generate_random_password(), rounds=5):
+def generate_password_with_hash(password=None, rounds=5):
+    # A default of generate_random_password() would be evaluated only once, at import time
+    if password is None:
+        password = generate_random_password()
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds))
     return hashed.decode("utf-8"), password
 

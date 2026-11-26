@@ -44,7 +44,9 @@ def default_expiry_date(json_dict=None):
     return dt_now() + timedelta(days=15)
 
 
-def calculate_expiry_period(invitation, today=dt_now()):
+def calculate_expiry_period(invitation, today=None):
+    if today is None:
+        today = dt_now()
     if (isinstance(invitation, Iterable) and "expiry_date" not in invitation) or not invitation.expiry_date:
         return "15 days"
     diff = invitation.expiry_date - today
