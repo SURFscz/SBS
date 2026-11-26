@@ -312,9 +312,17 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah", "user_email": "sarah@uni-franeker.nl"})
-        res_eduid = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah_eduid", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah2", "user_email": "sarah@uni-franeker.nl"})
+        res_eduid = self.post(
+                    "/api/users/proxy_authz",
+                    response_status_code=200,
+                    body={
+                        "user_id": "urn:sarah_eduid",
+                        "service_id": service_mail_entity_id,
+                        "issuer_id": "issuer.com",
+                        "uid": "sarah2",
+                        "user_email": "sarah@uni-franeker.nl",
+                    },
+                )
 
         # proxy_authz only returns attributes when the authentication succeeds
         self.assertTrue("attributes" not in res)
@@ -327,12 +335,17 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah", "user_email": "sarah@uni-franeker.nl"})
-        res_eduid = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah_eduid", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah2", "user_email": "sarah@uni-franeker.nl"})
+        res_eduid = self.post(
+                    "/api/users/proxy_authz",
+                    response_status_code=200,
+                    body={
+                        "user_id": "urn:sarah_eduid",
+                        "service_id": service_mail_entity_id,
+                        "issuer_id": "issuer.com",
+                        "uid": "sarah2",
+                        "user_email": "sarah@uni-franeker.nl"
+                    },
+                )
 
         self.assertTrue("attributes" in res)
         self.assertTrue("attributes" not in res_eduid)
-
-
-

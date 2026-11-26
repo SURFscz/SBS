@@ -1,7 +1,6 @@
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
-from sqlalchemy import or_
 from server import tools
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with

@@ -219,9 +219,9 @@ def seed(db, app_config, skip_seed=False):
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022",
                  last_login_date=yesterday)
     sarah_eduid = User(uid="urn:sarah_eduid", name=user_sarah_eduid_name, email="sarah@uni-franeker.nl",
-                 application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
-                 username="sarah2", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f023",
-                 last_login_date=yesterday)
+                        application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
+                        username="sarah2", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f023",
+                        last_login_date=yesterday)
     betty = User(uid="urn:betty", name=user_betty_name, email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890",
                  last_login_date=yesterday)
