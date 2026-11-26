@@ -43,14 +43,15 @@ def proxy_authz_edu_teams():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
 
-    conditions = [
-        User.uid == uid,
-    ]
-    if eduperson_principal_name:
-        conditions.append(User.eduperson_principal_name == eduperson_principal_name)
-    if email:
-        conditions.append(User.email == email)
-    user: User = User.query.filter(or_(*conditions)).first()
+    user = User.query.filter(User.uid == uid).first()
+
+    if user is None and eduperson_principal_name:
+        user = User.query.filter(
+            User.eduperson_principal_name == eduperson_principal_name
+        ).first()
+
+    if user is None and email:
+        user = User.query.filter(User.email == email).first()
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
