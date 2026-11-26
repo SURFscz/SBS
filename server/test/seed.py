@@ -268,9 +268,10 @@ def seed(db, app_config, skip_seed=False):
                              last_login_date=deletion_date, last_accessed_date=deletion_date,
                              suspended=True)
 
+    persist_instance(db, sarah_eduid)
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
-                     paul, hannibal, service_admin, extra_admin, eb_provisioned, sarah_eduid)
+                     paul, hannibal, service_admin, extra_admin, eb_provisioned)
 
     # old suspension warning, should not affect new suspension warnings
     warning_date_old = retention_today - datetime.timedelta(retention.allowed_inactive_period_days + 1)

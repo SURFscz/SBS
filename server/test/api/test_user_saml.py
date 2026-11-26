@@ -308,32 +308,31 @@ class TestUserSaml(AbstractTest):
         # We have to make sure that email is only used if the other fails
         # Here we have two accounts of Sarah, one from the UniFraneker IdP and one from the eduID IdP
         # They both have the same email address
-        # the UniFraneker Sarah is the first in the database
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah"})
+                              "uid": "sarah", "user_email": "sarah@uni-franeker.nl"})
         res_eduid = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah_eduid", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah2"})
+                              "uid": "sarah2", "user_email": "sarah@uni-franeker.nl"})
 
         # proxy_authz only returns attributes when the authentication succeeds
         self.assertTrue("attributes" not in res)
         self.assertTrue("attributes" not in res_eduid)
 
-        # now let's see what happens when we prepare eduid sarah for successful authentication, but normal sarah not
-        self.add_service_aup_to_user("urn:sarah_eduid", service_mail_entity_id)
-        self.login_user_2fa("urn:sarah_eduid")
+        # now let's see what happens when we prepare normal sarah for successful authentication, but eduid sarah not
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah"})
+                              "uid": "sarah", "user_email": "sarah@uni-franeker.nl"})
         res_eduid = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah_eduid", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah2"})
+                              "uid": "sarah2", "user_email": "sarah@uni-franeker.nl"})
 
-        self.assertTrue("attributes" not in res)
-        self.assertTrue("attributes" in res_eduid)
+        self.assertTrue("attributes" in res)
+        self.assertTrue("attributes" not in res_eduid)
 
 
 
