@@ -188,7 +188,7 @@ def seed(db, app_config, skip_seed=False):
 
     john = User(uid="urn:john", name=user_john_name, email="john@example.org", username="john",
                 address="Postal 1234AA", external_id="86eee601-770f-4df3-bd4c-181a2edcbb2f",
-                last_login_date=yesterday)
+                eduperson_principal_name="john@woods.io", last_login_date=yesterday)
     peter = User(uid="urn:peter", name=user_peter_name, email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603",
                  last_login_date=yesterday)

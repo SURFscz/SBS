@@ -102,7 +102,7 @@ def proxy_authz_eb():
     if user is None and upstream_subject_id:
         user = User.query.filter(
             User.uid == upstream_subject_id
-        )
+        ).first()
 
     if user is None and emails:
         for email in emails:
