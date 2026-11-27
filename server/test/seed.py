@@ -26,6 +26,7 @@ user_john_name = "John Doe"
 user_mike_name = "Mike Doe"
 user_james_name = "James Byrd"
 user_sarah_name = "Sarah Cross"
+user_sarah_eduid_name = "Sarah Cross eduID"
 user_jane_name = "Jane Doe"
 user_paul_name = "Paul Doe"
 user_peter_name = "Peter Doe"
@@ -187,7 +188,7 @@ def seed(db, app_config, skip_seed=False):
 
     john = User(uid="urn:john", name=user_john_name, email="john@example.org", username="john",
                 address="Postal 1234AA", external_id="86eee601-770f-4df3-bd4c-181a2edcbb2f",
-                last_login_date=yesterday)
+                eduperson_principal_name="john@woods.io", last_login_date=yesterday)
     peter = User(uid="urn:peter", name=user_peter_name, email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603",
                  last_login_date=yesterday)
@@ -217,6 +218,10 @@ def seed(db, app_config, skip_seed=False):
                  application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022",
                  last_login_date=yesterday)
+    sarah_eduid = User(uid="urn:sarah_eduid", name=user_sarah_eduid_name, email="sarah@uni-franeker.nl",
+                        application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
+                        username="sarah2", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f023",
+                        last_login_date=yesterday)
     betty = User(uid="urn:betty", name=user_betty_name, email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890",
                  last_login_date=yesterday)
@@ -263,6 +268,7 @@ def seed(db, app_config, skip_seed=False):
                              last_login_date=deletion_date, last_accessed_date=deletion_date,
                              suspended=True)
 
+    persist_instance(db, sarah_eduid)
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
                      paul, hannibal, service_admin, extra_admin, eb_provisioned)

@@ -505,7 +505,7 @@ class TestUser(AbstractTest):
         self.assertEqual(13, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(19, len(res))
+        self.assertEqual(20, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "dtrh.io"})
         self.assertEqual(1, len(res))

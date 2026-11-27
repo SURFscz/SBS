@@ -3,7 +3,6 @@ import urllib.parse
 import uuid
 
 from flask import Blueprint, current_app, request as current_request, redirect, session, jsonify
-from sqlalchemy import or_
 from werkzeug.exceptions import Forbidden, NotFound
 
 from server import tools
@@ -89,18 +88,25 @@ def proxy_authz_eb():
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
 
-    conditions = [
-        User.collab_person_id == collab_person_id,
-        User.uid == collab_person_id
-    ]
-    if eppn:
-        conditions.append(User.eduperson_principal_name == eppn)
-    if upstream_subject_id:
-        conditions.append(User.uid == upstream_subject_id)
-    if emails:
+    user = User.query.filter(User.uid == collab_person_id).first()
+
+    if user is None and collab_person_id:
+        user = User.query.filter(User.collab_person_id == collab_person_id).first()
+
+    if user is None and eppn:
+        user = User.query.filter(
+            User.eduperson_principal_name == eppn
+        ).first()
+
+    if user is None and upstream_subject_id:
+        user = User.query.filter(
+            User.uid == upstream_subject_id
+        ).first()
+
+    if user is None and emails:
         for email in emails:
-            conditions.append(User.email == email)
-    user = User.query.filter(or_(*conditions)).first()
+            user = User.query.filter(User.email == email).first()
+
     # Logic for unknown users is after the service check, but we want to add the collab_person_id if it is missing
     if user and not user.collab_person_id:
         user.collab_person_id = collab_person_id
